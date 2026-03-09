@@ -5,74 +5,95 @@ import { supabase } from "../../lib/supabaseClient"
 import { useRouter } from "next/navigation"
 
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  PieChart,
-  Pie,
-  Cell
+ LineChart,
+ Line,
+ XAxis,
+ YAxis,
+ Tooltip,
+ ResponsiveContainer,
+ AreaChart,
+ Area,
+ PieChart,
+ Pie,
+ Cell
 } from "recharts"
 
 export default function Dashboard() {
 
-  const router = useRouter()
+ const router = useRouter()
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data } = await supabase.auth.getSession()
-      if (!data.session) {
-        router.push("/login")
-      }
-    }
-    checkUser()
-  }, [router])
+ useEffect(() => {
+  const checkUser = async () => {
+   const { data } = await supabase.auth.getSession()
+   if (!data.session) {
+    router.push("/login")
+   }
+  }
+  checkUser()
+ }, [router])
 
 
-  const alunosData = [
-    { mes: "Jan", alunos: 180 },
-    { mes: "Fev", alunos: 210 },
-    { mes: "Mar", alunos: 240 },
-    { mes: "Abr", alunos: 300 },
-    { mes: "Mai", alunos: 320 },
-  ]
+ // DADOS
 
-  const faturamentoData = [
-    { mes: "Jan", valor: 20000 },
-    { mes: "Fev", valor: 28000 },
-    { mes: "Mar", valor: 32000 },
-    { mes: "Abr", valor: 41000 },
-    { mes: "Mai", valor: 39000 },
-  ]
+ const faturamento = 41000
+ const faturamentoAnterior = 32000
 
-  const cancelamentosData = [
-    { name: "Ativos", value: 308 },
-    { name: "Cancelados", value: 12 },
-  ]
+ const alunos = 320
+ const alunosAnterior = 240
 
-  const COLORS = ["#22c55e", "#ef4444"]
+ const novos = 40
+ const novosAnterior = 30
 
-  const faturamento = 41000
-  const alunos = 320
-  const novos = 40
-  const cancelamentos = 12
+ const cancelamentos = 12
+ const cancelAnterior = 10
 
-  const ticketMedio = (faturamento / alunos).toFixed(2)
-  const churn = ((cancelamentos / alunos) * 100).toFixed(1)
 
-  const healthScore = 82
+ // FUNÇÃO VARIAÇÃO %
 
-  const alertas = [
-    "📈 Faturamento em crescimento",
-    "👥 Base de alunos em expansão",
-    "⚠ Monitorar cancelamentos"
-  ]
+ const variacao = (atual:number, anterior:number) => {
+  return (((atual - anterior) / anterior) * 100).toFixed(1)
+ }
 
-  return (
+ const varFat = Number(variacao(faturamento, faturamentoAnterior))
+ const varAlunos = Number(variacao(alunos, alunosAnterior))
+ const varNovos = Number(variacao(novos, novosAnterior))
+ const varCancel = Number(variacao(cancelamentos, cancelAnterior))
+
+
+ // OUTROS INDICADORES
+
+ const ticketMedio = (faturamento / alunos).toFixed(2)
+ const churn = ((cancelamentos / alunos) * 100).toFixed(1)
+ const healthScore = 82
+
+
+ // DADOS GRÁFICOS
+
+ const alunosData = [
+  { mes:"Jan", alunos:180 },
+  { mes:"Fev", alunos:210 },
+  { mes:"Mar", alunos:240 },
+  { mes:"Abr", alunos:300 },
+  { mes:"Mai", alunos:320 },
+ ]
+
+ const faturamentoData = [
+  { mes:"Jan", valor:20000 },
+  { mes:"Fev", valor:28000 },
+  { mes:"Mar", valor:32000 },
+  { mes:"Abr", valor:41000 },
+  { mes:"Mai", valor:39000 },
+ ]
+
+ const cancelamentosData = [
+  { name:"Ativos", value:308 },
+  { name:"Cancelados", value:12 }
+ ]
+
+ const COLORS = ["#22c55e","#ef4444"]
+
+
+ return (
 
 <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
 
@@ -80,39 +101,88 @@ export default function Dashboard() {
 Analytics Dashboard
 </h1>
 
+
 {/* KPI CARDS */}
 
 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
 
+{/* FATURAMENTO */}
+
 <div className="bg-[#0f1c33] p-6 rounded-xl">
-<p className="text-gray-400 text-sm">Faturamento</p>
+
+<p className="text-gray-400 text-sm">
+Faturamento
+</p>
+
 <h2 className="text-3xl font-bold text-green-400">
 R$ {faturamento}
 </h2>
+
+<p className={`text-sm mt-2 ${varFat >= 0 ? "text-green-400":"text-red-400"}`}>
+{varFat >= 0 ? "↑":"↓"} {varFat}% vs mês anterior
+</p>
+
 </div>
 
+
+{/* ALUNOS */}
+
 <div className="bg-[#0f1c33] p-6 rounded-xl">
-<p className="text-gray-400 text-sm">Alunos Ativos</p>
+
+<p className="text-gray-400 text-sm">
+Alunos Ativos
+</p>
+
 <h2 className="text-3xl font-bold text-cyan-400">
 {alunos}
 </h2>
+
+<p className={`text-sm mt-2 ${varAlunos >= 0 ? "text-green-400":"text-red-400"}`}>
+{varAlunos >= 0 ? "↑":"↓"} {varAlunos}% vs mês anterior
+</p>
+
 </div>
 
+
+{/* NOVOS */}
+
 <div className="bg-[#0f1c33] p-6 rounded-xl">
-<p className="text-gray-400 text-sm">Novos Alunos</p>
+
+<p className="text-gray-400 text-sm">
+Novos Alunos
+</p>
+
 <h2 className="text-3xl font-bold text-purple-400">
 {novos}
 </h2>
+
+<p className={`text-sm mt-2 ${varNovos >= 0 ? "text-green-400":"text-red-400"}`}>
+{varNovos >= 0 ? "↑":"↓"} {varNovos}% vs mês anterior
+</p>
+
 </div>
 
+
+{/* CANCELAMENTOS */}
+
 <div className="bg-[#0f1c33] p-6 rounded-xl">
-<p className="text-gray-400 text-sm">Cancelamentos</p>
+
+<p className="text-gray-400 text-sm">
+Cancelamentos
+</p>
+
 <h2 className="text-3xl font-bold text-red-400">
 {cancelamentos}
 </h2>
+
+<p className={`text-sm mt-2 ${varCancel <= 0 ? "text-green-400":"text-red-400"}`}>
+{varCancel >= 0 ? "↑":"↓"} {varCancel}% vs mês anterior
+</p>
+
 </div>
 
 </div>
+
 
 {/* SEGUNDA LINHA KPI */}
 
@@ -148,9 +218,11 @@ R$ {ticketMedio}
 
 </div>
 
+
 {/* GRÁFICOS */}
 
 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+
 
 <div className="bg-[#0f1c33] p-6 rounded-xl">
 
@@ -163,12 +235,7 @@ Evolução de Alunos
 <XAxis dataKey="mes"/>
 <YAxis/>
 <Tooltip/>
-<Line
-type="monotone"
-dataKey="alunos"
-stroke="#22d3ee"
-strokeWidth={3}
-/>
+<Line type="monotone" dataKey="alunos" stroke="#22d3ee" strokeWidth={3}/>
 </LineChart>
 </ResponsiveContainer>
 
@@ -186,13 +253,7 @@ Evolução do Faturamento
 <XAxis dataKey="mes"/>
 <YAxis/>
 <Tooltip/>
-<Area
-type="monotone"
-dataKey="valor"
-stroke="#22c55e"
-fill="#22c55e33"
-strokeWidth={3}
-/>
+<Area type="monotone" dataKey="valor" stroke="#22c55e" fill="#22c55e33" strokeWidth={3}/>
 </AreaChart>
 </ResponsiveContainer>
 
@@ -200,9 +261,8 @@ strokeWidth={3}
 
 </div>
 
-{/* CANCELAMENTOS + HEALTH */}
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+{/* CANCELAMENTOS */}
 
 <div className="bg-[#0f1c33] p-6 rounded-xl">
 
@@ -212,14 +272,8 @@ Cancelamentos
 
 <ResponsiveContainer width="100%" height={300}>
 <PieChart>
-<Pie
-data={cancelamentosData}
-dataKey="value"
-nameKey="name"
-outerRadius={100}
-label
->
-{cancelamentosData.map((entry, index) => (
+<Pie data={cancelamentosData} dataKey="value" nameKey="name" outerRadius={100} label>
+{cancelamentosData.map((entry,index)=>(
 <Cell key={index} fill={COLORS[index]} />
 ))}
 </Pie>
@@ -230,25 +284,7 @@ label
 </div>
 
 
-<div className="bg-[#0f1c33] p-6 rounded-xl">
-
-<h2 className="text-xl mb-4">
-Health Report
-</h2>
-
-<div className="space-y-3 text-gray-300">
-
-{alertas.map((alerta, index) => (
-<p key={index}>{alerta}</p>
-))}
-
 </div>
 
-</div>
-
-</div>
-
-</div>
-
-  )
+ )
 }
