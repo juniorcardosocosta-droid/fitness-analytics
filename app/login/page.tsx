@@ -19,7 +19,8 @@ export default function Login() {
     })
 
     if (error) {
-      alert("Erro no login")
+      alert(error.message)
+      console.log(error)
     } else {
       alert("/dashboard")
     }
