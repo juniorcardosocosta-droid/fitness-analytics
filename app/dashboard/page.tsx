@@ -23,17 +23,13 @@ export default function Dashboard() {
   const router = useRouter()
 
   useEffect(() => {
-
     const checkUser = async () => {
       const { data } = await supabase.auth.getSession()
-
       if (!data.session) {
         router.push("/login")
       }
     }
-
     checkUser()
-
   }, [router])
 
 
@@ -60,6 +56,22 @@ export default function Dashboard() {
 
   const COLORS = ["#22c55e", "#ef4444"]
 
+  const faturamento = 41000
+  const alunos = 320
+  const novos = 40
+  const cancelamentos = 12
+
+  const ticketMedio = (faturamento / alunos).toFixed(2)
+  const churn = ((cancelamentos / alunos) * 100).toFixed(1)
+
+  const healthScore = 82
+
+  const alertas = [
+    "📈 Faturamento em crescimento",
+    "👥 Base de alunos em expansão",
+    "⚠ Monitorar cancelamentos"
+  ]
+
   return (
 
 <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
@@ -68,10 +80,83 @@ export default function Dashboard() {
 Analytics Dashboard
 </h1>
 
-<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+{/* KPI CARDS */}
+
+<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
 
 <div className="bg-[#0f1c33] p-6 rounded-xl">
-<h2 className="text-xl mb-4">Evolução de Alunos</h2>
+<p className="text-gray-400 text-sm">Faturamento</p>
+<h2 className="text-3xl font-bold text-green-400">
+R$ {faturamento}
+</h2>
+</div>
+
+<div className="bg-[#0f1c33] p-6 rounded-xl">
+<p className="text-gray-400 text-sm">Alunos Ativos</p>
+<h2 className="text-3xl font-bold text-cyan-400">
+{alunos}
+</h2>
+</div>
+
+<div className="bg-[#0f1c33] p-6 rounded-xl">
+<p className="text-gray-400 text-sm">Novos Alunos</p>
+<h2 className="text-3xl font-bold text-purple-400">
+{novos}
+</h2>
+</div>
+
+<div className="bg-[#0f1c33] p-6 rounded-xl">
+<p className="text-gray-400 text-sm">Cancelamentos</p>
+<h2 className="text-3xl font-bold text-red-400">
+{cancelamentos}
+</h2>
+</div>
+
+</div>
+
+{/* SEGUNDA LINHA KPI */}
+
+<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+
+<div className="bg-[#0f1c33] p-6 rounded-xl">
+<p className="text-gray-400 text-sm">Ticket Médio</p>
+<h2 className="text-3xl font-bold text-blue-400">
+R$ {ticketMedio}
+</h2>
+</div>
+
+<div className="bg-[#0f1c33] p-6 rounded-xl">
+<p className="text-gray-400 text-sm">Churn</p>
+<h2 className="text-3xl font-bold text-yellow-400">
+{churn}%
+</h2>
+</div>
+
+<div className="bg-[#0f1c33] p-6 rounded-xl">
+<p className="text-gray-400 text-sm">Meta</p>
+<h2 className="text-3xl font-bold text-indigo-400">
+82%
+</h2>
+</div>
+
+<div className="bg-[#0f1c33] p-6 rounded-xl">
+<p className="text-gray-400 text-sm">Health Score</p>
+<h2 className="text-3xl font-bold text-green-300">
+{healthScore}
+</h2>
+</div>
+
+</div>
+
+{/* GRÁFICOS */}
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+
+<div className="bg-[#0f1c33] p-6 rounded-xl">
+
+<h2 className="text-xl mb-4">
+Evolução de Alunos
+</h2>
 
 <ResponsiveContainer width="100%" height={300}>
 <LineChart data={alunosData}>
@@ -91,7 +176,10 @@ strokeWidth={3}
 
 
 <div className="bg-[#0f1c33] p-6 rounded-xl">
-<h2 className="text-xl mb-4">Evolução do Faturamento</h2>
+
+<h2 className="text-xl mb-4">
+Evolução do Faturamento
+</h2>
 
 <ResponsiveContainer width="100%" height={300}>
 <AreaChart data={faturamentoData}>
@@ -110,9 +198,17 @@ strokeWidth={3}
 
 </div>
 
+</div>
+
+{/* CANCELAMENTOS + HEALTH */}
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
 <div className="bg-[#0f1c33] p-6 rounded-xl">
-<h2 className="text-xl mb-4">Cancelamentos</h2>
+
+<h2 className="text-xl mb-4">
+Cancelamentos
+</h2>
 
 <ResponsiveContainer width="100%" height={300}>
 <PieChart>
@@ -130,6 +226,23 @@ label
 <Tooltip/>
 </PieChart>
 </ResponsiveContainer>
+
+</div>
+
+
+<div className="bg-[#0f1c33] p-6 rounded-xl">
+
+<h2 className="text-xl mb-4">
+Health Report
+</h2>
+
+<div className="space-y-3 text-gray-300">
+
+{alertas.map((alerta, index) => (
+<p key={index}>{alerta}</p>
+))}
+
+</div>
 
 </div>
 
