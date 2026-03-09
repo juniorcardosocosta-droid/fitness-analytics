@@ -108,25 +108,48 @@ export default function Dashboard() {
   if (varAlunos > 0) alertas.push("👥 Base de alunos em expansão")
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
 
-      <div className="flex justify-between items-center mb-10">
+<div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
 
-        <h1 className="text-4xl font-bold">
-          Analytics Dashboard
-        </h1>
+  <div className="flex justify-between items-center mb-10">
 
-        <button
-          onClick={logout}
-          className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg"
-        >
-          Logout
-        </button>
+    <h1 className="text-4xl font-bold">
+      Analytics Dashboard
+    </h1>
 
-    </div>
+    <button
+      onClick={logout}
+      className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg"
+    >
+      Logout
+    </button>
 
-      {/* RESTO DO SEU DASHBOARD CONTINUA IGUAL */}
+  </div>
 
-    </div>
-  )
-}
+  {/* FILTROS */}
+
+  <div className="flex gap-4 mb-8">
+
+    <select className="p-3 bg-[#0a162b] rounded-lg">
+      <option>Rede</option>
+    </select>
+
+    <select className="p-3 bg-[#0a162b] rounded-lg">
+      <option>Unidade</option>
+    </select>
+
+    <select className="p-3 bg-[#0a162b] rounded-lg">
+      <option>Mês</option>
+    </select>
+
+    <select className="p-3 bg-[#0a162b] rounded-lg">
+      <option>Ano</option>
+    </select>
+
+  </div>
+
+  {/* CARDS, GRÁFICOS E RESTO DO DASHBOARD CONTINUA AQUI */}
+
+</div>
+
+)
