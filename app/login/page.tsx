@@ -21,8 +21,9 @@ export default function Login() {
     if (error) {
       alert(error.message)
       console.log(error)
+      
     } else {
-      alert("/dashboard")
+       router.push("/dashboard")
     }
 
   }
