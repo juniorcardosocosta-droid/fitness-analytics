@@ -128,28 +128,28 @@ export default function Dashboard() {
 
   {/* FILTROS */}
 
-  <div className="flex gap-4 mb-8">
+<div className="flex gap-4 mb-8">
 
-    <select className="p-3 bg-[#0a162b] rounded-lg">
-      <option>Rede</option>
-    </select>
+<select className="p-3 bg-[#0a162b] rounded-lg">
+<option>Rede</option>
+</select>
 
-    <select className="p-3 bg-[#0a162b] rounded-lg">
-      <option>Unidade</option>
-    </select>
+<select className="p-3 bg-[#0a162b] rounded-lg">
+<option>Unidade</option>
+</select>
 
-    <select className="p-3 bg-[#0a162b] rounded-lg">
-      <option>Mês</option>
-    </select>
+<select className="p-3 bg-[#0a162b] rounded-lg">
+<option>Mês</option>
+</select>
 
-    <select className="p-3 bg-[#0a162b] rounded-lg">
-      <option>Ano</option>
-    </select>
-
-  </div>
-
-  {/* CARDS, GRÁFICOS E RESTO DO DASHBOARD CONTINUA AQUI */}
+<select className="p-3 bg-[#0a162b] rounded-lg">
+<option>Ano</option>
+</select>
 
 </div>
 
+{/* RESTO DO DASHBOARD CONTINUA AQUI */}
+
+</div>
 )
+}
