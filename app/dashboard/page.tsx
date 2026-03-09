@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, } from "react"
 import { supabase } from "../../lib/supabaseClient"
+import { useRouter } from "next/navigation"
 
 import {
   LineChart,
@@ -52,6 +53,24 @@ function variacao(atual: number, anterior: number) {
 }
 
 export default function Dashboard() {
+
+  const router = useRouter()
+
+  useEffect(() => {
+
+    const checkUser = async () => {
+
+      const { data } = await supabase.auth.getSession()
+
+      if (!data.session) {
+      router.push("/login")
+      }
+
+    }
+
+    checkUser()
+
+}, [])
 
   const varFat = Number(variacao(faturamentoAtual, faturamentoAnterior))
   const varAlunos = Number(variacao(alunosAtual, alunosAnterior))
