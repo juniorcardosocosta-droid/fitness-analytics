@@ -97,11 +97,25 @@ export default function Dashboard() {
 
 <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
 
-<h1 className="text-4xl font-bold mb-10">
+<div className="flex justify-between items-center mb-10">
+
+<h1 className="text-4xl font-bold">
 Analytics Dashboard
 </h1>
 
-<div className="flex flex-wrap gap-4 mb-10">
+<button
+onClick={async () => {
+ await supabase.auth.signOut()
+ router.push("/login")
+}}
+className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg"
+>
+Sair
+</button>
+
+</div>
+
+<div className="flex flex-wrap items-center gap-4 mb-10">
 
 <select className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg">
 <option>Academia</option>
@@ -124,12 +138,6 @@ Analytics Dashboard
 <option>Abril</option>
 <option>Maio</option>
 <option>Junho</option>
-<option>Julho</option>
-<option>Agosto</option>
-<option>Setembro</option>
-<option>Outubro</option>
-<option>Novembro</option>
-<option>Dezembro</option>
 </select>
 
 <select className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg">
@@ -138,6 +146,12 @@ Analytics Dashboard
 <option>2025</option>
 <option>2026</option>
 </select>
+
+<button
+className="bg-cyan-500 hover:bg-cyan-600 px-6 py-2 rounded-lg font-semibold"
+>
+Filtrar
+</button>
 
 </div>
 
