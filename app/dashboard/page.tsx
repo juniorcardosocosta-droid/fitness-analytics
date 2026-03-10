@@ -101,6 +101,46 @@ export default function Dashboard() {
 Analytics Dashboard
 </h1>
 
+<div className="flex flex-wrap gap-4 mb-10">
+
+<select className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg">
+<option>Academia</option>
+<option>Rede Alpha</option>
+<option>Rede Beta</option>
+</select>
+
+<select className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg">
+<option>Unidade</option>
+<option>Matriz</option>
+<option>Filial 1</option>
+<option>Filial 2</option>
+</select>
+
+<select className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg">
+<option>Mês</option>
+<option>Janeiro</option>
+<option>Fevereiro</option>
+<option>Março</option>
+<option>Abril</option>
+<option>Maio</option>
+<option>Junho</option>
+<option>Julho</option>
+<option>Agosto</option>
+<option>Setembro</option>
+<option>Outubro</option>
+<option>Novembro</option>
+<option>Dezembro</option>
+</select>
+
+<select className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg">
+<option>Ano</option>
+<option>2024</option>
+<option>2025</option>
+<option>2026</option>
+</select>
+
+</div>
+
 
 {/* KPI CARDS */}
 
