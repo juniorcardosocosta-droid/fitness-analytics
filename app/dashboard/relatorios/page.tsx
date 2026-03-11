@@ -9,7 +9,7 @@ const [unidade,setUnidade] = useState("Todas")
 const [mes,setMes] = useState("Março")
 const [ano,setAno] = useState("2025")
 
-// DADOS EXEMPLO (depois virão do Supabase/API)
+// DADOS EXEMPLO
 
 const receitaBruta = 130000
 const deducoes = 10000
@@ -18,27 +18,24 @@ const receitaLiquida = receitaBruta - deducoes
 const custos = 40000
 const lucroBruto = receitaLiquida - custos
 
-const despesasInfra = 15000
-const despesasAdmin = 12000
-const despesasPessoal = 18000
+const infra = 15000
+const admin = 12000
+const pessoal = 18000
 const terceiros = 5000
 
-const despesasOperacionais =
-despesasInfra + despesasAdmin + despesasPessoal + terceiros
+const despesas = infra + admin + pessoal + terceiros
 
-const ebitda = lucroBruto - despesasOperacionais
+const ebitda = lucroBruto - despesas
 
 const impostos = 8000
 const resultadoOperacional = ebitda - impostos
 
 const despesasFinanceiras = 2000
-const despesasNaoOperacionais = 0
 
-const lucroLiquido =
-resultadoOperacional - despesasFinanceiras - despesasNaoOperacionais
+const lucroLiquido = resultadoOperacional - despesasFinanceiras
 
-const percentual = (valor:number) =>
-((valor / receitaLiquida) * 100).toFixed(1)
+const margemEbitda = ((ebitda / receitaLiquida) * 100).toFixed(1)
+const margemLiquida = ((lucroLiquido / receitaLiquida) * 100).toFixed(1)
 
 return (
 
@@ -50,7 +47,7 @@ Relatórios Financeiros
 
 {/* FILTROS */}
 
-<div className="flex flex-wrap gap-4 mb-10">
+<div className="flex gap-4 mb-10 flex-wrap">
 
 <select
 value={academia}
@@ -100,7 +97,8 @@ Filtrar
 
 </div>
 
-{/* RESUMO EXECUTIVO */}
+
+{/* RESUMO */}
 
 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
 
@@ -134,111 +132,137 @@ R$ {lucroLiquido.toLocaleString()}
 
 </div>
 
+
+{/* GRID PRINCIPAL */}
+
+<div className="grid md:grid-cols-3 gap-8 mb-12">
+
 {/* DRE */}
 
-<div className="bg-[#0f1c33] rounded-xl p-8 mb-12">
+<div className="md:col-span-2 bg-[#0f1c33] rounded-xl p-8">
 
 <h2 className="text-2xl font-semibold mb-6">
 DRE - Demonstrativo de Resultado
 </h2>
 
-<table className="w-full text-sm">
+<div className="space-y-3 text-sm">
 
-<thead className="text-gray-400 border-b border-gray-700">
-<tr>
-<th className="text-left py-2">Conta</th>
-<th className="text-right">Valor</th>
-<th className="text-right">%</th>
-</tr>
-</thead>
+<p>Receita Operacional Bruta ............. R$ {receitaBruta.toLocaleString()}</p>
 
-<tbody className="space-y-2">
+<p>(-) Deduções .......................... R$ {deducoes.toLocaleString()}</p>
 
-<tr>
-<td className="py-2">Receita Bruta</td>
-<td className="text-right">R$ {receitaBruta.toLocaleString()}</td>
-<td className="text-right">100%</td>
-</tr>
+<p className="text-green-400 font-semibold">
+Receita Líquida ......................... R$ {receitaLiquida.toLocaleString()}
+</p>
 
-<tr>
-<td>(-) Deduções</td>
-<td className="text-right">R$ {deducoes.toLocaleString()}</td>
-<td className="text-right">-</td>
-</tr>
+<p>(-) Custos Variáveis ................... R$ {custos.toLocaleString()}</p>
 
-<tr className="text-green-400 font-semibold">
-<td>Receita Líquida</td>
-<td className="text-right">R$ {receitaLiquida.toLocaleString()}</td>
-<td className="text-right">100%</td>
-</tr>
+<p className="text-green-400 font-semibold">
+Lucro Bruto ............................. R$ {lucroBruto.toLocaleString()}
+</p>
 
-<tr>
-<td>(-) Custos Variáveis</td>
-<td className="text-right">R$ {custos.toLocaleString()}</td>
-<td className="text-right">{percentual(custos)}%</td>
-</tr>
+<br/>
 
-<tr className="text-green-400 font-semibold">
-<td>Lucro Bruto</td>
-<td className="text-right">R$ {lucroBruto.toLocaleString()}</td>
-<td className="text-right">{percentual(lucroBruto)}%</td>
-</tr>
+<p className="text-gray-400">Despesas Operacionais</p>
 
-<tr>
-<td>Infraestrutura</td>
-<td className="text-right">R$ {despesasInfra.toLocaleString()}</td>
-<td className="text-right">{percentual(despesasInfra)}%</td>
-</tr>
+<p>Infraestrutura ........................ R$ {infra.toLocaleString()}</p>
+<p>Administrativas ....................... R$ {admin.toLocaleString()}</p>
+<p>Pessoal ............................... R$ {pessoal.toLocaleString()}</p>
+<p>Serviços de Terceiros ................. R$ {terceiros.toLocaleString()}</p>
 
-<tr>
-<td>Administrativas</td>
-<td className="text-right">R$ {despesasAdmin.toLocaleString()}</td>
-<td className="text-right">{percentual(despesasAdmin)}%</td>
-</tr>
+<br/>
 
-<tr>
-<td>Pessoal</td>
-<td className="text-right">R$ {despesasPessoal.toLocaleString()}</td>
-<td className="text-right">{percentual(despesasPessoal)}%</td>
-</tr>
+<p className="text-purple-400 font-semibold">
+EBITDA .................................. R$ {ebitda.toLocaleString()}
+</p>
 
-<tr>
-<td>Serviços de Terceiros</td>
-<td className="text-right">R$ {terceiros.toLocaleString()}</td>
-<td className="text-right">{percentual(terceiros)}%</td>
-</tr>
+<p>Impostos .............................. R$ {impostos.toLocaleString()}</p>
 
-<tr className="text-purple-400 font-semibold">
-<td>EBITDA</td>
-<td className="text-right">R$ {ebitda.toLocaleString()}</td>
-<td className="text-right">{percentual(ebitda)}%</td>
-</tr>
+<p>Despesas Financeiras .................. R$ {despesasFinanceiras.toLocaleString()}</p>
 
-<tr>
-<td>Impostos</td>
-<td className="text-right">R$ {impostos.toLocaleString()}</td>
-<td className="text-right">{percentual(impostos)}%</td>
-</tr>
-
-<tr>
-<td>Despesas Financeiras</td>
-<td className="text-right">R$ {despesasFinanceiras.toLocaleString()}</td>
-<td className="text-right">{percentual(despesasFinanceiras)}%</td>
-</tr>
-
-<tr className="text-cyan-400 font-semibold text-lg">
-<td>Lucro Líquido</td>
-<td className="text-right">R$ {lucroLiquido.toLocaleString()}</td>
-<td className="text-right">{percentual(lucroLiquido)}%</td>
-</tr>
-
-</tbody>
-
-</table>
+<p className="text-cyan-400 font-bold text-lg">
+Lucro Líquido ........................... R$ {lucroLiquido.toLocaleString()}
+</p>
 
 </div>
 
-{/* BOTÃO PDF */}
+</div>
+
+
+{/* INSIGHTS */}
+
+<div className="bg-[#0f1c33] rounded-xl p-6">
+
+<h2 className="text-xl font-semibold mb-6">
+Insights Financeiros
+</h2>
+
+<div className="space-y-4 text-sm">
+
+<div>
+<p className="text-gray-400">Margem EBITDA</p>
+<p className="text-purple-400 text-xl font-bold">
+{margemEbitda}%
+</p>
+</div>
+
+<div>
+<p className="text-gray-400">Margem Líquida</p>
+<p className="text-cyan-400 text-xl font-bold">
+{margemLiquida}%
+</p>
+</div>
+
+<div>
+<p className="text-gray-400">Peso da Folha</p>
+<p className="text-yellow-400 text-lg font-bold">
+{((pessoal / receitaLiquida) * 100).toFixed(1)}%
+</p>
+</div>
+
+<hr className="border-gray-700"/>
+
+<p>📈 Receita está saudável</p>
+<p>⚠ Despesas com pessoal elevadas</p>
+<p>✅ EBITDA positivo</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+{/* FLUXO DE CAIXA */}
+
+<div className="bg-[#0f1c33] rounded-xl p-8 mb-10">
+
+<h2 className="text-2xl font-semibold mb-6">
+Fluxo de Caixa
+</h2>
+
+<div className="space-y-3 text-sm">
+
+<p>Fluxo de Caixa de Investimento ........ R$ 10.000</p>
+
+<p>Fluxo de Caixa de Financiamento ....... R$ 0</p>
+
+<p className="text-green-400 font-semibold">
+Geração de Caixa ....................... R$ 19.123
+</p>
+
+<p>Dividendos / Aportes .................. R$ 5.000</p>
+
+<p className="text-cyan-400 font-semibold">
+Geração de Caixa Final ................. R$ 14.123
+</p>
+
+</div>
+
+</div>
+
+
+{/* PDF */}
 
 <button className="bg-green-500 hover:bg-green-600 px-6 py-3 rounded-lg font-semibold">
 Exportar Relatório PDF
