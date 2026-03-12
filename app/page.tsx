@@ -63,6 +63,88 @@ export default function LandingPage() {
 
       </section>
 
+      <section className="max-w-6xl mx-auto px-6 pb-32">
+
+<div className="bg-[#1e3a5f] rounded-3xl p-10 shadow-2xl">
+
+<h3 className="text-center text-gray-300 mb-10">
+Gym Fitness Analytics — Dashboard
+</h3>
+
+<div className="grid md:grid-cols-2 gap-6">
+
+<div className="bg-[#2b4a73] p-6 rounded-xl">
+<p className="text-gray-300 text-sm">FATURAMENTO</p>
+<p className="text-3xl font-bold mt-2">R$ 48k</p>
+<p className="text-green-400 text-sm mt-2">▲ 12% vs anterior</p>
+</div>
+
+<div className="bg-[#2b4a73] p-6 rounded-xl">
+<p className="text-gray-300 text-sm">ALUNOS ATIVOS</p>
+<p className="text-3xl font-bold mt-2">342</p>
+<p className="text-green-400 text-sm mt-2">▲ 8 novos</p>
+</div>
+
+<div className="bg-[#2b4a73] p-6 rounded-xl">
+<p className="text-gray-300 text-sm">CHURN RATE</p>
+<p className="text-3xl font-bold mt-2">4,2%</p>
+<p className="text-red-400 text-sm mt-2">▼ 1,1% vs anterior</p>
+</div>
+
+<div className="bg-[#2b4a73] p-6 rounded-xl">
+<p className="text-gray-300 text-sm">TICKET MÉDIO</p>
+<p className="text-3xl font-bold mt-2">R$ 140</p>
+<p className="text-green-400 text-sm mt-2">▲ R$ 8</p>
+</div>
+
+</div>
+
+<div className="mt-10">
+
+<p className="text-gray-300 mb-4">
+Faturamento por unidade
+</p>
+
+<div className="space-y-4">
+
+<div>
+<div className="flex justify-between text-sm">
+<span>Unidade 1</span>
+<span>85%</span>
+</div>
+<div className="w-full bg-gray-700 rounded-full h-2 mt-1">
+<div className="bg-blue-500 h-2 rounded-full w-[85%]"></div>
+</div>
+</div>
+
+<div>
+<div className="flex justify-between text-sm">
+<span>Unidade 2</span>
+<span>68%</span>
+</div>
+<div className="w-full bg-gray-700 rounded-full h-2 mt-1">
+<div className="bg-green-500 h-2 rounded-full w-[68%]"></div>
+</div>
+</div>
+
+<div>
+<div className="flex justify-between text-sm">
+<span>Unidade 3</span>
+<span>51%</span>
+</div>
+<div className="w-full bg-gray-700 rounded-full h-2 mt-1">
+<div className="bg-yellow-500 h-2 rounded-full w-[51%]"></div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
       {/* MÉTRICAS */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
 
