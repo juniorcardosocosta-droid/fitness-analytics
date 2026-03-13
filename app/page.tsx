@@ -26,7 +26,7 @@ export default function LandingPage() {
 
             <div className="text-sm text-gray-300">
               <strong className="text-white">Gym Fitness Analytics</strong>
-              <br/>
+              <br />
               Inteligência Financeira para Academias
             </div>
 
@@ -96,6 +96,25 @@ export default function LandingPage() {
           <p className="text-gray-400 text-sm mt-6">
             🔒 Sem custo. Sem compromisso. Sem cartão de crédito.
           </p>
+
+        </div>
+
+        <div className="flex flex-col gap-3 mt-6">
+
+          <div className="flex items-center gap-2 bg-blue-900/40 border border-blue-700 px-4 py-2 rounded-full w-fit">
+            <span className="text-green-400">✔</span>
+            <span className="text-sm">Especialistas no mercado fitness</span>
+          </div>
+
+          <div className="flex items-center gap-2 bg-blue-900/40 border border-blue-700 px-4 py-2 rounded-full w-fit">
+            <span className="text-green-400">✔</span>
+            <span className="text-sm">Plataforma exclusiva Gym Fitness Analytics</span>
+          </div>
+
+          <div className="flex items-center gap-2 bg-blue-900/40 border border-blue-700 px-4 py-2 rounded-full w-fit">
+            <span className="text-green-400">✔</span>
+            <span className="text-sm">Resultado prático, não só teoria</span>
+          </div>
 
         </div>
 
@@ -327,7 +346,7 @@ export default function LandingPage() {
 
       </section>
 
-       {/* PÚBLICO IDEAL */}
+      {/* PÚBLICO IDEAL */}
       <section className="bg-gray-100 py-28 text-gray-900">
 
         <div className="max-w-5xl mx-auto px-6 text-center">
