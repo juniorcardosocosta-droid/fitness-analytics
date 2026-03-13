@@ -1,300 +1,583 @@
 "use client"
 
 import Link from "next/link"
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  PieChart,
-  Pie,
-  Cell
-} from "recharts"
-
-const faturamentoData = [
-  { mes: "Jan", valor: 80000 },
-  { mes: "Fev", valor: 92000 },
-  { mes: "Mar", valor: 105000 },
-  { mes: "Abr", valor: 120000 },
-  { mes: "Mai", valor: 128000 }
-]
-
-const churnData = [
-  { name: "Ativos", value: 92 },
-  { name: "Cancelados", value: 8 }
-]
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-[#0f172a] text-white">
+    <main className="min-h-screen bg-[#0a1f44] text-white">
+
+      {/* TOPBAR */}
+      <div className="bg-blue-600 text-center text-sm py-2 font-semibold">
+        🎯 Vagas limitadas por mês! Diagnóstico Financeiro Gratuito para Academias
+      </div>
+
+      {/* HEADER */}
+      <header className="bg-[#0a1f44] border-b border-blue-900">
+
+        <div className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
+
+          <div className="flex items-center gap-4">
+
+            <div className="text-2xl font-bold">
+              CF <span className="text-blue-400">Consultoria</span>
+            </div>
+
+            <div className="h-6 w-px bg-gray-600"></div>
+
+            <div className="text-sm text-gray-300">
+              <strong className="text-white">Gym Fitness Analytics</strong>
+              <br/>
+              Inteligência Financeira para Academias
+            </div>
+
+          </div>
+
+          <div className="flex gap-4">
+
+            <a
+              href="https://wa.me/55619982067189"
+              target="_blank"
+              className="bg-green-500 hover:bg-green-400 px-5 py-2 rounded-lg font-semibold"
+            >
+              WhatsApp
+            </a>
+
+            <Link
+              href="/login"
+              className="bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded-lg font-semibold"
+            >
+              Login
+            </Link>
+
+          </div>
+
+        </div>
+
+      </header>
 
       {/* HERO */}
-      <section className="max-w-7xl mx-auto px-6 py-28 text-center">
+      <section className="max-w-7xl mx-auto px-6 py-28 grid md:grid-cols-2 gap-16 items-center">
 
-        <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-          Transforme os dados da sua academia
-          em decisões inteligentes
-        </h1>
+        <div>
 
-        <p className="text-gray-400 mt-6 text-xl max-w-2xl mx-auto">
-          Analytics avançado para academias. Conecte seus sistemas
-          e acompanhe métricas como faturamento, churn e ticket médio
-          em tempo real.
+          <span className="bg-blue-900/40 text-blue-300 px-4 py-2 rounded-full text-sm">
+            Consultoria Financeira Especializada no Mercado Fitness
+          </span>
+
+          <h1 className="text-5xl font-bold mt-6 leading-tight">
+            Sua academia pode estar perdendo dinheiro agora
+            e você ainda <span className="text-blue-300">não sabe onde.</span>
+          </h1>
+
+          <p className="text-gray-300 mt-6 text-lg">
+            A CF Consultoria ajuda donos de academia a entender exatamente
+            onde estão os gargalos financeiros e transformar dados em decisões
+            que aumentam lucro e retenção de alunos.
+          </p>
+
+          <div className="flex gap-4 mt-10">
+
+            <a
+              href="https://wa.me/55619982067189"
+              className="bg-green-500 hover:bg-green-400 px-8 py-4 rounded-lg font-semibold"
+            >
+              Quero meu diagnóstico
+            </a>
+
+            <a
+              href="#como-funciona"
+              className="border border-gray-500 px-8 py-4 rounded-lg"
+            >
+              Como funciona
+            </a>
+
+          </div>
+
+          <p className="text-gray-400 text-sm mt-6">
+            🔒 Sem custo. Sem compromisso. Sem cartão de crédito.
+          </p>
+
+        </div>
+
+
+        {/* DASHBOARD MOCKUP */}
+        <div className="bg-[#1e3a5f] rounded-3xl p-10 shadow-2xl">
+
+          <h3 className="text-gray-300 mb-6 text-center">
+            Gym Fitness Analytics — Dashboard
+          </h3>
+
+          <div className="grid grid-cols-2 gap-4">
+
+            <div className="bg-[#0d2d63] p-4 rounded-xl">
+              <p className="text-sm text-gray-300">Faturamento</p>
+              <p className="text-2xl font-bold mt-1">R$ 48k</p>
+              <p className="text-green-400 text-sm">▲ 12%</p>
+            </div>
+
+            <div className="bg-[#0d2d63] p-4 rounded-xl">
+              <p className="text-sm text-gray-300">Alunos</p>
+              <p className="text-2xl font-bold mt-1">342</p>
+              <p className="text-green-400 text-sm">▲ 8</p>
+            </div>
+
+            <div className="bg-[#0d2d63] p-4 rounded-xl">
+              <p className="text-sm text-gray-300">Churn</p>
+              <p className="text-2xl font-bold mt-1">4.2%</p>
+              <p className="text-red-400 text-sm">▼ 1.1%</p>
+            </div>
+
+            <div className="bg-[#0d2d63] p-4 rounded-xl">
+              <p className="text-sm text-gray-300">Ticket</p>
+              <p className="text-2xl font-bold mt-1">R$140</p>
+              <p className="text-green-400 text-sm">▲ R$8</p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* SEÇÃO DOR */}
+      <section className="bg-gray-100 text-gray-900 py-28">
+
+        <div className="max-w-5xl mx-auto px-6 text-center">
+
+          <h2 className="text-4xl font-bold mb-16">
+            Você sabe responder essas perguntas sobre sua academia?
+          </h2>
+
+          <div className="space-y-6 text-left">
+
+            <div className="bg-white p-6 rounded-xl border">
+              Você sabe exatamente qual é a <b>margem de lucro real</b> da sua academia?
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border">
+              Quantos alunos <b>cancelaram nos últimos 90 dias</b>?
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border">
+              Você consegue comparar o desempenho <b>das suas unidades</b>?
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border">
+              Você sabe quais despesas estão <b>corroendo seu lucro</b>?
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border">
+              Qual é o <b>LTV médio de um aluno</b> na sua academia?
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      {/* CONSEQUÊNCIAS */}
+      <section className="py-28 bg-white text-gray-900">
+
+        <div className="max-w-6xl mx-auto px-6">
+
+          <h2 className="text-4xl font-bold text-center mb-16">
+            Gerir academia sem clareza financeira tem um custo.
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-10">
+
+            <div className="p-8 border rounded-xl">
+
+              <h3 className="text-xl font-semibold mb-4">
+                📉 Você trabalha mais e lucra menos
+              </h3>
+
+              <p>
+                Sem entender os números da academia,
+                aumentar alunos nem sempre significa aumentar lucro.
+              </p>
+
+            </div>
+
+            <div className="p-8 border rounded-xl">
+
+              <h3 className="text-xl font-semibold mb-4">
+                🔄 Você perde alunos sem entender
+              </h3>
+
+              <p>
+                O churn alto parece inevitável,
+                mas com dados certos ele pode ser previsto e reduzido.
+              </p>
+
+            </div>
+
+            <div className="p-8 border rounded-xl">
+
+              <h3 className="text-xl font-semibold mb-4">
+                🚫 Decisões no feeling
+              </h3>
+
+              <p>
+                Investimentos, contratações e expansão
+                sem base financeira viram apostas.
+              </p>
+
+            </div>
+
+            <div className="p-8 border rounded-xl">
+
+              <h3 className="text-xl font-semibold mb-4">
+                😰 Gestão no escuro
+              </h3>
+
+              <p>
+                Dados espalhados em sistemas e planilhas
+                tornam impossível ter clareza real do negócio.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      {/* SOLUÇÃO */}
+      <section className="bg-gray-100 py-28 text-gray-900">
+
+        <div className="max-w-5xl mx-auto text-center px-6">
+
+          <h2 className="text-4xl font-bold mb-10">
+            Conheça o Gym Fitness Analytics
+          </h2>
+
+          <p className="text-lg max-w-3xl mx-auto">
+            Uma plataforma que transforma os dados da sua academia
+            em indicadores estratégicos para tomada de decisão.
+            Com dashboards claros, análises financeiras e métricas
+            de retenção de alunos.
+          </p>
+
+        </div>
+
+      </section>
+
+
+
+      {/* ENTREGÁVEIS */}
+      <section className="py-28 bg-white text-gray-900">
+
+        <div className="max-w-6xl mx-auto px-6">
+
+          <h2 className="text-4xl font-bold text-center mb-16">
+            O que você recebe
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-10">
+
+            <div className="p-8 border rounded-xl">
+
+              <h3 className="text-xl font-semibold mb-4">
+                📊 Dashboard completo
+              </h3>
+
+              <p>
+                Todos os indicadores financeiros e operacionais
+                da academia em um único painel.
+              </p>
+
+            </div>
+
+            <div className="p-8 border rounded-xl">
+
+              <h3 className="text-xl font-semibold mb-4">
+                📈 Análise de faturamento
+              </h3>
+
+              <p>
+                Visualize crescimento, tendências e desempenho
+                de cada unidade da academia.
+              </p>
+
+            </div>
+
+            <div className="p-8 border rounded-xl">
+
+              <h3 className="text-xl font-semibold mb-4">
+                ⚠️ Alertas inteligentes
+              </h3>
+
+              <p>
+                Receba avisos automáticos quando indicadores
+                importantes começarem a cair.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+       {/* PÚBLICO IDEAL */}
+      <section className="bg-gray-100 py-28 text-gray-900">
+
+        <div className="max-w-5xl mx-auto px-6 text-center">
+
+          <h2 className="text-4xl font-bold mb-16">
+            Para quem é o Gym Fitness Analytics?
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-8 text-left">
+
+            <div className="bg-white p-6 rounded-xl border">
+              ✔ Donos de academia que querem parar de gerir no escuro
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border">
+              ✔ Redes com múltiplas unidades
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border">
+              ✔ Academias que querem aumentar lucro
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border">
+              ✔ Gestores que querem tomar decisões com dados
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      {/* PROCESSO */}
+      <section className="py-28 bg-white text-gray-900" id="como-funciona">
+
+        <div className="max-w-6xl mx-auto px-6 text-center">
+
+          <h2 className="text-4xl font-bold mb-16">
+            Como funciona
+          </h2>
+
+          <div className="grid md:grid-cols-5 gap-8">
+
+            <div>
+              <div className="text-3xl font-bold text-blue-600 mb-4">1</div>
+              <p>Diagnóstico gratuito da academia</p>
+            </div>
+
+            <div>
+              <div className="text-3xl font-bold text-blue-600 mb-4">2</div>
+              <p>Análise dos dados financeiros</p>
+            </div>
+
+            <div>
+              <div className="text-3xl font-bold text-blue-600 mb-4">3</div>
+              <p>Dashboard personalizado</p>
+            </div>
+
+            <div>
+              <div className="text-3xl font-bold text-blue-600 mb-4">4</div>
+              <p>Plano de ação estratégico</p>
+            </div>
+
+            <div>
+              <div className="text-3xl font-bold text-blue-600 mb-4">5</div>
+              <p>Acompanhamento mensal</p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      {/* DEPOIMENTOS */}
+      <section className="bg-gray-100 py-28 text-gray-900">
+
+        <div className="max-w-6xl mx-auto px-6">
+
+          <h2 className="text-4xl font-bold text-center mb-16">
+            O que dizem nossos clientes
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-10">
+
+            <div className="bg-white p-8 rounded-xl border">
+
+              <p className="mb-6">
+                "Descobri um vazamento financeiro na academia que eu não via.
+                O diagnóstico foi um divisor de águas."
+              </p>
+
+              <strong>Cliente CF</strong>
+
+            </div>
+
+            <div className="bg-white p-8 rounded-xl border">
+
+              <p className="mb-6">
+                "Nunca tinha visto meus números tão claros.
+                O dashboard mudou completamente minha gestão."
+              </p>
+
+              <strong>Rede de academias</strong>
+
+            </div>
+
+            <div className="bg-white p-8 rounded-xl border">
+
+              <p className="mb-6">
+                "Hoje tomo decisões baseadas em dados,
+                não mais em achismo."
+              </p>
+
+              <strong>Academia Premium</strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      {/* OFERTA */}
+      <section className="bg-[#0a1f44] py-28 text-center">
+
+        <h2 className="text-4xl font-bold mb-6">
+          Comece pelo diagnóstico gratuito
+        </h2>
+
+        <p className="text-gray-300 mb-10">
+          Uma conversa estratégica de 45 minutos
+          que pode mudar a forma como você gere sua academia.
         </p>
 
-        <div className="flex gap-4 justify-center mt-10">
+        <a
+          href="https://wa.me/55619982067189"
+          className="bg-green-500 hover:bg-green-400 px-10 py-4 rounded-lg font-semibold text-lg"
+        >
+          Agendar diagnóstico no WhatsApp
+        </a>
+
+      </section>
+
+
+
+      {/* FAQ */}
+      <section className="bg-white py-28 text-gray-900">
+
+        <div className="max-w-4xl mx-auto px-6">
+
+          <h2 className="text-4xl font-bold text-center mb-16">
+            Perguntas frequentes
+          </h2>
+
+          <div className="space-y-8">
+
+            <div>
+              <h3 className="font-semibold mb-2">
+                O diagnóstico é realmente gratuito?
+              </h3>
+              <p>
+                Sim. A primeira análise da academia é gratuita e sem compromisso.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-2">
+                Preciso trocar meu sistema atual?
+              </h3>
+              <p>
+                Não. Integramos com os principais sistemas de gestão fitness.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-2">
+                Funciona para academias pequenas?
+              </h3>
+              <p>
+                Sim. O sistema foi pensado para academias de todos os tamanhos.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      {/* CTA FINAL */}
+      <section className="bg-black py-28 text-center">
+
+        <h2 className="text-5xl font-bold mb-6">
+          Pronto para transformar sua academia?
+        </h2>
+
+        <p className="text-gray-400 mb-10">
+          Comece agora e tenha clareza financeira sobre seu negócio.
+        </p>
+
+        <div className="flex justify-center gap-4">
 
           <Link
             href="/login"
-            className="bg-blue-600 hover:bg-blue-500 px-8 py-4 rounded-lg text-lg font-semibold"
+            className="bg-blue-600 px-10 py-4 rounded-lg font-semibold"
           >
-            Começar agora
+            Acessar plataforma
           </Link>
 
-          <button className="border border-gray-600 px-8 py-4 rounded-lg text-lg">
-            Ver demonstração
-          </button>
+          <a
+            href="https://wa.me/55619982067189"
+            className="bg-green-500 px-10 py-4 rounded-lg font-semibold"
+          >
+            WhatsApp
+          </a>
 
         </div>
 
       </section>
 
-      <section className="max-w-6xl mx-auto px-6 pb-32">
 
-<div className="bg-[#1e3a5f] rounded-3xl p-10 shadow-2xl">
 
-<h3 className="text-center text-gray-300 mb-10">
-Gym Fitness Analytics — Dashboard
-</h3>
+      {/* FOOTER */}
+      <footer className="bg-[#0a1f44] text-gray-400 text-center py-10">
 
-<div className="grid md:grid-cols-2 gap-6">
-
-<div className="bg-[#2b4a73] p-6 rounded-xl">
-<p className="text-gray-300 text-sm">FATURAMENTO</p>
-<p className="text-3xl font-bold mt-2">R$ 48k</p>
-<p className="text-green-400 text-sm mt-2">▲ 12% vs anterior</p>
-</div>
-
-<div className="bg-[#2b4a73] p-6 rounded-xl">
-<p className="text-gray-300 text-sm">ALUNOS ATIVOS</p>
-<p className="text-3xl font-bold mt-2">342</p>
-<p className="text-green-400 text-sm mt-2">▲ 8 novos</p>
-</div>
-
-<div className="bg-[#2b4a73] p-6 rounded-xl">
-<p className="text-gray-300 text-sm">CHURN RATE</p>
-<p className="text-3xl font-bold mt-2">4,2%</p>
-<p className="text-red-400 text-sm mt-2">▼ 1,1% vs anterior</p>
-</div>
-
-<div className="bg-[#2b4a73] p-6 rounded-xl">
-<p className="text-gray-300 text-sm">TICKET MÉDIO</p>
-<p className="text-3xl font-bold mt-2">R$ 140</p>
-<p className="text-green-400 text-sm mt-2">▲ R$ 8</p>
-</div>
-
-</div>
-
-<div className="mt-10">
-
-<p className="text-gray-300 mb-4">
-Faturamento por unidade
-</p>
-
-<div className="space-y-4">
-
-<div>
-<div className="flex justify-between text-sm">
-<span>Unidade 1</span>
-<span>85%</span>
-</div>
-<div className="w-full bg-gray-700 rounded-full h-2 mt-1">
-<div className="bg-blue-500 h-2 rounded-full w-[85%]"></div>
-</div>
-</div>
-
-<div>
-<div className="flex justify-between text-sm">
-<span>Unidade 2</span>
-<span>68%</span>
-</div>
-<div className="w-full bg-gray-700 rounded-full h-2 mt-1">
-<div className="bg-green-500 h-2 rounded-full w-[68%]"></div>
-</div>
-</div>
-
-<div>
-<div className="flex justify-between text-sm">
-<span>Unidade 3</span>
-<span>51%</span>
-</div>
-<div className="w-full bg-gray-700 rounded-full h-2 mt-1">
-<div className="bg-yellow-500 h-2 rounded-full w-[51%]"></div>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-      {/* MÉTRICAS */}
-      <section className="max-w-7xl mx-auto px-6 pb-24">
-
-        <div className="grid md:grid-cols-4 gap-6">
-
-          <div className="bg-[#1e293b] p-6 rounded-xl">
-            <p className="text-gray-400">Faturamento mensal</p>
-            <p className="text-3xl font-bold mt-2">R$ 128.000</p>
-          </div>
-
-          <div className="bg-[#1e293b] p-6 rounded-xl">
-            <p className="text-gray-400">Alunos ativos</p>
-            <p className="text-3xl font-bold mt-2">842</p>
-          </div>
-
-          <div className="bg-[#1e293b] p-6 rounded-xl">
-            <p className="text-gray-400">Churn</p>
-            <p className="text-3xl font-bold mt-2">4.2%</p>
-          </div>
-
-          <div className="bg-[#1e293b] p-6 rounded-xl">
-            <p className="text-gray-400">Ticket médio</p>
-            <p className="text-3xl font-bold mt-2">R$ 142</p>
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* GRÁFICOS */}
-      <section className="max-w-7xl mx-auto px-6 pb-28">
-
-        <h2 className="text-4xl font-bold mb-16 text-center">
-          Visualize os dados da sua academia
-        </h2>
-
-        <div className="grid md:grid-cols-2 gap-10">
-
-          {/* Faturamento */}
-          <div className="bg-[#1e293b] p-8 rounded-xl">
-
-            <h3 className="text-xl font-semibold mb-6">
-              Crescimento de faturamento
-            </h3>
-
-            <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={faturamentoData}>
-                <XAxis dataKey="mes" />
-                <YAxis />
-                <Tooltip />
-                <Area
-                  type="monotone"
-                  dataKey="valor"
-                  stroke="#3b82f6"
-                  fill="#3b82f6"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-
-          </div>
-
-          {/* Churn */}
-          <div className="bg-[#1e293b] p-8 rounded-xl">
-
-            <h3 className="text-xl font-semibold mb-6">
-              Taxa de retenção
-            </h3>
-
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={churnData}
-                  dataKey="value"
-                  outerRadius={80}
-                >
-                  <Cell fill="#22c55e" />
-                  <Cell fill="#ef4444" />
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* FUNCIONALIDADES */}
-      <section className="max-w-7xl mx-auto px-6 pb-28">
-
-        <h2 className="text-4xl font-bold text-center mb-16">
-          Funcionalidades que transformam sua gestão
-        </h2>
-
-        <div className="grid md:grid-cols-3 gap-10">
-
-          <div className="bg-[#1e293b] p-8 rounded-xl">
-            <h3 className="text-xl font-semibold mb-4">
-              📊 Dashboard em tempo real
-            </h3>
-            <p className="text-gray-400">
-              Todos os indicadores estratégicos da academia
-              em um único painel.
-            </p>
-          </div>
-
-          <div className="bg-[#1e293b] p-8 rounded-xl">
-            <h3 className="text-xl font-semibold mb-4">
-              🔗 Integração com sistemas
-            </h3>
-            <p className="text-gray-400">
-              Conecte Tecnofit, EVO, Pacto e Nextfit
-              via API em poucos minutos.
-            </p>
-          </div>
-
-          <div className="bg-[#1e293b] p-8 rounded-xl">
-            <h3 className="text-xl font-semibold mb-4">
-              ⚠️ Alertas inteligentes
-            </h3>
-            <p className="text-gray-400">
-              Receba avisos automáticos quando indicadores
-              importantes começarem a cair.
-            </p>
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* CTA */}
-      <section className="bg-blue-600 py-20 text-center">
-
-        <h2 className="text-4xl font-bold mb-6">
-          Comece agora gratuitamente
-        </h2>
-
-        <p className="text-blue-100 mb-10">
-          Descubra como dados podem transformar
-          a gestão da sua academia.
+        <p>
+          © {new Date().getFullYear()} CF Consultoria — Gym Fitness Analytics
         </p>
 
-        <Link
-          href="/login"
-          className="bg-white text-blue-600 px-10 py-4 rounded-lg font-semibold text-lg"
-        >
-          Criar conta
-        </Link>
+      </footer>
 
-      </section>
+
+
+      {/* BOTÃO WHATSAPP FLUTUANTE */}
+      <a
+        href="https://wa.me/55619982067189"
+        className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-400 text-white px-5 py-3 rounded-full shadow-lg"
+      >
+        WhatsApp
+      </a>
 
     </main>
   )
