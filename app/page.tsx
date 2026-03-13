@@ -56,116 +56,116 @@ export default function LandingPage() {
       </header>
 
       {/* HERO */}
-<section className="max-w-7xl mx-auto px-6 py-28 grid md:grid-cols-2 gap-16 items-center">
+      <section className="max-w-7xl mx-auto px-6 py-28 grid md:grid-cols-2 gap-16 items-center">
 
-  {/* COLUNA ESQUERDA */}
-  <div>
+        {/* COLUNA ESQUERDA */}
+        <div>
 
-    <span className="bg-blue-900/40 text-blue-300 px-4 py-2 rounded-full text-sm">
-      Consultoria Financeira Especializada no Mercado Fitness
-    </span>
+          <span className="bg-blue-900/40 text-blue-300 px-4 py-2 rounded-full text-sm">
+            Consultoria Financeira Especializada no Mercado Fitness
+          </span>
 
-    <h1 className="text-5xl font-bold mt-6 leading-tight">
-      Sua academia pode estar perdendo dinheiro agora
-      e você ainda <span className="text-blue-300">não sabe onde.</span>
-    </h1>
+          <h1 className="text-5xl font-bold mt-6 leading-tight">
+            Sua academia pode estar perdendo dinheiro agora
+            e você ainda <span className="text-blue-300">não sabe onde.</span>
+          </h1>
 
-    <p className="text-gray-300 mt-6 text-lg">
-      A CF Consultoria ajuda donos de academia a entender exatamente
-      onde estão os gargalos financeiros e transformar dados em decisões
-      que aumentam lucro e retenção de alunos.
-    </p>
+          <p className="text-gray-300 mt-6 text-lg">
+            A CF Consultoria ajuda donos de academia a entender exatamente
+            onde estão os gargalos financeiros e transformar dados em decisões
+            que aumentam lucro e retenção de alunos.
+          </p>
 
-    <div className="flex gap-4 mt-10">
+          <div className="flex gap-4 mt-10">
 
-      <a
-        href="https://wa.me/55619982067189"
-        className="bg-green-500 hover:bg-green-400 px-8 py-4 rounded-lg font-semibold"
-      >
-        Quero meu diagnóstico
-      </a>
+            <a
+              href="https://wa.me/55619982067189"
+              className="bg-green-500 hover:bg-green-400 px-8 py-4 rounded-lg font-semibold"
+            >
+              Quero meu diagnóstico
+            </a>
 
-      <a
-        href="#como-funciona"
-        className="border border-gray-500 px-8 py-4 rounded-lg"
-      >
-        Como funciona
-      </a>
+            <a
+              href="#como-funciona"
+              className="border border-gray-500 px-8 py-4 rounded-lg"
+            >
+              Como funciona
+            </a>
 
-    </div>
+          </div>
 
-    <p className="text-gray-400 text-sm mt-6">
-      🔒 Sem custo. Sem compromisso. Sem cartão de crédito.
-    </p>
+          <p className="text-gray-400 text-sm mt-6">
+            🔒 Sem custo. Sem compromisso. Sem cartão de crédito.
+          </p>
 
-    {/* BADGES */}
-    <div className="flex flex-wrap gap-3 mt-6">
+          {/* BADGES */}
+          <div className="flex flex-wrap gap-3 mt-6">
 
-      <div className="flex items-center gap-2 bg-blue-900/40 border border-blue-700 px-4 py-2 rounded-full">
-        <span className="text-green-400">✔</span>
-        <span className="text-sm">Especialistas no mercado fitness</span>
-      </div>
+            <div className="flex items-center gap-2 bg-blue-900/40 border border-blue-700 px-4 py-2 rounded-full">
+              <span className="text-green-400">✔</span>
+              <span className="text-sm">Especialistas no mercado fitness</span>
+            </div>
 
-      <div className="flex items-center gap-2 bg-blue-900/40 border border-blue-700 px-4 py-2 rounded-full">
-        <span className="text-green-400">✔</span>
-        <span className="text-sm">Plataforma exclusiva Gym Fitness Analytics</span>
-      </div>
+            <div className="flex items-center gap-2 bg-blue-900/40 border border-blue-700 px-4 py-2 rounded-full">
+              <span className="text-green-400">✔</span>
+              <span className="text-sm">Plataforma exclusiva Gym Fitness Analytics</span>
+            </div>
 
-      <div className="flex items-center gap-2 bg-blue-900/40 border border-blue-700 px-4 py-2 rounded-full">
-        <span className="text-green-400">✔</span>
-        <span className="text-sm">Resultado prático, não só teoria</span>
-      </div>
+            <div className="flex items-center gap-2 bg-blue-900/40 border border-blue-700 px-4 py-2 rounded-full">
+              <span className="text-green-400">✔</span>
+              <span className="text-sm">Resultado prático, não só teoria</span>
+            </div>
 
-    </div>
+          </div>
 
-  </div>
+        </div>
 
 
-  {/* COLUNA DIREITA */}
-  <div className="bg-[#1e3a5f] rounded-3xl p-10 shadow-2xl">
+        {/* COLUNA DIREITA */}
+        <div className="bg-[#1e3a5f] rounded-3xl p-10 shadow-2xl">
 
-    <h3 className="text-gray-300 mb-6 text-center">
-      Gym Fitness Analytics — Dashboard
-    </h3>
+          <h3 className="text-gray-300 mb-6 text-center">
+            Gym Fitness Analytics — Dashboard
+          </h3>
 
-    <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
 
-      <div className="bg-[#0d2d63] p-4 rounded-xl">
-        <p className="text-sm text-gray-300">Faturamento</p>
-        <p className="text-2xl font-bold mt-1">R$ 48k</p>
-        <p className="text-green-400 text-sm">▲ 12%</p>
-      </div>
+            <div className="bg-[#0d2d63] p-4 rounded-xl">
+              <p className="text-sm text-gray-300">Faturamento</p>
+              <p className="text-2xl font-bold mt-1">R$ 48k</p>
+              <p className="text-green-400 text-sm">▲ 12%</p>
+            </div>
 
-      <div className="bg-[#0d2d63] p-4 rounded-xl">
-        <p className="text-sm text-gray-300">Alunos</p>
-        <p className="text-2xl font-bold mt-1">342</p>
-        <p className="text-green-400 text-sm">▲ 8</p>
-      </div>
+            <div className="bg-[#0d2d63] p-4 rounded-xl">
+              <p className="text-sm text-gray-300">Alunos</p>
+              <p className="text-2xl font-bold mt-1">342</p>
+              <p className="text-green-400 text-sm">▲ 8</p>
+            </div>
 
-      <div className="bg-[#0d2d63] p-4 rounded-xl">
-        <p className="text-sm text-gray-300">Churn</p>
-        <p className="text-2xl font-bold mt-1">4.2%</p>
-        <p className="text-red-400 text-sm">▼ 1.1%</p>
-      </div>
+            <div className="bg-[#0d2d63] p-4 rounded-xl">
+              <p className="text-sm text-gray-300">Churn</p>
+              <p className="text-2xl font-bold mt-1">4.2%</p>
+              <p className="text-red-400 text-sm">▼ 1.1%</p>
+            </div>
 
-      <div className="bg-[#0d2d63] p-4 rounded-xl">
-        <p className="text-sm text-gray-300">Ticket</p>
-        <p className="text-2xl font-bold mt-1">R$140</p>
-        <p className="text-green-400 text-sm">▲ R$8</p>
-      </div>
+            <div className="bg-[#0d2d63] p-4 rounded-xl">
+              <p className="text-sm text-gray-300">Ticket</p>
+              <p className="text-2xl font-bold mt-1">R$140</p>
+              <p className="text-green-400 text-sm">▲ R$8</p>
+            </div>
 
-    </div>
+          </div>
 
-  </div>
+        </div>
 
-</section>
+      </section>
       {/* SEÇÃO DOR */}
       <section className="bg-gray-100 text-gray-900 py-28">
 
         <div className="max-w-5xl mx-auto px-6 text-center">
 
           <h2 className="text-4xl font-bold mb-16">
-            Você sabe responder essas perguntas sobre sua academia?
+            Você cuida da sua academia com dedicação. Mas me responda com honestidade:
           </h2>
 
           <div className="space-y-6 text-left">
@@ -188,6 +188,20 @@ export default function LandingPage() {
 
             <div className="bg-white p-6 rounded-xl border">
               Qual é o <b>LTV médio de um aluno</b> na sua academia?
+            </div>
+
+          </div>
+
+          <div className="max-w-4xl mx-auto mt-16">
+
+            <div className="bg-[#0f2a52] text-white p-10 rounded-2xl text-center">
+
+              <p className="text-lg leading-relaxed">
+                Se você hesitou em alguma dessas perguntas, você não tem um problema
+                de gestão. Você tem um <strong>problema de clareza</strong>. E clareza
+                financeira é exatamente o que a CF Consultoria entrega.
+              </p>
+
             </div>
 
           </div>
