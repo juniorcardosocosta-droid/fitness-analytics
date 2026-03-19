@@ -26,7 +26,7 @@ export async function GET() {
     const response = await fetch("https://api.tecnofit.com.br/v1/alunos", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${integracao.api_key}`,
+        "x-api-key": integracao.api_key,
         "Content-Type": "application/json"
       }
     })
