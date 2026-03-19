@@ -20,57 +20,42 @@ export async function GET() {
 
     const integracao = integracoes[0]
 
-    // 🔥 TESTE 1 - Bearer
-    try {
-      const res1 = await fetch("https://api.tecnofit.com.br/v1/alunos", {
-        headers: {
-          Authorization: `Bearer ${integracao.api_key}`
-        }
+    // 🔥 PASSO 1 — LOGIN
+    const loginResponse = await fetch("https://integracao.tecnofit.com.br/v1/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        api_key: integracao.api_key,
+        api_secret: integracao.api_secret
       })
-      const data1 = await res1.text()
+    })
 
+    const loginData = await loginResponse.json()
+
+    if (!loginData || !loginData.access_token) {
       return NextResponse.json({
-        tipo: "Bearer",
-        status: res1.status,
-        resposta: data1
+        error: "Erro ao autenticar",
+        detalhe: loginData
       })
-    } catch (e) {}
+    }
 
-    // 🔥 TESTE 2 - x-api-key
-    try {
-      const res2 = await fetch("https://api.tecnofit.com.br/v1/alunos", {
-        headers: {
-          "x-api-key": integracao.api_key
-        }
-      })
-      const data2 = await res2.text()
+    const token = loginData.access_token
 
-      return NextResponse.json({
-        tipo: "x-api-key",
-        status: res2.status,
-        resposta: data2
-      })
-    } catch (e) {}
+    // 🔥 PASSO 2 — CHAMAR API (exemplo alunos)
+    const apiResponse = await fetch("https://integracao.tecnofit.com.br/v1/students", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
 
-    // 🔥 TESTE 3 - api-key direto
-    try {
-      const res3 = await fetch("https://api.tecnofit.com.br/v1/alunos", {
-        headers: {
-          "api-key": integracao.api_key
-        }
-      })
-      const data3 = await res3.text()
+    const data = await apiResponse.json()
 
-      return NextResponse.json({
-        tipo: "api-key",
-        status: res3.status,
-        resposta: data3
-      })
-    } catch (e) {}
-
-    return NextResponse.json({ error: "Nenhum método funcionou" })
+    return NextResponse.json(data)
 
   } catch (error) {
-    return NextResponse.json({ error: "Erro geral", detalhe: String(error) })
+    return NextResponse.json({ error: "Erro interno", detalhe: String(error) })
   }
 }
