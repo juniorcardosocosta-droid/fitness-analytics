@@ -9,18 +9,20 @@ const supabase = createClient(
 export async function GET() {
   try {
 
-    // 🔥 pega integração salva
-    const { data: integracao, error } = await supabase
+    // 🔥 pega TODAS integrações tecnofit
+    const { data: integracoes, error } = await supabase
       .from("integracoes")
       .select("*")
       .ilike("sistema", "tecnofit")
-      .single()
 
-    if (error || !integracao) {
+    if (error || !integracoes || integracoes.length === 0) {
       return NextResponse.json({ error: "Integração não encontrada" })
     }
 
-    // 🔥 chamada para Tecnofit (primeiro teste)
+    // 🔥 pega a primeira integração
+    const integracao = integracoes[0]
+
+    // 🔥 chamada API Tecnofit
     const response = await fetch("https://api.tecnofit.com.br/v1/alunos", {
       method: "GET",
       headers: {
