@@ -13,7 +13,7 @@ export async function GET() {
     const { data: integracao, error } = await supabase
       .from("integracoes")
       .select("*")
-      .eq("sistema", "tecnofit")
+      .ilike("sistema", "tecnofit")
       .single()
 
     if (error || !integracao) {
