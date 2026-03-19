@@ -49,7 +49,7 @@ export default function Integracoes() {
     <div className="p-6">
 
       <h1 className="text-2xl font-bold mb-4">
-        Integração Tecnofit
+        TESTE NOVO SISTEMA 🚀
       </h1>
 
       <input
