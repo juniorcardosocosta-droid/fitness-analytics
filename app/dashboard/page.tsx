@@ -48,7 +48,9 @@ export default function Dashboard() {
 
  // DADOS
 
- const faturamento = 41000
+ const faturamento = dadosApi?.data?.reduce((total:any, item:any) => {
+    return total + Number(item.receipt?.netValue || 0)
+ }, 0) || 0   
  const faturamentoAnterior = 32000
 
  const alunos = 320
