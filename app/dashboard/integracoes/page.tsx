@@ -11,6 +11,7 @@ export default function Integracoes() {
   const [academiaId,setAcademiaId] = useState("")
   const [sistema,setSistema] = useState("")
   const [apiKey,setApiKey] = useState("")
+  const [apiSecret,setApiSecret] = useState("")
 
   useEffect(()=>{
     carregarAcademias()
@@ -53,7 +54,8 @@ export default function Integracoes() {
         {
           academia_id: academiaId,
           sistema,
-          api_key: apiKey
+          api_key: apiKey,
+          api_secret: apiSecret
         }
       ])
 
@@ -116,6 +118,14 @@ export default function Integracoes() {
           className="w-full p-3 mb-4 bg-[#0a162b] rounded-lg"
           value={apiKey}
           onChange={(e)=>setApiKey(e.target.value)}
+        />
+
+        <input
+          type="text"
+          placeholder="API Secret"
+          className="w-full p-3 mb-4 bg-[#0a162b] rounded-lg"
+          value={apiSecret}
+          onChange={(e)=>setApiSecret(e.target.value)}
         />
 
 
