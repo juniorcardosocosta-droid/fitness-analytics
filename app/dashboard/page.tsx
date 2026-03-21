@@ -22,6 +22,7 @@ export default function Dashboard() {
 
  const router = useRouter()
  const [dadosApi, setDadosApi] = useState<any>(null)
+ const [mesSelecionado, setMesSelecionado] = useState("")
 
  useEffect(() => {
   const checkUser = async () => {
@@ -48,9 +49,23 @@ export default function Dashboard() {
 
  // DADOS
 
- const faturamento = dadosApi?.data?.reduce((total:any, item:any) => {
+ const faturamento = dadosApi?.data
+  ?.filter((item:any) => {
+    const data = item.receipt?.date
+    if (!data) return false
+
+    const hoje = new Date()
+
+    const mesAtual = String(hoje.getMonth() + 1).padStart(2, "0")
+    const anoAtual = String(hoje.getFullYear())
+
+    const mesFiltro = mesSelecionado || mesAtual
+
+    return data.includes(`${anoAtual}-${mesFiltro}`)
+  })
+  .reduce((total:any, item:any) => {
     return total + Number(item.receipt?.netValue || 0)
- }, 0) || 0   
+  }, 0) || 0  
  const faturamentoAnterior = 32000
 
  const alunos = 320
@@ -146,14 +161,24 @@ Sair
 <option>Filial 2</option>
 </select>
 
-<select className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg">
-<option>Mês</option>
-<option>Janeiro</option>
-<option>Fevereiro</option>
-<option>Março</option>
-<option>Abril</option>
-<option>Maio</option>
-<option>Junho</option>
+<select
+  value={mesSelecionado}
+  onChange={(e) => setMesSelecionado(e.target.value)}
+  className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg"
+>
+  <option value="">Mês (Automático)</option>
+  <option value="01">Janeiro</option>
+  <option value="02">Fevereiro</option>
+  <option value="03">Março</option>
+  <option value="04">Abril</option>
+  <option value="05">Maio</option>
+  <option value="06">Junho</option>
+  <option value="07">Julho</option>
+  <option value="08">Agosto</option>
+  <option value="09">Setembro</option>
+  <option value="10">Outubro</option>
+  <option value="11">Novembro</option>
+  <option value="12">Dezembro</option>
 </select>
 
 <select className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg">
