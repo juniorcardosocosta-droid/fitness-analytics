@@ -2,17 +2,22 @@ import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
 export async function GET() {
   try {
 
-    const { data: integracoes } = await supabase
+    // 🔎 Buscar integração
+    const { data: integracoes, error } = await supabase
       .from("integracoes")
       .select("*")
       .ilike("sistema", "tecnofit")
+
+    if (error) {
+      return NextResponse.json({ error: "Erro Supabase", detalhe: error })
+    }
 
     if (!integracoes || integracoes.length === 0) {
       return NextResponse.json({ error: "Integração não encontrada" })
@@ -20,7 +25,7 @@ export async function GET() {
 
     const integracao = integracoes[0]
 
-    // 🔥 PASSO 1 — LOGIN
+    // 🔐 LOGIN
     const loginResponse = await fetch("https://integracao.tecnofit.com.br/v1/auth/login", {
       method: "POST",
       headers: {
@@ -32,18 +37,22 @@ export async function GET() {
       })
     })
 
+    if (!loginResponse.ok) {
+      return NextResponse.json({ error: "Erro login Tecnofit" })
+    }
+
     const loginData = await loginResponse.json()
 
-    if (!loginData || !loginData.access_token) {
+    if (!loginData?.access_token) {
       return NextResponse.json({
-        error: "Erro ao autenticar",
+        error: "Token não retornado",
         detalhe: loginData
       })
     }
 
     const token = loginData.access_token
 
-    // 🔥 PASSO 2 — CHAMAR API (exemplo alunos)
+    // 📊 Buscar alunos
     const apiResponse = await fetch("https://integracao.tecnofit.com.br/v1/students", {
       method: "GET",
       headers: {
@@ -51,11 +60,18 @@ export async function GET() {
       }
     })
 
+    if (!apiResponse.ok) {
+      return NextResponse.json({ error: "Erro ao buscar alunos" })
+    }
+
     const data = await apiResponse.json()
 
     return NextResponse.json(data)
 
   } catch (error) {
-    return NextResponse.json({ error: "Erro interno", detalhe: String(error) })
+    return NextResponse.json({
+      error: "Erro interno",
+      detalhe: String(error)
+    })
   }
 }
