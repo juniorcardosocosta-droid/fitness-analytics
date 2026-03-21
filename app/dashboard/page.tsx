@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabaseClient"
 import { useRouter } from "next/navigation"
 
@@ -21,6 +21,7 @@ import {
 export default function Dashboard() {
 
  const router = useRouter()
+ const [dadosApi, setDadosApi] = useState<any>(null)
 
  useEffect(() => {
   const checkUser = async () => {
@@ -31,6 +32,18 @@ export default function Dashboard() {
   }
   checkUser()
  }, [router])
+
+ useEffect(() => {
+  async function carregarDados() {
+    const res = await fetch("/api/tecnofit")
+    const json = await res.json()
+
+    console.log("DADOS API:", json)
+    setDadosApi(json)
+  }
+
+  carregarDados()
+}, [])
 
 
  // DADOS
@@ -96,6 +109,10 @@ export default function Dashboard() {
  return (
 
 <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
+
+<pre style={{fontSize: "10px"}}>
+   {JSON.stringify(dadosApi, null, 2)} 
+</pre>
 
 <div className="flex justify-between items-center mb-10">
 
