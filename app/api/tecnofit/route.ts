@@ -43,14 +43,14 @@ export async function GET() {
 
     const loginData = await loginResponse.json()
 
-    if (!loginData?.token?.access_token) {
+    if (!loginData?.token) {
       return NextResponse.json({
         error: "Token não retornado",
         detalhe: loginData
       })
     }
 
-   const token = loginData.token.access_token
+   const token = loginData.token
 
     // 📊 Buscar alunos
     const apiResponse = await fetch("https://integracao.tecnofit.com.br/v1/students", {

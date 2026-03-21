@@ -121,7 +121,7 @@ export default function Integracoes() {
         />
 
         <input
-          type="text"
+          type="password"
           placeholder="API Secret"
           className="w-full p-3 mb-4 bg-[#0a162b] rounded-lg"
           value={apiSecret}
