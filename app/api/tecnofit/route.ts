@@ -56,12 +56,17 @@ export async function GET() {
     const apiResponse = await fetch("https://integracao.tecnofit.com.br/v1/students", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
       }
     })
 
     if (!apiResponse.ok) {
-      return NextResponse.json({ error: "Erro ao buscar alunos" })
+      const erro = await apiResponse.text()
+      return NextResponse.json({
+         error: "Erro ao buscar alunos",
+         detalhe: erro
+       }) 
     }
 
     const data = await apiResponse.json()
