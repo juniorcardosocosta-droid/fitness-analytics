@@ -112,9 +112,6 @@ export default function Dashboard() {
 
 <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
 
-<pre style={{fontSize: "10px"}}>
-   {JSON.stringify(dadosApi, null, 2)} 
-</pre>
 
 <div className="flex justify-between items-center mb-10">
 
