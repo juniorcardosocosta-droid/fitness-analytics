@@ -23,6 +23,7 @@ export default function Dashboard() {
  const router = useRouter()
  const [dadosApi, setDadosApi] = useState<any>(null)
  const [mesSelecionado, setMesSelecionado] = useState("")
+ const [mesAplicado, setMesAplicado] = useState("")
 
  useEffect(() => {
   const checkUser = async () => {
@@ -59,7 +60,7 @@ export default function Dashboard() {
     const mesAtual = String(hoje.getMonth() + 1).padStart(2, "0")
     const anoAtual = String(hoje.getFullYear())
 
-    const mesFiltro = mesSelecionado || mesAtual
+    const mesFiltro = mesAplicado || mesAtual
 
     return data.includes(`${anoAtual}-${mesFiltro}`)
   })
@@ -189,9 +190,10 @@ Sair
 </select>
 
 <button
-className="bg-cyan-500 hover:bg-cyan-600 px-6 py-2 rounded-lg font-semibold"
+  onClick={() => setMesAplicado(mesSelecionado)}
+  className="bg-cyan-500 hover:bg-cyan-600 px-6 py-3 rounded-lg"
 >
-Filtrar
+  Filtrar
 </button>
 
 </div>
