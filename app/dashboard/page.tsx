@@ -185,7 +185,7 @@ Faturamento
 </p>
 
 <h2 className="text-3xl font-bold text-green-400">
-R$ {faturamento}
+R$ {faturamento.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
 </h2>
 
 <p className={`text-sm mt-2 ${varFat >= 0 ? "text-green-400":"text-red-400"}`}>
