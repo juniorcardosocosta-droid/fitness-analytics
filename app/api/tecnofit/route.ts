@@ -53,7 +53,7 @@ export async function GET() {
    const token = loginData.token
 
     // 📊 Buscar alunos
-    const apiResponse = await fetch("https://integracao.tecnofit.com.br/v1/customer", {
+    const apiResponse = await fetch("https://integracao.tecnofit.com.br/v1/products/1", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
