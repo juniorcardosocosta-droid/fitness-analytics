@@ -56,23 +56,22 @@ export default function Dashboard() {
 
  // DADOS
 
- const faturamento = dadosApi?.data
-  ?.filter((item:any) => {
-    const data = item.receipt?.date
-    if (!data) return false
+ const hoje = new Date()
 
-    const hoje = new Date()
+const mesAtual = hoje.getMonth() + 1
+const anoAtual = hoje.getFullYear()
 
-    const mesAtual = String(hoje.getMonth() + 1).padStart(2, "0")
-    const anoAtual = String(hoje.getFullYear())
+const mesFiltro = mesAplicado ? Number(mesAplicado) : mesAtual
 
-    const mesFiltro = mesAplicado || mesAtual
+const dadosFiltrados = dadosApi?.data?.filter((item: any) => {
+  if (!item.mes || !item.ano) return false
 
-    return data.includes(`${anoAtual}-${mesFiltro}`)
-  })
-  .reduce((total:any, item:any) => {
-    return total + Number(item.receipt?.netValue || 0)
-  }, 0) || 0  
+  return item.mes === mesFiltro && item.ano === anoAtual
+}) || []
+
+const faturamento = dadosFiltrados.reduce((total: any, item: any) => {
+  return total + Number(item.faturamento || 0)
+}, 0) 
  const faturamentoAnterior = 32000
 
  const alunos = 320
