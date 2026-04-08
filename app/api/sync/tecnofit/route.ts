@@ -54,7 +54,12 @@ export async function GET() {
 
       if (item.type !== "sale") return
 
-      const data = item.receipt?.date
+    // 🔥 GARANTE QUE FOI PAGO
+      if (!item.receipt) return
+      if (!item.receipt.paymentMethod) return
+
+    // 🔥 USA DATA DE PAGAMENTO
+      const data = item.receipt?.paymentDate
       if (!data) return
 
       const ano = Number(data.split("-")[0])
