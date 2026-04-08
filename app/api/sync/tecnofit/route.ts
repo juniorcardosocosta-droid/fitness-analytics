@@ -37,20 +37,35 @@ export async function GET() {
     const token = loginData.token
 
     // 📊 BUSCAR DADOS
-    const apiResponse = await fetch("https://integracao.tecnofit.com.br/v1/financial/receivables?page=1&limit=100", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      }
-    })
+    let pagina = 1
+let continuar = true
 
-    const json = await apiResponse.json()
+const todosDados: any[] = []
+
+while (continuar) {
+
+  const response = await fetch(`https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    }
+  })
+
+  const json = await response.json()
+
+  if (!json.data || json.data.length === 0) {
+    continuar = false
+  } else {
+    todosDados.push(...json.data)
+    pagina++
+  }
+}
 
     // 🧠 AGRUPAR POR MÊS
     const mapa: any = {}
 
-    json.data.forEach((item: any) => {
+    todosDados.forEach((item: any) => {
 
       if (item.type !== "sale") return
 
