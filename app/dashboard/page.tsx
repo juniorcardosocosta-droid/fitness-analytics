@@ -69,7 +69,7 @@ const anoFiltro = anoAplicado ? Number(anoAplicado) : anoAtual
 const dadosFiltrados = dadosApi?.data?.filter((item: any) => {
   if (!item.mes || !item.ano) return false
 
-  return item.mes === mesFiltro && item.ano === anoAtual
+  return item.mes === mesFiltro && item.ano === anoFiltro
 }) || []
 
 const faturamento = dadosFiltrados.reduce((total: any, item: any) => {
@@ -202,7 +202,10 @@ Sair
 </select>
 
 <button
-  onClick={() => setMesAplicado(mesSelecionado)}
+  onClick={() => {
+  setMesAplicado(mesSelecionado)
+  setAnoAplicado(anoSelecionado)
+}}
   className="bg-cyan-500 hover:bg-cyan-600 px-6 py-3 rounded-lg"
 >
   Filtrar
