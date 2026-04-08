@@ -35,64 +35,69 @@ export async function GET() {
 
     const loginData = await loginResponse.json()
     const token = loginData.token
+    
 
-    // 📊 BUSCAR DADOS
+    // 🧠 AGRUPAR POR MÊS (NOVO CORRETO)
+const mapa: any = {}
+
+const anoAtual = new Date().getFullYear()
+const anoInicial = 2024
+
+for (let ano = anoInicial; ano <= anoAtual; ano++) {
+
+  for (let mes = 1; mes <= 12; mes++) {
+
+    const inicio = `${ano}-${String(mes).padStart(2, "0")}-01`
+    const fim = `${ano}-${String(mes).padStart(2, "0")}-31`
+
     let pagina = 1
-let continuar = true
+    let continuar = true
 
-const todosDados: any[] = []
+    while (continuar) {
 
-while (continuar) {
+      const response = await fetch(
+        `https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100&paymentDateStart=${inicio}&paymentDateEnd=${fim}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          }
+        }
+      )
 
-  const response = await fetch(`https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-      "Accept": "application/json"
+      const json = await response.json()
+
+      if (!json.data || json.data.length === 0) {
+        continuar = false
+      } else {
+
+        json.data.forEach((item: any) => {
+
+          if (item.type !== "sale") return
+          if (!item.receipt) return
+          if (!item.receipt.grossValue) return
+
+          const data = item.receipt?.paymentDate || item.receipt?.date
+          if (!data) return
+
+          const anoData = Number(data.split("-")[0])
+          const mesData = Number(data.split("-")[1])
+
+          const chave = `${anoData}-${mesData}`
+
+          if (!mapa[chave]) {
+            mapa[chave] = { faturamento: 0 }
+          }
+
+          mapa[chave].faturamento += Number(item.receipt.grossValue || 0)
+        })
+
+        pagina++
+      }
     }
-  })
-
-  const json = await response.json()
-
-  if (!json.data || json.data.length === 0) {
-    continuar = false
-  } else {
-    todosDados.push(...json.data)
-    pagina++
   }
 }
-
-    // 🧠 AGRUPAR POR MÊS
-    const mapa: any = {}
-
-    todosDados.forEach((item: any) => {
-
-      if (item.type !== "sale") return
-
-    // 🔥 GARANTE QUE TEM VALOR REAL
-      if (!item.receipt) return
-      if (!item.receipt.netValue) return
-
-    // 🔥 PEGA DATA DE PAGAMENTO OU FALLBACK
-    const data = item.receipt?.paymentDate || item.receipt?.date
-
-    if (!data) return
-
-      const ano = Number(data.split("-")[0])
-      const mes = Number(data.split("-")[1])
-
-      const chave = `${ano}-${mes}`
-
-      if (!mapa[chave]) {
-        mapa[chave] = {
-          faturamento: 0
-        }
-      }
-
-      mapa[chave].faturamento =
-        Number((mapa[chave].faturamento + Number(item.receipt?.grossValue || 0)).toFixed(2))
-    })
-
     // 💾 SALVAR NO BANCO
     for (const chave in mapa) {
 
