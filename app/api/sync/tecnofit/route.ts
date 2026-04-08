@@ -40,6 +40,8 @@ export async function GET() {
     // 🧠 AGRUPAR POR MÊS (NOVO CORRETO)
 const mapa: any = {}
 
+const idsProcessados = new Set()
+
 const anoAtual = new Date().getFullYear()
 const anoInicial = 2024
 
@@ -74,24 +76,28 @@ for (let ano = anoInicial; ano <= anoAtual; ano++) {
 
         json.data.forEach((item: any) => {
 
-          if (item.type !== "sale") return
-          if (!item.receipt) return
-          if (!item.receipt.grossValue) return
+  if (item.type !== "sale") return
+  if (!item.receipt) return
+  if (!item.receipt.grossValue) return
 
-          const data = item.receipt?.paymentDate || item.receipt?.date
-          if (!data) return
+  // 🔥 EVITA DUPLICIDADE
+  if (idsProcessados.has(item.receipt.id)) return
+  idsProcessados.add(item.receipt.id)
 
-          const anoData = Number(data.split("-")[0])
-          const mesData = Number(data.split("-")[1])
+  const data = item.receipt?.paymentDate || item.receipt?.date
+  if (!data) return
 
-          const chave = `${anoData}-${mesData}`
+  const anoData = Number(data.split("-")[0])
+  const mesData = Number(data.split("-")[1])
 
-          if (!mapa[chave]) {
-            mapa[chave] = { faturamento: 0 }
-          }
+  const chave = `${anoData}-${mesData}`
 
-          mapa[chave].faturamento += Number(item.receipt.grossValue || 0)
-        })
+  if (!mapa[chave]) {
+    mapa[chave] = { faturamento: 0 }
+  }
+
+  mapa[chave].faturamento += Number(item.receipt.grossValue || 0)
+})
 
         pagina++
       }
