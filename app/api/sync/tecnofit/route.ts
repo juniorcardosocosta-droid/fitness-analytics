@@ -54,13 +54,14 @@ export async function GET() {
 
       if (item.type !== "sale") return
 
-    // 🔥 GARANTE QUE FOI PAGO
+    // 🔥 GARANTE QUE TEM VALOR REAL
       if (!item.receipt) return
-      if (!item.receipt.paymentMethod) return
+      if (!item.receipt.netValue) return
 
-    // 🔥 USA DATA DE PAGAMENTO
-      const data = item.receipt?.paymentDate
-      if (!data) return
+    // 🔥 PEGA DATA DE PAGAMENTO OU FALLBACK
+    const data = item.receipt?.paymentDate || item.receipt?.date
+
+    if (!data) return
 
       const ano = Number(data.split("-")[0])
       const mes = Number(data.split("-")[1])
