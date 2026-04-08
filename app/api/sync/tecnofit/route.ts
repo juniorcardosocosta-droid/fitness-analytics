@@ -90,7 +90,7 @@ while (continuar) {
       }
 
       mapa[chave].faturamento =
-        Number((mapa[chave].faturamento + Number(item.receipt?.netValue || 0)).toFixed(2))
+        Number((mapa[chave].faturamento + Number(item.receipt?.grossValue || 0)).toFixed(2))
     })
 
     // 💾 SALVAR NO BANCO
