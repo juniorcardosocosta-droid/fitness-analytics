@@ -37,11 +37,17 @@ export default function Dashboard() {
 
  useEffect(() => {
   async function carregarDados() {
-    const res = await fetch("/api/tecnofit")
-    const json = await res.json()
 
-    console.log("DADOS API:", json)
-    setDadosApi(json)
+    const { data, error } = await supabase
+      .from("dados_mensais")
+      .select("*")
+
+    if (error) {
+      console.error(error)
+      return
+    }
+
+    setDadosApi({ data })
   }
 
   carregarDados()
