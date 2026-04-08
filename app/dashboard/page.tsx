@@ -24,6 +24,8 @@ export default function Dashboard() {
  const [dadosApi, setDadosApi] = useState<any>(null)
  const [mesSelecionado, setMesSelecionado] = useState("")
  const [mesAplicado, setMesAplicado] = useState("")
+ const [anoSelecionado, setAnoSelecionado] = useState("")
+ const [anoAplicado, setAnoAplicado] = useState("")
 
  useEffect(() => {
   const checkUser = async () => {
@@ -62,6 +64,7 @@ const mesAtual = hoje.getMonth() + 1
 const anoAtual = hoje.getFullYear()
 
 const mesFiltro = mesAplicado ? Number(mesAplicado) : mesAtual
+const anoFiltro = anoAplicado ? Number(anoAplicado) : anoAtual
 
 const dadosFiltrados = dadosApi?.data?.filter((item: any) => {
   if (!item.mes || !item.ano) return false
@@ -187,11 +190,15 @@ Sair
   <option value="12">Dezembro</option>
 </select>
 
-<select className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg">
-<option>Ano</option>
-<option>2024</option>
-<option>2025</option>
-<option>2026</option>
+<select
+  value={anoSelecionado}
+  onChange={(e) => setAnoSelecionado(e.target.value)}
+  className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg"
+>
+  <option value="">Ano (Automático)</option>
+  <option value="2024">2024</option>
+  <option value="2025">2025</option>
+  <option value="2026">2026</option>
 </select>
 
 <button
