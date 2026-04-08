@@ -68,7 +68,8 @@ export async function GET() {
         }
       }
 
-      mapa[chave].faturamento += Number(item.receipt?.netValue || 0)
+      mapa[chave].faturamento =
+        Number((mapa[chave].faturamento + Number(item.receipt?.netValue || 0)).toFixed(2))
     })
 
     // 💾 SALVAR NO BANCO
