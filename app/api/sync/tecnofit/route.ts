@@ -36,105 +36,47 @@ export async function GET() {
     const loginData = await loginResponse.json()
     const token = loginData.token
 
-    const mapa: any = {}
-
-    // 🔥 BUSCAR TODOS OS DADOS (SEM FILTRO)
-    let pagina = 1
-    let continuar = true
-
-    const todosDados: any[] = []
-
-    while (continuar) {
-
-      const response = await fetch(
-        `https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          }
-        }
-      )
-
-      const json = await response.json()
-
-      if (!json.data || json.data.length === 0) {
-        continuar = false
-      } else {
-        todosDados.push(...json.data)
-        pagina++
-      }
-    }
-
-    // 🔥 PROCESSAR DADOS
-    todosDados.forEach((item: any) => {
-
-      if (!item.receipt) return
-
-      const valor = 
-      Number(item.receipt.paidAmount) ||
-      Number(item.receipt.netValue) ||
-      Number(item.receipt.grossValue) ||
-      0
-      if (valor <= 0) return
-
-      const dataPagamento = item.receipt.paymentDate
-      const dataRef = item.receipt.paymentDate || item.receipt.dueDate
-
-      if (!dataRef) return
-
-      const anoData = Number(dataRef.split("-")[0])
-      const mesData = Number(dataRef.split("-")[1])
-
-      const chave = `${anoData}-${mesData}`
-
-      if (!mapa[chave]) {
-        mapa[chave] = {
-          faturamento: 0,
-          vendas_recebidas: 0,
-          vendas_realizadas: 0,
-          faturamento_previsto: 0
+    // 🔥 BUSCAR DASHBOARD REAL
+    const dashboardResponse = await fetch(
+      `https://app.tecnofit.com.br/api-core/${integracao.academia_id}/nps/dashboard`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
         }
       }
+    )
 
-      // 🔥 PREVISTO = TUDO
-      mapa[chave].faturamento_previsto += valor
+    const dashboardData = await dashboardResponse.json()
 
-      // 🔥 REAL = PAGO
-      if (dataPagamento) {
-        mapa[chave].faturamento += valor
-        mapa[chave].vendas_recebidas += valor
-      }
+    const revenue = dashboardData.revenue || {}
 
-      // 🔥 REALIZADAS
-      mapa[chave].vendas_realizadas += valor
+    const faturamento = Number(revenue.monthRevenue || 0)
+    const faturamento_previsto = Number(revenue.overallRevenue || 0)
 
-    })
+    // 📅 DATA ATUAL
+    const hoje = new Date()
+    const ano = hoje.getFullYear()
+    const mes = hoje.getMonth() + 1
 
     // 💾 SALVAR NO BANCO
-    for (const chave in mapa) {
+    await supabase
+      .from("dados_mensais")
+      .upsert({
+        academia_id: integracao.academia_id,
+        ano,
+        mes,
+        faturamento,
+        faturamento_previsto
+      }, {
+        onConflict: "academia_id,ano,mes"
+      })
 
-      const [ano, mes] = chave.split("-")
-
-      const dados = mapa[chave]
-
-      await supabase
-        .from("dados_mensais")
-        .upsert({
-          academia_id: integracao.academia_id,
-          ano: Number(ano),
-          mes: Number(mes),
-          faturamento: Number(dados.faturamento.toFixed(2)),
-          vendas_recebidas: Number(dados.vendas_recebidas.toFixed(2)),
-          vendas_realizadas: Number(dados.vendas_realizadas.toFixed(2)),
-          faturamento_previsto: Number(dados.faturamento_previsto.toFixed(2))
-        }, {
-          onConflict: "academia_id,ano,mes"
-        })
-    }
-
-    return NextResponse.json({ success: true })
+    return NextResponse.json({
+      success: true,
+      faturamento,
+      faturamento_previsto
+    })
 
   } catch (error) {
     return NextResponse.json({ error: String(error) })
