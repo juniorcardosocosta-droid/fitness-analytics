@@ -9,7 +9,7 @@ const supabase = createClient(
 export async function GET() {
   try {
 
-    // 🔎 Buscar integração tecnofit
+    // 🔎 Buscar integração
     const { data: integracoes } = await supabase
       .from("integracoes")
       .select("*")
@@ -35,79 +35,81 @@ export async function GET() {
 
     const loginData = await loginResponse.json()
     const token = loginData.token
-    
 
-    // 🧠 AGRUPAR POR MÊS (NOVO CORRETO)
-const mapa: any = {}
+    const mapa: any = {}
 
-const idsProcessados = new Set()
+    const anoAtual = new Date().getFullYear()
+    const anoInicial = 2024
 
-const anoAtual = new Date().getFullYear()
-const anoInicial = 2024
+    for (let ano = anoInicial; ano <= anoAtual; ano++) {
 
-for (let ano = anoInicial; ano <= anoAtual; ano++) {
+      for (let mes = 1; mes <= 12; mes++) {
 
-  for (let mes = 1; mes <= 12; mes++) {
+        const inicio = `${ano}-${String(mes).padStart(2, "0")}-01`
+        const fim = `${ano}-${String(mes).padStart(2, "0")}-31`
 
-    const inicio = `${ano}-${String(mes).padStart(2, "0")}-01`
-    const fim = `${ano}-${String(mes).padStart(2, "0")}-31`
+        let pagina = 1
+        let continuar = true
 
-    let pagina = 1
-    let continuar = true
+        while (continuar) {
 
-    while (continuar) {
+          const response = await fetch(
+            `https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100&paymentDateStart=${inicio}&paymentDateEnd=${fim}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+              }
+            }
+          )
 
-      const response = await fetch(
-        `https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100&paymentDateStart=${inicio}&paymentDateEnd=${fim}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
+          const json = await response.json()
+
+          if (!json.data || json.data.length === 0) {
+            continuar = false
+          } else {
+
+            json.data.forEach((item: any) => {
+
+              // 🔥 SOMENTE PAGAMENTOS
+              if (!item.receipt?.paymentDate) return
+
+              const valor = Number(item.receipt.grossValue || 0)
+              if (valor <= 0) return
+
+              const data = item.receipt.paymentDate
+
+              const anoData = Number(data.split("-")[0])
+              const mesData = Number(data.split("-")[1])
+
+              const chave = `${anoData}-${mesData}`
+
+              if (!mapa[chave]) {
+                mapa[chave] = {
+                  faturamento: 0,
+                  vendas_recebidas: 0,
+                  vendas_realizadas: 0,
+                  faturamento_previsto: 0
+                }
+              }
+
+              mapa[chave].faturamento += valor
+              mapa[chave].vendas_recebidas += valor
+            })
+
+            pagina++
           }
         }
-      )
-
-      const json = await response.json()
-
-      if (!json.data || json.data.length === 0) {
-        continuar = false
-      } else {
-
-        json.data.forEach((item: any) => {
-
-  if (item.type !== "sale") return
-  if (!item.receipt) return
-  if (!item.receipt.grossValue) return
-
-  // 🔥 EVITA DUPLICIDADE
-  if (idsProcessados.has(item.receipt.id)) return
-  idsProcessados.add(item.receipt.id)
-
-  const data = item.receipt?.paymentDate || item.receipt?.date
-  if (!data) return
-
-  const anoData = Number(data.split("-")[0])
-  const mesData = Number(data.split("-")[1])
-
-  const chave = `${anoData}-${mesData}`
-
-  if (!mapa[chave]) {
-    mapa[chave] = { faturamento: 0 }
-  }
-
-  mapa[chave].faturamento += Number(item.receipt.grossValue || 0)
-})
-
-        pagina++
       }
     }
-  }
-}
+
     // 💾 SALVAR NO BANCO
     for (const chave in mapa) {
 
       const [ano, mes] = chave.split("-")
+
+      const dados = mapa[chave]
 
       await supabase
         .from("dados_mensais")
@@ -115,7 +117,10 @@ for (let ano = anoInicial; ano <= anoAtual; ano++) {
           academia_id: integracao.academia_id,
           ano: Number(ano),
           mes: Number(mes),
-          faturamento: mapa[chave].faturamento
+          faturamento: Number(dados.faturamento.toFixed(2)),
+          vendas_recebidas: Number(dados.vendas_recebidas.toFixed(2)),
+          vendas_realizadas: 0,
+          faturamento_previsto: 0
         }, {
           onConflict: "academia_id,ano,mes"
         })
