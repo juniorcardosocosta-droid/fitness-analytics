@@ -54,7 +54,7 @@ export async function GET() {
         while (continuar) {
 
           const response = await fetch(
-            `https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100&paymentDateStart=${inicio}&paymentDateEnd=${fim}`,
+            `https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100&dueDateStart=${inicio}&dueDateEnd=${fim}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
