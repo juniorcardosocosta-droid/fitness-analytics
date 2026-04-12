@@ -39,7 +39,17 @@ export async function GET() {
       }
     )
 
-    const dashboardData = await dashboardResponse.json()
+    console.log("STATUS DASHBOARD:", dashboardResponse.status)
+
+    let dashboardData: any = {}
+
+try {
+  const text = await dashboardResponse.text()
+  dashboardData = text ? JSON.parse(text) : {}
+} catch (e) {
+  console.log("Erro ao ler dashboard:", e)
+  dashboardData = {}
+}
 
     const revenue = dashboardData.revenue || {}
 
