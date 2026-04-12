@@ -20,7 +20,7 @@ export async function GET() {
 
     const integracao = integracoes[0]
 
-    // 🔐 LOGIN
+    // LOGIN
     const loginResponse = await fetch("https://integracao.tecnofit.com.br/v1/auth/login", {
       method: "POST",
       headers: {
@@ -38,40 +38,37 @@ export async function GET() {
     const mapa: any = {}
     const idsProcessados = new Set()
 
+    // 🔥 DATA AUTOMÁTICA
+    const hoje = new Date()
+    const anoAtual = hoje.getFullYear()
+    const mesAtual = hoje.getMonth() + 1
+
+    const inicio = `${anoAtual}-${String(mesAtual).padStart(2, "0")}-01`
+    const fim = `${anoAtual}-${String(mesAtual).padStart(2, "0")}-31`
+
     let pagina = 1
 
-    // 🔥 LOOP CORRETO
     while (true) {
 
       const response = await fetch(
-        `https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100&dueDateStart=2026-04-01&dueDateEnd=2026-04-30`,
+        `https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100&dueDateStart=${inicio}&dueDateEnd=${fim}`,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
+            Authorization: `Bearer ${token}`
           }
         }
       )
 
       const json = await response.json()
 
-      if (!json.data || json.data.length === 0) {
-        break
-      }
-
-      console.log("Página:", pagina, "Qtd:", json.data.length)
+      if (!json.data || json.data.length === 0) break
 
       json.data.forEach((item: any) => {
 
         if (!item.receipt) return
 
-        // 🔥 EVITA DUPLICIDADE
         if (idsProcessados.has(item.id)) return
         idsProcessados.add(item.id)
-
-       // 🔥 FILTRO DE STATUS
-        if (item.status !== "paid" && item.status !== "pending") return
 
         const valor =
           Number(item.receipt.paidAmount) ||
@@ -81,22 +78,13 @@ export async function GET() {
 
         if (valor <= 0) return
 
-        const dataPagamento = item.receipt.paymentDate
-        const dataRef = item.receipt.paymentDate || item.receipt.dueDate
+        const dueDate = item.receipt.dueDate
+        const paymentDate = item.receipt.paymentDate
 
-        if (!dataRef) return
+        if (!dueDate) return
 
-        if (dataRef.startsWith("2026-04")) {
-          console.log("ITEM ABRIL:", {
-            valor,
-            paymentDate: item.receipt.paymentDate,
-            dueDate: item.receipt.dueDate,
-            status: item.status
-         })
-       }
-
-        const ano = Number(dataRef.split("-")[0])
-        const mes = Number(dataRef.split("-")[1])
+        const ano = Number(dueDate.split("-")[0])
+        const mes = Number(dueDate.split("-")[1])
 
         const chave = `${ano}-${mes}`
 
@@ -107,11 +95,11 @@ export async function GET() {
           }
         }
 
-        // 🔥 PREVISTO
+        // PREVISTO
         mapa[chave].faturamento_previsto += valor
 
-        // 🔥 REAL
-        if (dataPagamento) {
+        // REAL
+        if (paymentDate && paymentDate.startsWith(`${anoAtual}-${String(mesAtual).padStart(2, "0")}`)) {
           mapa[chave].faturamento += valor
         }
 
@@ -120,7 +108,7 @@ export async function GET() {
       pagina++
     }
 
-    // 💾 SALVAR NO BANCO
+    // SALVAR
     for (const chave in mapa) {
 
       const [ano, mes] = chave.split("-")
