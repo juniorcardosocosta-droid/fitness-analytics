@@ -38,83 +38,75 @@ export async function GET() {
 
     const mapa: any = {}
 
-    const anoAtual = new Date().getFullYear()
-    const anoInicial = 2024
+    // 🔥 BUSCAR TODOS OS DADOS (SEM FILTRO)
+    let pagina = 1
+    let continuar = true
 
-    for (let ano = anoInicial; ano <= anoAtual; ano++) {
+    const todosDados: any[] = []
 
-      for (let mes = 1; mes <= 12; mes++) {
+    while (continuar) {
 
-        const inicio = `${ano}-${String(mes).padStart(2, "0")}-01`
-        const fim = `${ano}-${String(mes).padStart(2, "0")}-31`
-
-        let pagina = 1
-        let continuar = true
-
-        while (continuar) {
-
-          const response = await fetch(
-            `https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100&dueDateStart=${inicio}&dueDateEnd=${fim}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-              }
-            }
-          )
-
-          const json = await response.json()
-
-          if (!json.data || json.data.length === 0) {
-            continuar = false
-          } else {
-
-            json.data.forEach((item: any) => {
-
-  if (!item.receipt) return
-
-  const valor = Number(item.receipt.netValue || 0)
-  if (valor <= 0) return
-
-  const dataPagamento = item.receipt.paymentDate
-  const dataRef = item.receipt.paymentDate || item.receipt.dueDate
-
-  if (!dataRef) return
-
-  const anoData = Number(dataRef.split("-")[0])
-  const mesData = Number(dataRef.split("-")[1])
-
-  const chave = `${anoData}-${mesData}`
-
-  if (!mapa[chave]) {
-    mapa[chave] = {
-      faturamento: 0,
-      vendas_recebidas: 0,
-      vendas_realizadas: 0,
-      faturamento_previsto: 0
-    }
-  }
-
-  // 🔥 PREVISTO = TUDO DO MÊS
-  mapa[chave].faturamento_previsto += valor
-
-  // 🔥 REAL = SÓ PAGO
-  if (dataPagamento) {
-    mapa[chave].faturamento += valor
-    mapa[chave].vendas_recebidas += valor
-  }
-
-  // 🔥 REALIZADAS = TODAS AS VENDAS
-  mapa[chave].vendas_realizadas += valor
-
-})
-
-            pagina++
+      const response = await fetch(
+        `https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
           }
         }
+      )
+
+      const json = await response.json()
+
+      if (!json.data || json.data.length === 0) {
+        continuar = false
+      } else {
+        todosDados.push(...json.data)
+        pagina++
       }
     }
+
+    // 🔥 PROCESSAR DADOS
+    todosDados.forEach((item: any) => {
+
+      if (!item.receipt) return
+
+      const valor = Number(item.receipt.netValue || 0)
+      if (valor <= 0) return
+
+      const dataPagamento = item.receipt.paymentDate
+      const dataRef = item.receipt.paymentDate || item.receipt.dueDate
+
+      if (!dataRef) return
+
+      const anoData = Number(dataRef.split("-")[0])
+      const mesData = Number(dataRef.split("-")[1])
+
+      const chave = `${anoData}-${mesData}`
+
+      if (!mapa[chave]) {
+        mapa[chave] = {
+          faturamento: 0,
+          vendas_recebidas: 0,
+          vendas_realizadas: 0,
+          faturamento_previsto: 0
+        }
+      }
+
+      // 🔥 PREVISTO = TUDO
+      mapa[chave].faturamento_previsto += valor
+
+      // 🔥 REAL = PAGO
+      if (dataPagamento) {
+        mapa[chave].faturamento += valor
+        mapa[chave].vendas_recebidas += valor
+      }
+
+      // 🔥 REALIZADAS
+      mapa[chave].vendas_realizadas += valor
+
+    })
 
     // 💾 SALVAR NO BANCO
     for (const chave in mapa) {
