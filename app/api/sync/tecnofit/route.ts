@@ -43,8 +43,8 @@ export async function GET() {
     const anoAtual = hoje.getFullYear()
     const mesAtual = hoje.getMonth() + 1
 
-    const inicio = `${anoAtual}-${String(mesAtual).padStart(2, "0")}-01`
-    const fim = `${anoAtual}-${String(mesAtual).padStart(2, "0")}-31`
+    const inicio = "2026-04-01"
+    const fim = "2026-04-30"
 
     let pagina = 1
 
