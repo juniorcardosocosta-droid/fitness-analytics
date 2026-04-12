@@ -72,7 +72,11 @@ export async function GET() {
 
       if (!item.receipt) return
 
-      const valor = Number(item.receipt.netValue || 0)
+      const valor = 
+      Number(item.receipt.paidAmount) ||
+      Number(item.receipt.netValue) ||
+      Number(item.receipt.grossValue) ||
+      0
       if (valor <= 0) return
 
       const dataPagamento = item.receipt.paymentDate
