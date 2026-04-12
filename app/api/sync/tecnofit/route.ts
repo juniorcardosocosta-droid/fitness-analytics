@@ -86,6 +86,15 @@ export async function GET() {
 
         if (!dataRef) return
 
+        if (dataRef.startsWith("2026-04")) {
+          console.log("ITEM ABRIL:", {
+            valor,
+            paymentDate: item.receipt.paymentDate,
+            dueDate: item.receipt.dueDate,
+            status: item.status
+         })
+       }
+
         const ano = Number(dataRef.split("-")[0])
         const mes = Number(dataRef.split("-")[1])
 
