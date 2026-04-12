@@ -20,7 +20,7 @@ export async function GET() {
 
     const integracao = integracoes[0]
 
-    // LOGIN
+    // 🔐 LOGIN
     const loginResponse = await fetch("https://integracao.tecnofit.com.br/v1/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -54,7 +54,6 @@ export async function GET() {
       if (!json.data || json.data.length === 0) break
 
       json.data.forEach((item: any) => {
-      console.log("ITEM COMPLETO:", JSON.stringify(item))  
 
         if (!item.receipt) return
 
@@ -63,40 +62,33 @@ export async function GET() {
         idsProcessados.add(item.id)
 
         const valor =
-          Number(item.receipt.paidAmount) ||
           Number(item.receipt.netValue) ||
           Number(item.receipt.grossValue) ||
           0
 
         if (valor <= 0) return
 
-        const dueDate = item.receipt.dueDate
-        const paymentDate = item.receipt.paymentDate
+        // 🔥 CAMPO CORRETO (DATA REAL DO PAGAMENTO)
+        const paymentDate = item.receipt.date
 
-        if (!dueDate) return
+        if (!paymentDate) return
 
-        const ano = Number(dueDate.split("-")[0])
-        const mes = Number(dueDate.split("-")[1])
+        const ano = Number(paymentDate.split("-")[0])
+        const mes = Number(paymentDate.split("-")[1])
 
         const chave = `${ano}-${mes}`
 
         if (!mapa[chave]) {
           mapa[chave] = {
             faturamento: 0,
-            faturamento_previsto: 0,
             vendas_realizadas: 0
           }
         }
 
-        // PREVISTO
-        mapa[chave].faturamento_previsto += valor
+        // 💰 FATURAMENTO REAL
+        mapa[chave].faturamento += valor
 
-        // REAL (pagos)
-        if (paymentDate) {
-          mapa[chave].faturamento += valor
-        }
-
-        // VENDAS
+        // 📊 VENDAS
         mapa[chave].vendas_realizadas += valor
 
       })
@@ -104,7 +96,7 @@ export async function GET() {
       pagina++
     }
 
-    // SALVAR
+    // 💾 SALVAR NO BANCO
     for (const chave in mapa) {
 
       const [ano, mes] = chave.split("-")
@@ -117,7 +109,6 @@ export async function GET() {
           ano: Number(ano),
           mes: Number(mes),
           faturamento: Number(dados.faturamento.toFixed(2)),
-          faturamento_previsto: Number(dados.faturamento_previsto.toFixed(2)),
           vendas_realizadas: Number(dados.vendas_realizadas.toFixed(2))
         }, {
           onConflict: "academia_id,ano,mes"
