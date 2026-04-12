@@ -20,7 +20,7 @@ export async function GET() {
 
     const integracao = integracoes[0]
 
-    // 🔐 LOGIN
+    // LOGIN
     const loginResponse = await fetch("https://integracao.tecnofit.com.br/v1/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -30,18 +30,21 @@ export async function GET() {
       })
     })
 
-    const loginData = await loginResponse.json()
-    const token = loginData.token
+    const { token } = await loginResponse.json()
 
     const mapa: any = {}
-    const idsProcessados = new Set()
+    const ids = new Set()
+
+    // 🔥 INTERVALO GRANDE (ULTIMOS 12 MESES)
+    const inicio = "2025-01-01"
+    const fim = "2026-12-31"
 
     let pagina = 1
 
     while (true) {
 
       const response = await fetch(
-        `https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100&startDate=2026-04-01&endDate=2026-04-30`,
+        `https://integracao.tecnofit.com.br/v1/financial/receivables?page=${pagina}&limit=100&startDate=${inicio}&endDate=${fim}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -52,56 +55,43 @@ export async function GET() {
       const json = await response.json()
 
       console.log("Página:", pagina, "Qtd:", json.data?.length)
+
       if (!json.data || json.data.length === 0) break
 
       json.data.forEach((item: any) => {
 
         if (!item.receipt) return
 
-        // evita duplicidade
-        if (idsProcessados.has(item.id)) return
-        idsProcessados.add(item.id)
+        if (ids.has(item.id)) return
+        ids.add(item.id)
 
-        const valor =
-          Number(item.receipt.netValue) ||
-          Number(item.receipt.grossValue) ||
-          0
-
+        const valor = Number(item.receipt.netValue || 0)
         if (valor <= 0) return
 
-        // 🔥 CAMPO CORRETO (DATA REAL DO PAGAMENTO)
-        const paymentDate = item.receipt.date
+        const data = item.receipt.date
+        if (!data) return
 
-        if (!paymentDate) return
-
-        const ano = Number(paymentDate.split("-")[0])
-        const mes = Number(paymentDate.split("-")[1])
+        const [ano, mes] = data.split("-")
 
         const chave = `${ano}-${mes}`
 
         if (!mapa[chave]) {
           mapa[chave] = {
-            faturamento: 0,
-            vendas_realizadas: 0
+            faturamento: 0
           }
         }
 
-        // 💰 FATURAMENTO REAL
         mapa[chave].faturamento += valor
-
-        // 📊 VENDAS
-        mapa[chave].vendas_realizadas += valor
 
       })
 
       pagina++
     }
 
-    // 💾 SALVAR NO BANCO
+    // SALVAR
     for (const chave in mapa) {
 
       const [ano, mes] = chave.split("-")
-      const dados = mapa[chave]
 
       await supabase
         .from("dados_mensais")
@@ -109,8 +99,7 @@ export async function GET() {
           academia_id: integracao.academia_id,
           ano: Number(ano),
           mes: Number(mes),
-          faturamento: Number(dados.faturamento.toFixed(2)),
-          vendas_realizadas: Number(dados.vendas_realizadas.toFixed(2))
+          faturamento: Number(mapa[chave].faturamento.toFixed(2))
         }, {
           onConflict: "academia_id,ano,mes"
         })
