@@ -54,6 +54,7 @@ export async function GET() {
       if (!json.data || json.data.length === 0) break
 
       json.data.forEach((item: any) => {
+      console.log("VALOR:", item.receipt?.netValue, "PAGO:", item.receipt?.paymentDate, "VENC:", item.receipt?.dueDate)  
 
         if (!item.receipt) return
 
