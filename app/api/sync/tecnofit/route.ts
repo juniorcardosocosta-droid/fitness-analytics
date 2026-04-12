@@ -36,6 +36,7 @@ export async function GET() {
     const token = loginData.token
 
     const mapa: any = {}
+    const idsProcessados = new Set()
 
     let pagina = 1
 
@@ -64,6 +65,13 @@ export async function GET() {
       json.data.forEach((item: any) => {
 
         if (!item.receipt) return
+
+        // 🔥 EVITA DUPLICIDADE
+        if (idsProcessados.has(item.id)) return
+        idsProcessados.add(item.id)
+
+       // 🔥 FILTRO DE STATUS
+        if (item.status !== "paid" && item.status !== "pending") return
 
         const valor =
           Number(item.receipt.paidAmount) ||
