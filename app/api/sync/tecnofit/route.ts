@@ -72,31 +72,43 @@ export async function GET() {
 
             json.data.forEach((item: any) => {
 
-              // 🔥 SOMENTE PAGAMENTOS
-              if (!item.receipt?.paymentDate) return
+  if (!item.receipt) return
 
-              const valor = Number(item.receipt.grossValue || 0)
-              if (valor <= 0) return
+  const valor = Number(item.receipt.netValue || 0)
+  if (valor <= 0) return
 
-              const data = item.receipt.paymentDate
+  const dataPagamento = item.receipt.paymentDate
+  const dataRef = item.receipt.paymentDate || item.receipt.dueDate
 
-              const anoData = Number(data.split("-")[0])
-              const mesData = Number(data.split("-")[1])
+  if (!dataRef) return
 
-              const chave = `${anoData}-${mesData}`
+  const anoData = Number(dataRef.split("-")[0])
+  const mesData = Number(dataRef.split("-")[1])
 
-              if (!mapa[chave]) {
-                mapa[chave] = {
-                  faturamento: 0,
-                  vendas_recebidas: 0,
-                  vendas_realizadas: 0,
-                  faturamento_previsto: 0
-                }
-              }
+  const chave = `${anoData}-${mesData}`
 
-              mapa[chave].faturamento += valor
-              mapa[chave].vendas_recebidas += valor
-            })
+  if (!mapa[chave]) {
+    mapa[chave] = {
+      faturamento: 0,
+      vendas_recebidas: 0,
+      vendas_realizadas: 0,
+      faturamento_previsto: 0
+    }
+  }
+
+  // 🔥 PREVISTO = TUDO DO MÊS
+  mapa[chave].faturamento_previsto += valor
+
+  // 🔥 REAL = SÓ PAGO
+  if (dataPagamento) {
+    mapa[chave].faturamento += valor
+    mapa[chave].vendas_recebidas += valor
+  }
+
+  // 🔥 REALIZADAS = TODAS AS VENDAS
+  mapa[chave].vendas_realizadas += valor
+
+})
 
             pagina++
           }
@@ -119,8 +131,8 @@ export async function GET() {
           mes: Number(mes),
           faturamento: Number(dados.faturamento.toFixed(2)),
           vendas_recebidas: Number(dados.vendas_recebidas.toFixed(2)),
-          vendas_realizadas: 0,
-          faturamento_previsto: 0
+          vendas_realizadas: Number(dados.vendas_realizadas.toFixed(2)),
+          faturamento_previsto: Number(dados.faturamento_previsto.toFixed(2))
         }, {
           onConflict: "academia_id,ano,mes"
         })
