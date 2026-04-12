@@ -51,6 +51,7 @@ export async function GET() {
 
       const json = await response.json()
 
+      console.log("Página:", pagina, "Qtd:", json.data?.length)
       if (!json.data || json.data.length === 0) break
 
       json.data.forEach((item: any) => {
