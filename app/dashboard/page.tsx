@@ -21,7 +21,7 @@ import {
 export default function Dashboard() {
 
  const router = useRouter()
- const [dadosApi, setDadosApi] = useState<any>(null)
+ const [dados, setDados] = useState<any[]>([])
  const [mesSelecionado, setMesSelecionado] = useState("")
  const [mesAplicado, setMesAplicado] = useState("")
  const [anoSelecionado, setAnoSelecionado] = useState("")
@@ -49,7 +49,7 @@ export default function Dashboard() {
       return
     }
 
-    setDadosApi({ data })
+    setDados(data || [])
   }
 
   carregarDados()
@@ -67,9 +67,20 @@ const mesFiltro = mesAplicado ? Number(mesAplicado) : mesAtual
 const anoFiltro = anoAplicado ? Number(anoAplicado) : anoAtual
 
 
-const dados = dadosApi?.data || []
+const dadosFiltrados = dados.filter((item: any) => {
 
-const faturamento = dados
+  const dataItem = new Date(item.data)
+
+  const mes = dataItem.getMonth() + 1
+  const ano = dataItem.getFullYear()
+
+  if (mesAplicado && Number(mesAplicado) !== mes) return false
+  if (anoAplicado && Number(anoAplicado) !== ano) return false
+
+  return true
+})
+
+const faturamento = dadosFiltrados
   .filter((item: any) => item.tipo === "receita")
   .reduce((total: number, item: any) => {
     return total + Number(item.valor || 0)
