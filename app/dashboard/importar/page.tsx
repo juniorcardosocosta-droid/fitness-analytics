@@ -27,6 +27,9 @@ export default function Importar() {
 
   const parseNumero = (v: any): number => {
     if (!v) return 0
+
+    if (typeof v === "number") return v
+
     return Number(
       String(v)
         .replace("R$", "")
@@ -41,89 +44,38 @@ export default function Importar() {
     const dadosConvertidos = dados
       .map((item: any) => {
 
-        // 🔥 NORMALIZA COLUNAS (PADRÃO PROFISSIONAL)
-        const itemLimpo: any = {}
-
-        Object.keys(item).forEach((key) => {
-          const novaKey = key
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .trim()
-
-          itemLimpo[novaKey] = item[key]
-        })
-
-        const valores = Object.values(itemLimpo)
-
-        // ======================
         // 🔥 DESCRIÇÃO
-        // ======================
-        const descricao: string =
-          itemLimpo["descricao"] ||
-          itemLimpo["cliente"] ||
-          itemLimpo["fornecedor"] ||
-          String(valores[1] || "")
+        const descricao =
+          item["Descrição"] ||
+          item["Cliente"] ||
+          item["Fornecedor"] ||
+          ""
 
-        // ======================
-        // 🔥 VALORES
-        // ======================
-        const valorLiquido =
-          itemLimpo["valor liquido"]
+        // 🔥 VALORES CORRETOS
+        const valor = parseNumero(item["Valor Líquido"])
+        const valorBruto = parseNumero(item["Valor Bruto"])
+        const taxa = parseNumero(item["Valor Taxa"])
 
-        const valorBrutoRaw =
-          itemLimpo["valor bruto"]
-
-        const taxaRaw =
-          itemLimpo["valor taxa"]
-
-        const fallback =
-          itemLimpo["valor pago"] ||
-          itemLimpo["valor total"] ||
-          itemLimpo["valor"]
-
-        const valorFinal = valorLiquido || fallback
-
-        if (!valorFinal) {
+        if (!valor) {
           console.log("❌ sem valor:", item)
           return null
         }
 
-        const valor = parseNumero(valorFinal)
-        const valorBruto = valorBrutoRaw ? parseNumero(valorBrutoRaw) : valor
-        const taxa = taxaRaw ? parseNumero(taxaRaw) : 0
+        // 🔥 DATA CORRETA (CRÉDITO)
+        const dataBruta = item["Data Crédito"]
 
-        // ======================
-        // 🔥 DATA (CORRETA)
-        // ======================
-        const dataBruta =
-          itemLimpo["data credito"] ||
-          itemLimpo["data pagamento"] ||
-          itemLimpo["data recebimento"] ||
-          valores.find((v: any) => String(v).includes("/"))
-
-        let data: string
+        let data = new Date().toISOString().split("T")[0]
 
         if (dataBruta) {
-          const valorData = String(dataBruta)
-
-          const partes = valorData.includes("/")
-            ? valorData.split("/")
-            : valorData.split("-")
+          const partes = String(dataBruta).split("/")
 
           if (partes.length === 3) {
             const [dia, mes, ano] = partes
             data = `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`
-          } else {
-            data = new Date().toISOString().split("T")[0]
           }
-        } else {
-          data = new Date().toISOString().split("T")[0]
         }
 
-        // ======================
         // 🔥 CATEGORIA
-        // ======================
         let categoria = "outros"
         const desc = descricao.toLowerCase()
 
@@ -157,7 +109,7 @@ export default function Importar() {
       return
     }
 
-    // 🔥 LIMPA ANTES DE IMPORTAR (EVITA DUPLICIDADE)
+    // 🔥 LIMPA ANTES DE IMPORTAR
     await supabase
       .from("lancamentos")
       .delete()
@@ -190,7 +142,6 @@ export default function Importar() {
       Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
-        transformHeader: (h) => h.trim(),
         complete: async (results) => {
           await processarDados(results.data, tipo)
           setLoading(false)
@@ -206,9 +157,8 @@ export default function Importar() {
         const workbook = XLSX.read(data, { type: "array" })
         const sheet = workbook.Sheets[workbook.SheetNames[0]]
 
-        const jsonData = XLSX.utils.sheet_to_json(sheet, {
-          defval: null
-        })
+        // 🔥 AQUI ESTÁ O SEGREDO: SEM RANGE
+        const jsonData = XLSX.utils.sheet_to_json(sheet)
 
         await processarDados(jsonData, tipo)
 
