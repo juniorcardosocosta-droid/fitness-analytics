@@ -206,7 +206,10 @@ export default function Importar() {
             accept=".csv"
             className="hidden"
             onChange={(e) => {
+              console.log("📁 arquivo selecionado")
+
               if (e.target.files?.[0]) {
+                console.log("🔥 chamando handleFile")
                 handleFile(e.target.files[0], "receita")
               }
             }}
@@ -226,7 +229,10 @@ export default function Importar() {
             accept=".csv"
             className="hidden"
             onChange={(e) => {
+              console.log("📁 arquivo selecionado")
+              
               if (e.target.files?.[0]) {
+               console.log("🔥 chamando handleFile")  
                 handleFile(e.target.files[0], "despesa")
               }
             }}
