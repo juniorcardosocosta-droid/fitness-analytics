@@ -110,26 +110,27 @@ export default function Dashboard() {
     }, 0)
 
   const dadosGrafico = Object.values(
-    dadosFiltrados
-      .filter((item: any) => item.tipo === "receita")
-      .reduce((acc: any, item: any) => {
+  dadosFiltrados
+    .filter((item: any) => item.tipo === "receita")
+    .reduce((acc: any, item: any) => {
 
-        const dataItem = new Date(item.data)
+      const dataItem = new Date(item.data)
+      const mesNumero = dataItem.getMonth()
+      const mesNome = dataItem.toLocaleDateString("pt-BR", {
+        month: "short"
+      })
 
-        const mes = dataItem.toLocaleDateString("pt-BR", {
-          month: "short"
-        })
+      if (!acc[mesNumero]) {
+        acc[mesNumero] = { mes: mesNome, total: 0, ordem: mesNumero }
+      }
 
-        if (!acc[mes]) {
-          acc[mes] = { mes, total: 0 }
-        }
+      acc[mesNumero].total += Number(item.valor || 0)
 
-        acc[mes].total += Number(item.valor || 0)
+      return acc
 
-        return acc
-
-      }, {})
-  )
+    }, {})
+)
+.sort((a: any, b: any) => a.ordem - b.ordem)
 
   return (
 
