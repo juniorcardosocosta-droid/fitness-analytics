@@ -1,14 +1,40 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Papa from "papaparse"
 import { supabase } from "../../../lib/supabaseClient"
 
 export default function Importar() {
 
   const [loading, setLoading] = useState(false)
+  const [academias, setAcademias] = useState<any[]>([])
+  const [academiaId, setAcademiaId] = useState("")
+
+    useEffect(() => {
+    async function loadAcademias() {
+      const { data } = await supabase
+        .from("academias")
+        .select("*")
+
+      if (data) {
+        setAcademias(data)
+
+        if (data.length === 1) {
+          setAcademiaId(data[0].id)
+        }
+      }
+    }
+
+    loadAcademias()
+  }, [])
+
 
   async function handleFile(file: File, tipo: "receita" | "despesa") {
+
+     if (!academiaId) {
+        alert("Selecione uma academia antes de importar")
+        return
+     }
 
     setLoading(true)
 
@@ -38,7 +64,8 @@ export default function Importar() {
             descricao: descricao,
             tipo: tipo,
             categoria: "importado",
-            valor: valor
+            valor: valor,
+            academia_id: academiaId
           }
         })
 
