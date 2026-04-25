@@ -150,9 +150,7 @@ export default function Dashboard() {
       {/* DEBUG (REMOVER DEPOIS) */}
 
       <div className="mt-10">
-        <pre className="text-xs bg-black p-4 rounded-lg overflow-auto">
-          {JSON.stringify(dadosFiltrados, null, 2)}
-        </pre>
+       
       </div>
 
     </div>
