@@ -64,30 +64,43 @@ export default function Importar() {
       <h1 className="text-3xl mb-6">Importar Dados</h1>
 
       <div className="mb-6">
-        <p className="mb-2">Importar RECEITAS (Contas a Receber)</p>
-        <input
-          type="file"
-          accept=".csv"
-          onChange={(e) => {
-            if (e.target.files?.[0]) {
-              handleFile(e.target.files[0], "receita")
-            }
-          }}
-        />
-      </div>
+  <p className="mb-2">Importar RECEITAS (Contas a Receber)</p>
 
-      <div>
-        <p className="mb-2">Importar DESPESAS (Contas a Pagar)</p>
-        <input
-          type="file"
-          accept=".csv"
-          onChange={(e) => {
-            if (e.target.files?.[0]) {
-              handleFile(e.target.files[0], "despesa")
-            }
-          }}
-        />
-      </div>
+  <label className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg cursor-pointer inline-block">
+    Selecionar Arquivo de Receitas
+
+    <input
+      type="file"
+      accept=".csv"
+      className="hidden"
+      onChange={(e) => {
+        if (e.target.files?.[0]) {
+          handleFile(e.target.files[0], "receita")
+        }
+      }}
+    />
+  </label>
+</div>
+
+
+<div>
+  <p className="mb-2">Importar DESPESAS (Contas a Pagar)</p>
+
+  <label className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg cursor-pointer inline-block">
+    Selecionar Arquivo de Despesas
+
+    <input
+      type="file"
+      accept=".csv"
+      className="hidden"
+      onChange={(e) => {
+        if (e.target.files?.[0]) {
+          handleFile(e.target.files[0], "despesa")
+        }
+      }}
+    />
+  </label>
+</div>
 
       {loading && <p className="mt-4">Importando...</p>}
 
