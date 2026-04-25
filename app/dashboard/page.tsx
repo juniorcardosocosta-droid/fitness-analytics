@@ -4,34 +4,44 @@ import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabaseClient"
 import { useRouter } from "next/navigation"
 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid
+} from "recharts"
+
 export default function Dashboard() {
 
   const router = useRouter()
   const [dados, setDados] = useState<any[]>([])
   const [academias, setAcademias] = useState<any[]>([])
   const [academiaId, setAcademiaId] = useState("")
-  
+
   const [mesSelecionado, setMesSelecionado] = useState("")
   const [anoSelecionado, setAnoSelecionado] = useState("")
 
   useEffect(() => {
-  async function loadAcademias() {
-    const { data } = await supabase
-      .from("academias")
-      .select("*")
+    async function loadAcademias() {
+      const { data } = await supabase
+        .from("academias")
+        .select("*")
 
-    if (data) {
-      setAcademias(data)
+      if (data) {
+        setAcademias(data)
 
-      // se tiver só 1 academia
-      if (data.length === 1) {
-        setAcademiaId(data[0].id)
+        // se tiver só 1 academia
+        if (data.length === 1) {
+          setAcademiaId(data[0].id)
+        }
       }
     }
-  }
 
-  loadAcademias()
-}, [])
+    loadAcademias()
+  }, [])
 
   // LOGIN
   useEffect(() => {
@@ -46,28 +56,28 @@ export default function Dashboard() {
 
   // BUSCAR DADOS
   useEffect(() => {
-  async function carregarDados() {
+    async function carregarDados() {
 
-    let query = supabase
-      .from("lancamentos")
-      .select("*")
+      let query = supabase
+        .from("lancamentos")
+        .select("*")
 
-    if (academiaId) {
-      query = query.eq("academia_id", academiaId)
+      if (academiaId) {
+        query = query.eq("academia_id", academiaId)
+      }
+
+      const { data, error } = await query
+
+      if (error) {
+        console.error(error)
+        return
+      }
+
+      setDados(data || [])
     }
 
-    const { data, error } = await query
-
-    if (error) {
-      console.error(error)
-      return
-    }
-
-    setDados(data || [])
-  }
-
-  carregarDados()
-}, [academiaId])
+    carregarDados()
+  }, [academiaId])
 
   // ANOS DINÂMICOS
   const anosDisponiveis = [...new Set(
@@ -99,6 +109,28 @@ export default function Dashboard() {
       return total + Number(item.valor || 0)
     }, 0)
 
+  const dadosGrafico = Object.values(
+    dadosFiltrados
+      .filter((item: any) => item.tipo === "receita")
+      .reduce((acc: any, item: any) => {
+
+        const dataItem = new Date(item.data)
+
+        const mes = dataItem.toLocaleDateString("pt-BR", {
+          month: "short"
+        })
+
+        if (!acc[mes]) {
+          acc[mes] = { mes, total: 0 }
+        }
+
+        acc[mes].total += Number(item.valor || 0)
+
+        return acc
+
+      }, {})
+  )
+
   return (
 
     <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
@@ -123,20 +155,20 @@ export default function Dashboard() {
 
       {/* FILTROS */}
       {academias.length > 1 && (
-  <select
-    value={academiaId}
-    onChange={(e) => setAcademiaId(e.target.value)}
-    className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg mb-4"
-  >
-    <option value="">Todas as academias</option>
+        <select
+          value={academiaId}
+          onChange={(e) => setAcademiaId(e.target.value)}
+          className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg mb-4"
+        >
+          <option value="">Todas as academias</option>
 
-    {academias.map((a) => (
-      <option key={a.id} value={a.id}>
-        {a.nome}
-      </option>
-    ))}
-  </select>
-)}
+          {academias.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.nome}
+            </option>
+          ))}
+        </select>
+      )}
 
       <div className="flex gap-4 mb-10">
 
@@ -191,10 +223,33 @@ export default function Dashboard() {
 
       </div>
 
+      <div className="bg-[#0f1c33] p-6 rounded-xl mt-10">
+
+        <h2 className="text-xl mb-4">
+          Evolução das Receitas Mensais
+        </h2>
+
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={dadosGrafico}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#1f2a44" />
+            <XAxis dataKey="mes" stroke="#ccc" />
+            <YAxis stroke="#ccc" />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="total"
+              stroke="#22c55e"
+              strokeWidth={3}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+
+      </div>
+
       {/* DEBUG (REMOVER DEPOIS) */}
 
       <div className="mt-10">
-       
+
       </div>
 
     </div>
