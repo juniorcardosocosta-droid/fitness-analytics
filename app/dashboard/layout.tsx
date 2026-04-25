@@ -30,6 +30,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       icon: FileText
     },
     {
+    name: "Importar",
+    path: "/dashboard/importar",
+    icon: FileText
+    },
+    {
       name: "Integrações",
       path: "/dashboard/integracoes",
       icon: Plug
