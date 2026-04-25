@@ -43,31 +43,55 @@ export default function Importar() {
 
         const dadosConvertidos = results.data
           .map((item: any) => {
-            // 🔥 DATA
+
+            // =========================
+            // 🔥 DATA (CORRIGIDO TECNOFIT)
+            // =========================
+            let data = null
+
             const dataBruta =
               item["Data"] ||
               item["Vencimento"] ||
-              item["Data de Vencimento"]
+              item["Data de Vencimento"] ||
+              item["Pagamento"]
 
-            if (!dataBruta) {
-              console.log("❌ sem data:", item)
-              return null
-            }
-
-            let data = ""
-
-            if (String(dataBruta).includes("/")) {
-              const partes = String(dataBruta).split("/")
-
-              if (partes.length === 3) {
-                const [dia, mes, ano] = partes
-                data = `${ano}-${mes}-${dia}`
+            // tenta pegar direto
+            if (dataBruta) {
+              if (String(dataBruta).includes("/")) {
+                const partes = String(dataBruta).split("/")
+                if (partes.length === 3) {
+                  const [dia, mes, ano] = partes
+                  data = `${ano}-${mes}-${dia}`
+                }
+              } else {
+                data = dataBruta
               }
-            } else {
-              data = dataBruta
             }
 
+            // 🔥 fallback Tecnofit → Período
+            if (!data && item["Período"]) {
+              const periodo = String(item["Período"])
+              const partes = periodo.split("-")
+
+              if (partes.length > 0) {
+                const inicio = partes[0].trim()
+
+                if (inicio.includes("/")) {
+                  const [dia, mes, ano] = inicio.split("/")
+                  data = `${ano}-${mes}-${dia}`
+                }
+              }
+            }
+
+            // 🔥 fallback final (NUNCA PERDE DADO)
+            if (!data) {
+              console.log("⚠️ usando data atual:", item)
+              data = new Date().toISOString().split("T")[0]
+            }
+
+            // =========================
             // 🔥 DESCRIÇÃO
+            // =========================
             const descricao =
               item["Descrição"] ||
               item["Aluno"] ||
@@ -75,7 +99,9 @@ export default function Importar() {
               item["Fornecedor"] ||
               item["Histórico"]
 
+            // =========================
             // 🔥 VALOR
+            // =========================
             const valorBruto =
               item["Valor"] ||
               item["Valor Total"] ||
@@ -102,7 +128,9 @@ export default function Importar() {
               return null
             }
 
+            // =========================
             // 🔥 CATEGORIA
+            // =========================
             let categoria = "outros"
             const desc = descricao?.toLowerCase() || ""
 
@@ -156,7 +184,6 @@ export default function Importar() {
     <div className="p-10 text-white">
       <h1 className="text-3xl mb-6">Importar Dados</h1>
 
-      {/* SELECT */}
       {academias.length > 1 && (
         <select
           value={academiaId}
