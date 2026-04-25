@@ -59,6 +59,18 @@ export default function Importar() {
               .trim()
           )
 
+           let categoria = "outros"
+
+           if (descricao?.toLowerCase().includes("mensalidade")) {
+             categoria = "recorrencia"
+           } else if (descricao?.toLowerCase().includes("plano")) {
+             categoria = "recorrencia"
+           } else if (descricao?.toLowerCase().includes("ifood")) {
+             categoria = "agregador"
+           } else if (descricao?.toLowerCase().includes("app")) {
+             categoria = "agregador"
+           }
+
           return {
             data: data,
             descricao: descricao,
