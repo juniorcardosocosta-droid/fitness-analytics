@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Papa from "papaparse"
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "../../../lib/supabaseClient"
 
 export default function Importar() {
 
