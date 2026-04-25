@@ -158,7 +158,9 @@ export default function Importar() {
         const sheet = workbook.Sheets[workbook.SheetNames[0]]
 
         // 🔥 AQUI ESTÁ O SEGREDO: SEM RANGE
-        const jsonData = XLSX.utils.sheet_to_json(sheet)
+        const jsonData = XLSX.utils.sheet_to_json(sheet, {
+          range: 1
+        })  
 
         await processarDados(jsonData, tipo)
 
