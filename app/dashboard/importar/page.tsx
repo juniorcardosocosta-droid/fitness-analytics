@@ -8,7 +8,7 @@ import { supabase } from "../../../lib/supabaseClient"
 export default function Importar() {
   const [loading, setLoading] = useState(false)
   const [academias, setAcademias] = useState<any[]>([])
-  const [academiaId, setAcademiaId] = useState("")
+  const [academiaId, setAcademiaId] = useState<string>("")
 
   useEffect(() => {
     async function loadAcademias() {
@@ -28,113 +28,111 @@ export default function Importar() {
 
   async function processarDados(dados: any[], tipo: "receita" | "despesa") {
 
+    const parseNumero = (v: any): number => {
+      if (!v) return 0
+
+      return Number(
+        String(v)
+          .replace("R$", "")
+          .replace(/\./g, "")
+          .replace(",", ".")
+          .trim()
+      )
+    }
+
     const dadosConvertidos = dados
       .map((item: any) => {
 
-         const itemLimpo: any = {}
+        // 🔥 LIMPA HEADERS
+        const itemLimpo: any = {}
 
-         Object.keys(item).forEach((key) => {
-           const novaKey = key.trim().replace(/\s+/g, " ")
-           itemLimpo[novaKey] = item[key]
-         })  
+        Object.keys(item).forEach((key) => {
+          const novaKey = key.trim().replace(/\s+/g, " ")
+          itemLimpo[novaKey] = item[key]
+        })
 
-          const valores = Object.values(itemLimpo)
-
-        const temHeader =
-          item["Descrição"] ||
-          item["Valor Pago"] ||
-          item["Valor Total"]
+        const valores = Object.values(itemLimpo)
 
         // ======================
         // 🔥 DESCRIÇÃO
         // ======================
-        let descricao = null
-
-        if (temHeader) {
-          descricao =
-            item["Descrição"] ||
-            item["Cliente"] ||
-            item["Fornecedor"]
-        } else {
-          descricao = valores[1]
-        }
+        const descricao: string =
+          itemLimpo["Descrição"] ||
+          itemLimpo["Cliente"] ||
+          itemLimpo["Fornecedor"] ||
+          String(valores[1] || "")
 
         // ======================
-        // 🔥 VALOR
+        // 🔥 VALORES
         // ======================
-        let valorBruto = null
+        const valorLiquidoBruto =
+          itemLimpo["Valor Líquido"] ||
+          itemLimpo["Valor Liquido"]
 
-        if (temHeader) {
-          valorBruto =
-            item["Valor Pago"] ||
-            item["Valor Total"] ||
-            item["Valor"]
-        } else {
-          valorBruto = valores.find((v: any) =>
-            String(v).includes("R$")
-          )
-        }
+        const valorBrutoBruto =
+          itemLimpo["Valor Bruto"]
 
-        if (!valorBruto) {
+        const taxaBruta =
+          itemLimpo["Valor Taxa"]
+
+        const fallbackValor =
+          itemLimpo["Valor Pago"] ||
+          itemLimpo["Valor Total"] ||
+          itemLimpo["Valor"]
+
+        const valorFinal = valorLiquidoBruto || fallbackValor
+
+        if (!valorFinal) {
           console.log("❌ sem valor:", item)
           return null
         }
 
-        const valor = Number(
-          String(valorBruto)
-            .replace("R$", "")
-            .replace(/\./g, "")
-            .replace(",", ".")
-            .trim()
-        )
+        const valor = parseNumero(valorFinal)
+        const valorBruto = valorBrutoBruto ? parseNumero(valorBrutoBruto) : valor
+        const taxa = taxaBruta ? parseNumero(taxaBruta) : 0
 
-        if (isNaN(valor)) {
-          console.log("❌ valor inválido:", valorBruto)
-          return null
-        }
+        if (isNaN(valor)) return null
 
         // ======================
         // 🔥 DATA
         // ======================
-        let dataBruta = null
+        const dataBruta =
+          itemLimpo["Data Crédito"] ||
+          itemLimpo["Data Pagamento"] ||
+          itemLimpo["Data Recebimento"] ||
+          valores.find((v: any) => String(v).includes("/"))
 
-        if (temHeader) {
-          dataBruta =
-            item["Data Pagamento"] ||
-            item["Data Vencimento"]
-        } else {
-          dataBruta = valores.find((v: any) =>
-            String(v).includes("/")
-          )
-        }
+        let data: string
 
-        let data = null
+        if (dataBruta) {
+          const valor = String(dataBruta)
 
-        if (dataBruta && String(dataBruta).includes("/")) {
-          const partes = String(dataBruta).split("/")
+          const partes = valor.includes("/")
+            ? valor.split("/")
+            : valor.split("-")
+
           if (partes.length === 3) {
             const [dia, mes, ano] = partes
-            data = `${ano}-${mes}-${dia}`
+            data = `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`
+          } else {
+            data = new Date().toISOString().split("T")[0]
           }
-        }
-
-        if (!data) {
-          console.log("⚠️ usando data atual:", item)
+        } else {
           data = new Date().toISOString().split("T")[0]
         }
 
         // ======================
         // 🔥 CATEGORIA
         // ======================
-        let categoria = "outros"
-        const desc = descricao?.toLowerCase() || ""
+        let categoria: string = "outros"
+        const desc = descricao.toLowerCase()
 
-        if (desc.includes("mensalidade") || desc.includes("plano")) {
+        if (desc.includes("plano") || desc.includes("mensalidade")) {
           categoria = "recorrencia"
         } else if (
-          desc.includes("ifood") ||
+          desc.includes("online") ||
           desc.includes("app") ||
-          desc.includes("online")
+          desc.includes("ifood")
         ) {
           categoria = "agregador"
         }
@@ -145,6 +143,8 @@ export default function Importar() {
           tipo,
           categoria,
           valor,
+          valor_bruto: valorBruto,
+          taxa,
           academia_id: academiaId,
         }
       })
@@ -180,9 +180,6 @@ export default function Importar() {
 
     const nome = file.name.toLowerCase()
 
-    // ======================
-    // 🔥 CSV
-    // ======================
     if (nome.endsWith(".csv")) {
 
       Papa.parse(file, {
@@ -190,7 +187,6 @@ export default function Importar() {
         skipEmptyLines: true,
         transformHeader: (h) => h.trim(),
         complete: async (results) => {
-          console.log("📊 CSV:", results.data)
           await processarDados(results.data, tipo)
           setLoading(false)
         }
@@ -198,9 +194,6 @@ export default function Importar() {
 
     } else {
 
-      // ======================
-      // 🔥 EXCEL
-      // ======================
       const reader = new FileReader()
 
       reader.onload = async (e) => {
@@ -211,10 +204,9 @@ export default function Importar() {
         const sheet = workbook.Sheets[workbook.SheetNames[0]]
 
         const jsonData = XLSX.utils.sheet_to_json(sheet, {
-          range: 2 // pula as 2 primeiras linhas
-        })  
-
-        console.log("📊 EXCEL:", jsonData)
+          range: 2,
+          defval: null
+        })
 
         await processarDados(jsonData, tipo)
 
@@ -229,20 +221,18 @@ export default function Importar() {
     <div className="p-10 text-white">
       <h1 className="text-3xl mb-6">Importar Dados</h1>
 
-      {academias.length > 1 && (
-        <select
-          value={academiaId}
-          onChange={(e) => setAcademiaId(e.target.value)}
-          className="bg-[#0f1c33] border border-gray-700 px-4 py-2 rounded mb-6"
-        >
-          <option value="">Selecione a academia</option>
-          {academias.map((a) => (
-            <option key={a.id} value={a.id}>
-              {a.nome}
-            </option>
-          ))}
-        </select>
-      )}
+      <select
+        value={academiaId}
+        onChange={(e) => setAcademiaId(e.target.value)}
+        className="bg-[#0f1c33] border border-gray-700 px-4 py-2 rounded mb-6"
+      >
+        <option value="">Selecione a academia</option>
+        {academias.map((a) => (
+          <option key={a.id} value={a.id}>
+            {a.nome}
+          </option>
+        ))}
+      </select>
 
       <div className="mb-6">
         <p>Importar RECEITAS</p>
