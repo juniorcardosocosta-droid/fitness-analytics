@@ -8,8 +8,30 @@ export default function Dashboard() {
 
   const router = useRouter()
   const [dados, setDados] = useState<any[]>([])
+  const [academias, setAcademias] = useState<any[]>([])
+  const [academiaId, setAcademiaId] = useState("")
+  
   const [mesSelecionado, setMesSelecionado] = useState("")
   const [anoSelecionado, setAnoSelecionado] = useState("")
+
+  useEffect(() => {
+  async function loadAcademias() {
+    const { data } = await supabase
+      .from("academias")
+      .select("*")
+
+    if (data) {
+      setAcademias(data)
+
+      // se tiver só 1 academia
+      if (data.length === 1) {
+        setAcademiaId(data[0].id)
+      }
+    }
+  }
+
+  loadAcademias()
+}, [])
 
   // LOGIN
   useEffect(() => {
@@ -24,21 +46,28 @@ export default function Dashboard() {
 
   // BUSCAR DADOS
   useEffect(() => {
-    async function carregarDados() {
-      const { data, error } = await supabase
-        .from("lancamentos")
-        .select("*")
+  async function carregarDados() {
 
-      if (error) {
-        console.error(error)
-        return
-      }
+    let query = supabase
+      .from("lancamentos")
+      .select("*")
 
-      setDados(data || [])
+    if (academiaId) {
+      query = query.eq("academia_id", academiaId)
     }
 
-    carregarDados()
-  }, [])
+    const { data, error } = await query
+
+    if (error) {
+      console.error(error)
+      return
+    }
+
+    setDados(data || [])
+  }
+
+  carregarDados()
+}, [academiaId])
 
   // ANOS DINÂMICOS
   const anosDisponiveis = [...new Set(
@@ -93,6 +122,21 @@ export default function Dashboard() {
       </div>
 
       {/* FILTROS */}
+      {academias.length > 1 && (
+  <select
+    value={academiaId}
+    onChange={(e) => setAcademiaId(e.target.value)}
+    className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg mb-4"
+  >
+    <option value="">Todas as academias</option>
+
+    {academias.map((a) => (
+      <option key={a.id} value={a.id}>
+        {a.nome}
+      </option>
+    ))}
+  </select>
+)}
 
       <div className="flex gap-4 mb-10">
 
