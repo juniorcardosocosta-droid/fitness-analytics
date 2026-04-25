@@ -207,7 +207,6 @@ export default function Importar() {
         const sheet = workbook.Sheets[workbook.SheetNames[0]]
 
         const jsonData = XLSX.utils.sheet_to_json(sheet, {
-          range: 2,
           defval: null
         })
 
