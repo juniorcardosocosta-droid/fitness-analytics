@@ -41,7 +41,7 @@ export default function Dashboard() {
   async function carregarDados() {
 
     const { data, error } = await supabase
-      .from("dados_mensais")
+      .from("lancamentos")
       .select("*")
 
     if (error) {
@@ -72,9 +72,13 @@ const dadosFiltrados = dadosApi?.data?.filter((item: any) => {
   return item.mes === mesFiltro && item.ano === anoFiltro
 }) || []
 
-const faturamento = dadosFiltrados.reduce((total: any, item: any) => {
-  return total + Number(item.faturamento || 0)
-}, 0) 
+const dados = dadosApi?.data || []
+
+const faturamento = dados
+  .filter((item: any) => item.tipo === "receita")
+  .reduce((total: number, item: any) => {
+    return total + Number(item.valor || 0)
+  }, 0)
  const faturamentoAnterior = 32000
 
  const alunos = 320
