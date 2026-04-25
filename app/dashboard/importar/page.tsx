@@ -16,7 +16,6 @@ export default function Importar() {
 
       if (data) {
         setAcademias(data)
-
         if (data.length === 1) {
           setAcademiaId(data[0].id)
         }
@@ -26,28 +25,32 @@ export default function Importar() {
     loadAcademias()
   }, [])
 
+  const parseNumero = (v: any): number => {
+    if (!v) return 0
+    return Number(
+      String(v)
+        .replace("R$", "")
+        .replace(/\./g, "")
+        .replace(",", ".")
+        .trim()
+    )
+  }
+
   async function processarDados(dados: any[], tipo: "receita" | "despesa") {
-
-    const parseNumero = (v: any): number => {
-      if (!v) return 0
-
-      return Number(
-        String(v)
-          .replace("R$", "")
-          .replace(/\./g, "")
-          .replace(",", ".")
-          .trim()
-      )
-    }
 
     const dadosConvertidos = dados
       .map((item: any) => {
 
-        // 🔥 LIMPA HEADERS
+        // 🔥 NORMALIZA COLUNAS (PADRÃO PROFISSIONAL)
         const itemLimpo: any = {}
 
         Object.keys(item).forEach((key) => {
-          const novaKey = key.trim().replace(/\s+/g, " ")
+          const novaKey = key
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .trim()
+
           itemLimpo[novaKey] = item[key]
         })
 
@@ -57,30 +60,29 @@ export default function Importar() {
         // 🔥 DESCRIÇÃO
         // ======================
         const descricao: string =
-          itemLimpo["Descrição"] ||
-          itemLimpo["Cliente"] ||
-          itemLimpo["Fornecedor"] ||
+          itemLimpo["descricao"] ||
+          itemLimpo["cliente"] ||
+          itemLimpo["fornecedor"] ||
           String(valores[1] || "")
 
         // ======================
         // 🔥 VALORES
         // ======================
-        const valorLiquidoBruto =
-          itemLimpo["Valor Líquido"] ||
-          itemLimpo["Valor Liquido"]
+        const valorLiquido =
+          itemLimpo["valor liquido"]
 
-        const valorBrutoBruto =
-          itemLimpo["Valor Bruto"]
+        const valorBrutoRaw =
+          itemLimpo["valor bruto"]
 
-        const taxaBruta =
-          itemLimpo["Valor Taxa"]
+        const taxaRaw =
+          itemLimpo["valor taxa"]
 
-        const fallbackValor =
-          itemLimpo["Valor Pago"] ||
-          itemLimpo["Valor Total"] ||
-          itemLimpo["Valor"]
+        const fallback =
+          itemLimpo["valor pago"] ||
+          itemLimpo["valor total"] ||
+          itemLimpo["valor"]
 
-        const valorFinal = valorLiquidoBruto || fallbackValor
+        const valorFinal = valorLiquido || fallback
 
         if (!valorFinal) {
           console.log("❌ sem valor:", item)
@@ -88,28 +90,26 @@ export default function Importar() {
         }
 
         const valor = parseNumero(valorFinal)
-        const valorBruto = valorBrutoBruto ? parseNumero(valorBrutoBruto) : valor
-        const taxa = taxaBruta ? parseNumero(taxaBruta) : 0
-
-        if (isNaN(valor)) return null
+        const valorBruto = valorBrutoRaw ? parseNumero(valorBrutoRaw) : valor
+        const taxa = taxaRaw ? parseNumero(taxaRaw) : 0
 
         // ======================
-        // 🔥 DATA
+        // 🔥 DATA (CORRETA)
         // ======================
         const dataBruta =
-          itemLimpo["Data Crédito"] ||
-          itemLimpo["Data Pagamento"] ||
-          itemLimpo["Data Recebimento"] ||
+          itemLimpo["data credito"] ||
+          itemLimpo["data pagamento"] ||
+          itemLimpo["data recebimento"] ||
           valores.find((v: any) => String(v).includes("/"))
 
         let data: string
 
         if (dataBruta) {
-          const valor = String(dataBruta)
+          const valorData = String(dataBruta)
 
-          const partes = valor.includes("/")
-            ? valor.split("/")
-            : valor.split("-")
+          const partes = valorData.includes("/")
+            ? valorData.split("/")
+            : valorData.split("-")
 
           if (partes.length === 3) {
             const [dia, mes, ano] = partes
@@ -124,7 +124,7 @@ export default function Importar() {
         // ======================
         // 🔥 CATEGORIA
         // ======================
-        let categoria: string = "outros"
+        let categoria = "outros"
         const desc = descricao.toLowerCase()
 
         if (desc.includes("plano") || desc.includes("mensalidade")) {
@@ -157,6 +157,12 @@ export default function Importar() {
       return
     }
 
+    // 🔥 LIMPA ANTES DE IMPORTAR (EVITA DUPLICIDADE)
+    await supabase
+      .from("lancamentos")
+      .delete()
+      .eq("academia_id", academiaId)
+
     const { error } = await supabase
       .from("lancamentos")
       .insert(dadosConvertidos)
@@ -181,7 +187,6 @@ export default function Importar() {
     const nome = file.name.toLowerCase()
 
     if (nome.endsWith(".csv")) {
-
       Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
@@ -191,9 +196,7 @@ export default function Importar() {
           setLoading(false)
         }
       })
-
     } else {
-
       const reader = new FileReader()
 
       reader.onload = async (e) => {
