@@ -47,10 +47,19 @@ export default function Importar() {
           .map((item: any) => {
 
             // 🔹 CAMPOS FLEXÍVEIS (TECNOFIT + OUTROS)
-            const data =
+            const dataBruta =
               item["Data"] ||
               item["Vencimento"] ||
               item["Data de Vencimento"]
+
+            let data = null
+            
+            if (dataBruta && dataBruta.includes("/")) {
+              const [dia, mes, ano] = dataBruta.split("/")
+              data = `${ano}-${mes}-${dia}`
+            } else {
+              data = dataBruta
+            }    
 
             const descricao =
               item["Descrição"] ||
