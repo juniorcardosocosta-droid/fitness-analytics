@@ -5,16 +5,13 @@ import Papa from "papaparse"
 import { supabase } from "../../../lib/supabaseClient"
 
 export default function Importar() {
-
   const [loading, setLoading] = useState(false)
   const [academias, setAcademias] = useState<any[]>([])
   const [academiaId, setAcademiaId] = useState("")
 
   useEffect(() => {
     async function loadAcademias() {
-      const { data } = await supabase
-        .from("academias")
-        .select("*")
+      const { data } = await supabase.from("academias").select("*")
 
       if (data) {
         setAcademias(data)
@@ -28,8 +25,8 @@ export default function Importar() {
     loadAcademias()
   }, [])
 
-
   async function handleFile(file: File, tipo: "receita" | "despesa") {
+    console.log("🔥 HANDLE FILE EXECUTOU")
 
     if (!academiaId) {
       alert("Selecione uma academia antes de importar")
@@ -42,13 +39,11 @@ export default function Importar() {
       header: true,
       skipEmptyLines: true,
       complete: async (results) => {
+        console.log("📊 RESULTADOS BRUTOS:", results.data)
 
         const dadosConvertidos = results.data
           .map((item: any) => {
-
-            // =========================
-            // 🔥 DATA (CORRIGIDO)
-            // =========================
+            // 🔥 DATA
             const dataBruta =
               item["Data"] ||
               item["Vencimento"] ||
@@ -63,6 +58,7 @@ export default function Importar() {
 
             if (String(dataBruta).includes("/")) {
               const partes = String(dataBruta).split("/")
+
               if (partes.length === 3) {
                 const [dia, mes, ano] = partes
                 data = `${ano}-${mes}-${dia}`
@@ -71,9 +67,7 @@ export default function Importar() {
               data = dataBruta
             }
 
-            // =========================
             // 🔥 DESCRIÇÃO
-            // =========================
             const descricao =
               item["Descrição"] ||
               item["Aluno"] ||
@@ -81,9 +75,7 @@ export default function Importar() {
               item["Fornecedor"] ||
               item["Histórico"]
 
-            // =========================
             // 🔥 VALOR
-            // =========================
             const valorBruto =
               item["Valor"] ||
               item["Valor Total"] ||
@@ -110,16 +102,13 @@ export default function Importar() {
               return null
             }
 
-            // =========================
             // 🔥 CATEGORIA
-            // =========================
             let categoria = "outros"
             const desc = descricao?.toLowerCase() || ""
 
             if (desc.includes("mensalidade") || desc.includes("plano")) {
               categoria = "recorrencia"
-            } 
-            else if (
+            } else if (
               desc.includes("ifood") ||
               desc.includes("app") ||
               desc.includes("online")
@@ -133,29 +122,20 @@ export default function Importar() {
               tipo,
               categoria,
               valor,
-              academia_id: academiaId
+              academia_id: academiaId,
             }
           })
           .filter(Boolean)
 
-        // =========================
-        // 🔥 DEBUG
-        // =========================
-        console.log("TOTAL REGISTROS:", dadosConvertidos.length)
-        console.log("DADOS:", dadosConvertidos)
+        console.log("✅ TOTAL REGISTROS:", dadosConvertidos.length)
+        console.log("📦 DADOS FINAL:", dadosConvertidos)
 
-        // =========================
-        // 🚫 BLOQUEAR SE VAZIO
-        // =========================
         if (dadosConvertidos.length === 0) {
-          alert("Nenhum dado válido foi encontrado no arquivo")
+          alert("Nenhum dado válido encontrado")
           setLoading(false)
           return
         }
 
-        // =========================
-        // 🔥 INSERT
-        // =========================
         const { error } = await supabase
           .from("lancamentos")
           .insert(dadosConvertidos)
@@ -164,20 +144,19 @@ export default function Importar() {
           console.error(error)
           alert("Erro ao importar")
         } else {
-          alert("Importação concluída!")
+          alert("Importação concluída com sucesso!")
         }
 
         setLoading(false)
-      }
+      },
     })
   }
 
   return (
     <div className="p-10 text-white">
-
       <h1 className="text-3xl mb-6">Importar Dados</h1>
 
-      {/* SELECT ACADEMIA */}
+      {/* SELECT */}
       {academias.length > 1 && (
         <select
           value={academiaId}
@@ -194,54 +173,43 @@ export default function Importar() {
         </select>
       )}
 
-      {/* RECEITAS */}
+      {/* RECEITA */}
       <div className="mb-6">
         <p className="mb-2">Importar RECEITAS</p>
 
-        <label className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg cursor-pointer inline-block">
-          Selecionar Arquivo
+        <input
+          type="file"
+          accept=".csv"
+          onChange={(e) => {
+            console.log("📁 arquivo selecionado RECEITA")
 
-          <input
-            type="file"
-            accept=".csv"
-            className="hidden"
-            onChange={(e) => {
-              console.log("📁 arquivo selecionado")
-
-              if (e.target.files?.[0]) {
-                console.log("🔥 chamando handleFile")
-                handleFile(e.target.files[0], "receita")
-              }
-            }}
-          />
-        </label>
+            if (e.target.files?.[0]) {
+              handleFile(e.target.files[0], "receita")
+            }
+          }}
+          className="bg-white text-black p-2 rounded"
+        />
       </div>
 
-      {/* DESPESAS */}
+      {/* DESPESA */}
       <div>
         <p className="mb-2">Importar DESPESAS</p>
 
-        <label className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg cursor-pointer inline-block">
-          Selecionar Arquivo
+        <input
+          type="file"
+          accept=".csv"
+          onChange={(e) => {
+            console.log("📁 arquivo selecionado DESPESA")
 
-          <input
-            type="file"
-            accept=".csv"
-            className="hidden"
-            onChange={(e) => {
-              console.log("📁 arquivo selecionado")
-              
-              if (e.target.files?.[0]) {
-               console.log("🔥 chamando handleFile")  
-                handleFile(e.target.files[0], "despesa")
-              }
-            }}
-          />
-        </label>
+            if (e.target.files?.[0]) {
+              handleFile(e.target.files[0], "despesa")
+            }
+          }}
+          className="bg-white text-black p-2 rounded"
+        />
       </div>
 
       {loading && <p className="mt-4">Importando...</p>}
-
     </div>
   )
 }
