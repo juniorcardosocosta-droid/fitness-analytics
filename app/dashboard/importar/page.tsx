@@ -46,21 +46,34 @@ export default function Importar() {
         const dadosConvertidos = results.data
           .map((item: any) => {
 
-            // 🔹 CAMPOS FLEXÍVEIS (TECNOFIT + OUTROS)
+            // =========================
+            // 🔥 DATA (CORRIGIDO)
+            // =========================
             const dataBruta =
               item["Data"] ||
               item["Vencimento"] ||
               item["Data de Vencimento"]
 
-            let data = null
-            
-            if (dataBruta && dataBruta.includes("/")) {
-              const [dia, mes, ano] = dataBruta.split("/")
-              data = `${ano}-${mes}-${dia}`
+            if (!dataBruta) {
+              console.log("❌ sem data:", item)
+              return null
+            }
+
+            let data = ""
+
+            if (String(dataBruta).includes("/")) {
+              const partes = String(dataBruta).split("/")
+              if (partes.length === 3) {
+                const [dia, mes, ano] = partes
+                data = `${ano}-${mes}-${dia}`
+              }
             } else {
               data = dataBruta
-            }    
+            }
 
+            // =========================
+            // 🔥 DESCRIÇÃO
+            // =========================
             const descricao =
               item["Descrição"] ||
               item["Aluno"] ||
@@ -68,16 +81,22 @@ export default function Importar() {
               item["Fornecedor"] ||
               item["Histórico"]
 
+            // =========================
+            // 🔥 VALOR
+            // =========================
             const valorBruto =
               item["Valor"] ||
               item["Valor Total"] ||
               item["Valor Original"] ||
-              item["Valor Pago"]
+              item["Valor Pago"] ||
+              item["Recebido"] ||
+              item["Pago"]
 
-            // 🔹 IGNORA LINHAS INVÁLIDAS
-            if (!valorBruto) return null
+            if (!valorBruto) {
+              console.log("❌ sem valor:", item)
+              return null
+            }
 
-            // 🔹 CONVERSÃO DE VALOR
             const valor = Number(
               String(valorBruto)
                 .replace("R$", "")
@@ -86,7 +105,14 @@ export default function Importar() {
                 .trim()
             )
 
-            // 🔹 CLASSIFICAÇÃO INTELIGENTE
+            if (isNaN(valor)) {
+              console.log("❌ valor inválido:", valorBruto)
+              return null
+            }
+
+            // =========================
+            // 🔥 CATEGORIA
+            // =========================
             let categoria = "outros"
             const desc = descricao?.toLowerCase() || ""
 
@@ -112,6 +138,24 @@ export default function Importar() {
           })
           .filter(Boolean)
 
+        // =========================
+        // 🔥 DEBUG
+        // =========================
+        console.log("TOTAL REGISTROS:", dadosConvertidos.length)
+        console.log("DADOS:", dadosConvertidos)
+
+        // =========================
+        // 🚫 BLOQUEAR SE VAZIO
+        // =========================
+        if (dadosConvertidos.length === 0) {
+          alert("Nenhum dado válido foi encontrado no arquivo")
+          setLoading(false)
+          return
+        }
+
+        // =========================
+        // 🔥 INSERT
+        // =========================
         const { error } = await supabase
           .from("lancamentos")
           .insert(dadosConvertidos)
@@ -133,7 +177,7 @@ export default function Importar() {
 
       <h1 className="text-3xl mb-6">Importar Dados</h1>
 
-      {/* SELECT DE ACADEMIA */}
+      {/* SELECT ACADEMIA */}
       {academias.length > 1 && (
         <select
           value={academiaId}
@@ -152,10 +196,10 @@ export default function Importar() {
 
       {/* RECEITAS */}
       <div className="mb-6">
-        <p className="mb-2">Importar RECEITAS (Contas a Receber)</p>
+        <p className="mb-2">Importar RECEITAS</p>
 
         <label className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg cursor-pointer inline-block">
-          Selecionar Arquivo de Receitas
+          Selecionar Arquivo
 
           <input
             type="file"
@@ -172,10 +216,10 @@ export default function Importar() {
 
       {/* DESPESAS */}
       <div>
-        <p className="mb-2">Importar DESPESAS (Contas a Pagar)</p>
+        <p className="mb-2">Importar DESPESAS</p>
 
         <label className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg cursor-pointer inline-block">
-          Selecionar Arquivo de Despesas
+          Selecionar Arquivo
 
           <input
             type="file"
