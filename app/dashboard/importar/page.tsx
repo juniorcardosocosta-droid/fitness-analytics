@@ -31,7 +31,14 @@ export default function Importar() {
     const dadosConvertidos = dados
       .map((item: any) => {
 
-        const valores = Object.values(item)
+         const itemLimpo: any = {}
+
+         Object.keys(item).forEach((key) => {
+           const novaKey = key.trim().replace(/\s+/g, " ")
+           itemLimpo[novaKey] = item[key]
+         })  
+
+          const valores = Object.values(itemLimpo)
 
         const temHeader =
           item["Descrição"] ||
