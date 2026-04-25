@@ -210,7 +210,9 @@ export default function Importar() {
         const workbook = XLSX.read(data, { type: "array" })
         const sheet = workbook.Sheets[workbook.SheetNames[0]]
 
-        const jsonData = XLSX.utils.sheet_to_json(sheet)
+        const jsonData = XLSX.utils.sheet_to_json(sheet, {
+          range: 2 // pula as 2 primeiras linhas
+        })  
 
         console.log("📊 EXCEL:", jsonData)
 
