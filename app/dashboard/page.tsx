@@ -66,11 +66,6 @@ const anoAtual = hoje.getFullYear()
 const mesFiltro = mesAplicado ? Number(mesAplicado) : mesAtual
 const anoFiltro = anoAplicado ? Number(anoAplicado) : anoAtual
 
-const dadosFiltrados = dadosApi?.data?.filter((item: any) => {
-  if (!item.mes || !item.ano) return false
-
-  return item.mes === mesFiltro && item.ano === anoFiltro
-}) || []
 
 const dados = dadosApi?.data || []
 
