@@ -112,32 +112,32 @@ export default function Dashboard() {
           }
         }
 
-        const valor = Number(item.valor || 0)
-
         // 🔥 USA SOMENTE A COLUNA CERTA
         const texto = String(item.forma || item.Forma || "").toLowerCase()
+        const valor = Number(item.valor || 0)
 
-        // RECORRÊNCIA
-        if (
-          texto.includes("plano") ||
-          texto.includes("mensal")
-        ) {
-          acc[mesNumero].recorrencia += valor
-        }
+// 🔥 AGREGADOR (cartão)
+if (
+  texto.includes("cart") ||
+  texto.includes("credito") ||
+  texto.includes("débito") ||
+  texto.includes("debito")
+) {
+  acc[mesNumero].agregador += valor
+}
 
-        // AGREGADOR (cartão)
-        else if (
-          texto.includes("cart") ||
-          texto.includes("credito") ||
-          texto.includes("debito")
-        ) {
-          acc[mesNumero].agregador += valor
-        }
+// 🔥 OUTROS (pix e dinheiro)
+else if (
+  texto.includes("pix") ||
+  texto.includes("dinheiro")
+) {
+  acc[mesNumero].outros += valor
+}
 
-        // OUTROS (pix etc)
-        else {
-          acc[mesNumero].outros += valor
-        }
+// 🔥 RECORRÊNCIA (TODO O RESTO)
+else {
+  acc[mesNumero].recorrencia += valor
+}
 
         return acc
 
