@@ -86,12 +86,17 @@ export default function Dashboard() {
     return true
   })
 
-  // ================= FATURAMENTO =================
-  const faturamento = dadosFiltrados
-    .filter((item: any) => item.tipo === "receita")
-    .reduce((total: number, item: any) => {
-      return total + Number(item.valor || 0)
-    }, 0)
+  // ================= INDICADORES =================
+  const receitas = dadosFiltrados.filter((i:any)=> i.tipo === "receita")
+  const despesasLista = dadosFiltrados.filter((i:any)=> i.tipo === "despesa")
+
+  const receita = receitas.reduce((t,i)=> t + Number(i.valor || 0), 0)
+  const despesa = despesasLista.reduce((t,i)=> t + Number(i.valor || 0), 0)
+  const resultado = receita - despesa
+
+  const ticketMedio = receitas.length
+    ? receita / receitas.length
+    : 0
 
   // ================= GRÁFICO =================
   const dadosGrafico = Object.values(
@@ -113,32 +118,22 @@ export default function Dashboard() {
           }
         }
 
-        // 🔥 USA SOMENTE A COLUNA CERTA
         const texto = String(item.origem || "").toLowerCase()
         const valor = Number(item.valor || 0)
 
-
-        // 🔥 AGREGADOR (cartão)
         if (
           texto.includes("cart") ||
           texto.includes("credito") ||
-          texto.includes("débito") ||
           texto.includes("debito")
         ) {
           acc[mesNumero].agregador += valor
-        }
-
-        // 🔥 OUTROS (pix e dinheiro)
-        else if (
+        } else if (
           texto.includes("pix") ||
           texto.includes("dinheiro")
         ) {
           acc[mesNumero].outros += valor
-        }
-
-        // 🔥 RECORRÊNCIA (TODO O RESTO)
-        else {
-           acc[mesNumero].recorrencia += valor
+        } else {
+          acc[mesNumero].recorrencia += valor
         }
 
         return acc
@@ -151,20 +146,6 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
 
       <h1 className="text-4xl font-bold mb-10">Dashboard</h1>
-
-      {/* ACADEMIA */}
-      {academias.length > 1 && (
-        <select
-          value={academiaId}
-          onChange={(e) => setAcademiaId((e.target as any).value)}
-          className="bg-[#0f1c33] border px-4 py-2 rounded mb-4"
-        >
-          <option value="">Todas as academias</option>
-          {academias.map((a: any) => (
-            <option key={a.id} value={a.id}>{a.nome}</option>
-          ))}
-        </select>
-      )}
 
       {/* FILTROS */}
       <div className="flex gap-4 mb-10">
@@ -193,54 +174,70 @@ export default function Dashboard() {
         </select>
       </div>
 
-      {/* FATURAMENTO */}
-      <div className="bg-[#0f1c33] p-6 rounded mb-10">
-        <p className="text-gray-400">Faturamento</p>
-        <h2 className="text-3xl text-green-400">
-          R$ {faturamento.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-        </h2>
+      {/* CARDS */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Receita</p>
+          <h2 className="text-2xl font-bold text-green-400">
+            R$ {receita.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+          </h2>
+        </div>
+
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Despesas</p>
+          <h2 className="text-2xl font-bold text-red-400">
+            R$ {despesa.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+          </h2>
+        </div>
+
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Resultado</p>
+          <h2 className={`text-2xl font-bold ${resultado >= 0 ? "text-green-400" : "text-red-400"}`}>
+            R$ {resultado.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+          </h2>
+        </div>
+
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Ticket Médio</p>
+          <h2 className="text-2xl font-bold text-blue-400">
+            R$ {ticketMedio.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+          </h2>
+        </div>
+
       </div>
 
       {/* GRÁFICO */}
       <div className="bg-[#0f1c33] p-6 rounded">
 
-  <h2 className="mb-4">Receitas por Categoria</h2>
+        <h2 className="mb-4">Receitas por Categoria</h2>
 
-  <ResponsiveContainer width="100%" height={350}>
-    <BarChart data={dadosGrafico} barGap={10}>
+        <ResponsiveContainer width="100%" height={350}>
+          <BarChart data={dadosGrafico} barGap={10}>
 
-      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+            <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+            <XAxis dataKey="mes" stroke="#94a3b8" />
+            <YAxis stroke="#94a3b8" />
 
-      <XAxis dataKey="mes" stroke="#94a3b8" />
-      <YAxis stroke="#94a3b8" />
+            <Tooltip />
+            <Legend />
 
-      <Tooltip
-        contentStyle={{
-          backgroundColor: "#020617",
-          border: "none",
-          borderRadius: "8px"
-        }}
-        labelStyle={{ color: "#fff" }}
-      />
+            <Bar dataKey="outros" fill="#2563eb">
+              <LabelList dataKey="outros" position="top" formatter={(v) => Number(v).toLocaleString("pt-BR")} />
+            </Bar>
 
-      <Legend wrapperStyle={{ color: "#ccc" }} />
+            <Bar dataKey="agregador" fill="#94a3b8">
+              <LabelList dataKey="agregador" position="top" formatter={(v) => Number(v).toLocaleString("pt-BR")} />
+            </Bar>
 
-      <Bar dataKey="outros" fill="#2563eb" radius={[6,6,0,0]}>
-        <LabelList dataKey="outros" position="top" formatter={(v) => Number(v).toLocaleString("pt-BR")} fill="#93c5fd" />
-      </Bar>
+            <Bar dataKey="recorrencia" fill="#16a34a">
+              <LabelList dataKey="recorrencia" position="top" formatter={(v) => Number(v).toLocaleString("pt-BR")} />
+            </Bar>
 
-      <Bar dataKey="agregador" fill="#94a3b8" radius={[6,6,0,0]}>
-        <LabelList dataKey="agregador" position="top" formatter={(v) => Number(v).toLocaleString("pt-BR")} fill="#e5e7eb" />
-      </Bar>
+          </BarChart>
+        </ResponsiveContainer>
 
-      <Bar dataKey="recorrencia" fill="#16a34a" radius={[6,6,0,0]}>
-        <LabelList dataKey="recorrencia" position="top" formatter={(v) => Number(v).toLocaleString("pt-BR")} fill="#86efac" />
-      </Bar>
-
-    </BarChart>
-  </ResponsiveContainer>
-
-</div>
+      </div>
 
     </div>
   )
