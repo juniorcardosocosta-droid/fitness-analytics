@@ -169,6 +169,14 @@ export default function Dashboard() {
     .filter((i:any)=> i.tipo === "receita")
     .reduce((t,i)=> t + Number(i.valor || 0), 0)
 
+  // despesa anterior
+  const despesaAnterior = dadosMesAnterior
+    .filter((i:any)=> i.tipo === "despesa")
+    .reduce((t,i)=> t + Number(i.valor || 0), 0)
+
+  // resultado anterior
+  const resultadoAnterior = receitaAnterior - despesaAnterior  
+
   // ativos anterior
   const ativosAnterior = dadosMesAnterior.filter((i:any)=>
     i.tipo === "receita" &&
@@ -267,6 +275,19 @@ export default function Dashboard() {
             <option key={ano} value={ano}>{ano}</option>
           ))}
         </select>
+
+        <select
+          value={academiaId}
+          onChange={(e) => setAcademiaId(e.target.value)}
+          className="bg-[#0f1c33] border px-4 py-2 rounded"
+>
+          <option value="">Todas as unidades</option>
+          {academias.map((a:any) => (
+            <option key={a.id} value={a.id}>
+              {a.nome}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* ================= KPIs FINANCEIROS ================= */}
@@ -289,6 +310,10 @@ export default function Dashboard() {
     <h2 className="text-2xl font-bold text-red-300">
       R$ {despesa.toLocaleString("pt-BR",{minimumFractionDigits:2})}
     </h2>
+
+    <p className="text-sm text-gray-400">
+      {variacao(despesa, despesaAnterior).toFixed(1)}% vs mês anterior
+    </p>
   </div>
 
   {/* Resultado */}
@@ -297,6 +322,10 @@ export default function Dashboard() {
     <h2 className={`text-2xl font-bold ${resultado >= 0 ? "text-green-300" : "text-red-300"}`}>
       R$ {resultado.toLocaleString("pt-BR",{minimumFractionDigits:2})}
     </h2>
+
+    <p className="text-sm text-gray-400">
+      {variacao(resultado, resultadoAnterior).toFixed(1)}% vs mês anterior
+    </p>
   </div>
 
   {/* Ticket Financeiro */}
