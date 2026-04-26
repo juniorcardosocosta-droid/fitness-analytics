@@ -128,6 +128,39 @@ export default function Importar() {
       return
     }
 
+    // ================= ALERTA DE MÊS JÁ IMPORTADO =================
+const primeiraData = dadosConvertidos[0]?.data
+
+if (primeiraData) {
+
+  const dataRef = new Date(primeiraData)
+  const mes = dataRef.getMonth() + 1
+  const ano = dataRef.getFullYear()
+
+  const inicioMes = `${ano}-${String(mes).padStart(2, "0")}-01`
+  const fimMes = `${ano}-${String(mes).padStart(2, "0")}-31`
+
+  const { data: existentes } = await supabase
+    .from("lancamentos")
+    .select("id")
+    .eq("academia_id", academiaId)
+    .gte("data", inicioMes)
+    .lte("data", fimMes)
+    .limit(1)
+
+  if (existentes && existentes.length > 0) {
+
+    const confirmar = confirm(
+      `Já existem dados para ${mes}/${ano}. Deseja reimportar?`
+    )
+
+    if (!confirmar) {
+      alert("Importação cancelada")
+      return
+    }
+  }
+}
+
     // 🔥 UPSERT (NÃO DUPLICA)
     const { error } = await supabase
       .from("lancamentos")
