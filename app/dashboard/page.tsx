@@ -12,7 +12,8 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  CartesianGrid
+  CartesianGrid,
+  LabelList
 } from "recharts"
 
 export default function Dashboard() {
@@ -202,23 +203,44 @@ export default function Dashboard() {
 
       {/* GRÁFICO */}
       <div className="bg-[#0f1c33] p-6 rounded">
-        <h2 className="mb-4">Receitas por Categoria</h2>
 
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={dadosGrafico}>
-            <CartesianGrid stroke="#1f2a44" />
-            <XAxis dataKey="mes" stroke="#ccc" />
-            <YAxis stroke="#ccc" />
-            <Tooltip />
-            <Legend />
+  <h2 className="mb-4">Receitas por Categoria</h2>
 
-            <Bar dataKey="recorrencia" stackId="a" fill="#22c55e" />
-            <Bar dataKey="agregador" stackId="a" fill="#64748b" />
-            <Bar dataKey="outros" stackId="a" fill="#3b82f6" />
+  <ResponsiveContainer width="100%" height={350}>
+    <BarChart data={dadosGrafico} barGap={10}>
 
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+
+      <XAxis dataKey="mes" stroke="#94a3b8" />
+      <YAxis stroke="#94a3b8" />
+
+      <Tooltip
+        contentStyle={{
+          backgroundColor: "#020617",
+          border: "none",
+          borderRadius: "8px"
+        }}
+        labelStyle={{ color: "#fff" }}
+      />
+
+      <Legend wrapperStyle={{ color: "#ccc" }} />
+
+      <Bar dataKey="outros" fill="#2563eb" radius={[6,6,0,0]}>
+        <LabelList dataKey="outros" position="top" formatter={(v) => Number(v).toLocaleString("pt-BR")} fill="#93c5fd" />
+      </Bar>
+
+      <Bar dataKey="agregador" fill="#94a3b8" radius={[6,6,0,0]}>
+        <LabelList dataKey="agregador" position="top" formatter={(v) => Number(v).toLocaleString("pt-BR")} fill="#e5e7eb" />
+      </Bar>
+
+      <Bar dataKey="recorrencia" fill="#16a34a" radius={[6,6,0,0]}>
+        <LabelList dataKey="recorrencia" position="top" formatter={(v) => Number(v).toLocaleString("pt-BR")} fill="#86efac" />
+      </Bar>
+
+    </BarChart>
+  </ResponsiveContainer>
+
+</div>
 
     </div>
   )
