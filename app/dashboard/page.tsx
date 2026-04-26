@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import {
   BarChart,
   Bar,
+  Line,
   Legend,
   XAxis,
   YAxis,
@@ -244,6 +245,17 @@ export default function Dashboard() {
       }, {})
   ).sort((a: any, b: any) => a.ordem - b.ordem)
 
+  // ================= % PARA GRÁFICO =================
+  const dadosPercentuais = dadosGrafico.map((m:any) => {
+    const total = m.recorrencia + m.agregador + m.outros
+
+    return {
+      mes: m.mes,
+      recorrencia: total ? (m.recorrencia / total) * 100 : 0,
+      agregador: total ? (m.agregador / total) * 100 : 0,
+    }
+  })
+
   // ================= TELA =================
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
@@ -417,6 +429,53 @@ export default function Dashboard() {
         </ResponsiveContainer>
 
       </div>
+
+      {/* ================= NOVO GRÁFICO (%) ================= */}
+<div className="bg-[#0f1c33] p-6 rounded mt-10">
+
+  <h2 className="mb-4">Composição da Receita (%)</h2>
+
+  <ResponsiveContainer width="100%" height={350}>
+    <BarChart data={dadosPercentuais}>
+
+      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+      <XAxis dataKey="mes" stroke="#94a3b8" />
+      <YAxis stroke="#94a3b8" domain={[0, 100]} />
+
+      <Tooltip />
+      <Legend />
+
+      {/* RECORRÊNCIA */}
+      <Bar dataKey="recorrencia" stackId="a" fill="#14b8a6">
+        <LabelList
+          dataKey="recorrencia"
+          position="inside"
+          formatter={(v:any)=> `${v.toFixed(0)}%`}
+        />
+      </Bar>
+
+      {/* AGREGADOR */}
+      <Bar dataKey="agregador" stackId="a" fill="#9ca3af">
+        <LabelList
+          dataKey="agregador"
+          position="top"
+          formatter={(v:any)=> `${v.toFixed(0)}%`}
+        />
+      </Bar>
+
+      {/* 🔥 LINHA LIGANDO */}
+      <Line
+        type="monotone"
+        dataKey="agregador"
+        stroke="#ffffff"
+        strokeWidth={2}
+        dot={{ r: 4 }}
+      />
+
+    </BarChart>
+  </ResponsiveContainer>
+
+</div>
 
     </div>
   )
