@@ -58,7 +58,7 @@ export default function Importar() {
         // ================= STATUS DO CLIENTE =================
         const status_cliente =
           tipo === "receita"
-            ? item["Status do Cliente"] || ""
+            ? item["Status do cliente"] || ""
             : ""
 
 
