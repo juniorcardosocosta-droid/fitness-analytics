@@ -116,6 +116,8 @@ export default function Dashboard() {
         const texto = String(item.forma || item.Forma || "").toLowerCase()
         const valor = Number(item.valor || 0)
 
+        console.log("FORMA REAL:", item.forma)
+
 // 🔥 AGREGADOR (cartão)
 if (
   texto.includes("cart") ||
