@@ -94,9 +94,25 @@ export default function Dashboard() {
   const despesa = despesasLista.reduce((t,i)=> t + Number(i.valor || 0), 0)
   const resultado = receita - despesa
 
-  const ticketMedio = receitas.length
-    ? receita / receitas.length
-    : 0
+  // ================= TICKET FINANCEIRO =================
+  const totalContratos = receitas.length
+
+  const ticketFinanceiro =
+    totalContratos > 0
+      ? receita / totalContratos
+      : 0
+
+  // ================= TICKET POR ALUNO =================
+  const alunosAtivos = dadosFiltrados.filter(
+    (i:any) =>
+      i.tipo === "receita" &&
+      String(i.status_cliente).toLowerCase().includes("ativo")
+  ).length
+
+  const ticketAluno =
+    alunosAtivos > 0
+      ? receita / alunosAtivos
+      : 0
 
   // ================= ALUNOS =================
    const alunos = dadosFiltrados.filter(
@@ -220,9 +236,9 @@ export default function Dashboard() {
         </div>
 
         <div className="bg-[#0f1c33] p-6 rounded">
-          <p className="text-gray-400">Ticket Médio</p>
+          <p className="text-gray-400">Ticket Médio Financeiro</p>
           <h2 className="text-2xl font-bold text-blue-400">
-            R$ {ticketMedio.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+             R$ {ticketFinanceiro.toLocaleString("pt-BR",{minimumFractionDigits:2})}
           </h2>
         </div>
 
@@ -230,9 +246,9 @@ export default function Dashboard() {
 
           {/* TICKET POR CLIENTE */}
           <div className="bg-[#0f1c33] p-6 rounded">
-            <p className="text-gray-400">Ticket por Cliente</p>
+            <p className="text-gray-400">Ticket Médio por Aluno</p>
             <h2 className="text-2xl font-bold text-blue-400">
-              R$ {ticketPorCliente.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+              R$ {ticketAluno.toLocaleString("pt-BR",{minimumFractionDigits:2})}
             </h2>
           </div>
 
