@@ -269,89 +269,93 @@ export default function Dashboard() {
         </select>
       </div>
 
-      {/* CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+      {/* ================= KPIs FINANCEIROS ================= */}
+<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
 
-        <div className="bg-[#0f1c33] p-6 rounded">
-          <p className="text-gray-400">Receita</p>
-          <h2 className="text-2xl font-bold text-green-400">
-            R$ {receita.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-          </h2>
+  {/* Receita */}
+  <div className="bg-[#0f1c33] p-6 rounded">
+    <p className="text-gray-400">Receita</p>
+    <h2 className="text-2xl font-bold text-green-300">
+      R$ {receita.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+    </h2>
+    <p className="text-sm text-gray-400">
+      {variacao(receita, receitaAnterior).toFixed(1)}% vs mês anterior
+    </p>
+  </div>
 
-          <p className="text-sm text-gray-400"></p>
-          {variacao(receita, receitaAnterior).toFixed(1)}% vs mês anterior
+  {/* Despesas */}
+  <div className="bg-[#0f1c33] p-6 rounded">
+    <p className="text-gray-400">Despesas</p>
+    <h2 className="text-2xl font-bold text-red-300">
+      R$ {despesa.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+    </h2>
+  </div>
 
-        </div>
+  {/* Resultado */}
+  <div className="bg-[#0f1c33] p-6 rounded">
+    <p className="text-gray-400">Resultado</p>
+    <h2 className={`text-2xl font-bold ${resultado >= 0 ? "text-green-300" : "text-red-300"}`}>
+      R$ {resultado.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+    </h2>
+  </div>
 
-        <div className="bg-[#0f1c33] p-6 rounded">
-          <p className="text-gray-400">Despesas</p>
-          <h2 className="text-2xl font-bold text-red-400">
-            R$ {despesa.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-          </h2>
-        </div>
+  {/* Ticket Financeiro */}
+  <div className="bg-[#0f1c33] p-6 rounded">
+    <p className="text-gray-400">Ticket Financeiro</p>
+    <h2 className="text-2xl font-bold text-blue-300">
+      R$ {ticketFinanceiro.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+    </h2>
+  </div>
 
-        <div className="bg-[#0f1c33] p-6 rounded">
-          <p className="text-gray-400">Resultado</p>
-          <h2 className={`text-2xl font-bold ${resultado >= 0 ? "text-green-400" : "text-red-400"}`}>
-            R$ {resultado.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-          </h2>
-        </div>
+</div>
 
-        <div className="bg-[#0f1c33] p-6 rounded">
-          <p className="text-gray-400">Ticket Médio Financeiro</p>
-          <h2 className="text-2xl font-bold text-blue-400">
-             R$ {ticketFinanceiro.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-          </h2>
-        </div>
+{/* ================= KPIs DE ALUNOS ================= */}
+<div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-10">
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+  {/* Ticket Aluno */}
+  <div className="bg-[#0f1c33] p-6 rounded">
+    <p className="text-gray-400">Ticket por Aluno</p>
+    <h2 className="text-2xl font-bold text-indigo-300">
+      R$ {ticketAluno.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+    </h2>
+  </div>
 
-          {/* TICKET POR CLIENTE */}
-          <div className="bg-[#0f1c33] p-6 rounded">
-            <p className="text-gray-400">Ticket Médio por Aluno</p>
-            <h2 className="text-2xl font-bold text-blue-400">
-              R$ {ticketAluno.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-            </h2>
-          </div>
+  {/* Ativos */}
+  <div className="bg-[#0f1c33] p-6 rounded">
+    <p className="text-gray-400">Ativos</p>
+    <h2 className="text-2xl font-bold text-green-300">
+      {ativos}
+    </h2>
+  </div>
 
-          {/* ALUNOS ATIVOS */}
-          <div className="bg-[#0f1c33] p-6 rounded">
-            <p className="text-gray-400">Alunos Ativos</p>
-            <h2 className="text-2xl font-bold text-green-400">
-              {ativos}
-           </h2>
-         </div>
+  {/* Cancelados */}
+  <div className="bg-[#0f1c33] p-6 rounded">
+    <p className="text-gray-400">Cancelados</p>
+    <h2 className="text-2xl font-bold text-red-300">
+      {cancelados}
+    </h2>
+  </div>
 
-          {/* CANCELADOS */}
-          <div className="bg-[#0f1c33] p-6 rounded">
-            <p className="text-gray-400">Cancelados</p>
-            <h2 className="text-2xl font-bold text-red-400">
-              {cancelados}
-            </h2>
-          </div>
+  {/* Bloqueados */}
+  <div className="bg-[#0f1c33] p-6 rounded">
+    <p className="text-gray-400">Bloqueados</p>
+    <h2 className="text-2xl font-bold text-yellow-300">
+      {bloqueados}
+    </h2>
+  </div>
 
-          {/* BLOQUEADOS */}
-          <div className="bg-[#0f1c33] p-6 rounded">
-            <p className="text-gray-400">Bloqueados</p>
-            <h2 className="text-2xl font-bold text-yellow-300">
-              {bloqueados}
-            </h2>
+  {/* Churn */}
+  <div className="bg-[#0f1c33] p-6 rounded">
+    <p className="text-gray-400">Churn</p>
+    <h2 className="text-2xl font-bold text-red-300">
+      {churn.toFixed(1)}%
+    </h2>
+    <p className="text-sm text-gray-400">
+      {variacao(churn, churnAnterior).toFixed(1)}% vs mês anterior
+    </p>
+  </div>
 
-          <div className="bg-[#0f1c33] p-6 rounded">
-            <p className="text-gray-400">Churn</p>
-            <h2 className="text-2xl font-bold text-red-400">
-              {churn.toFixed(1)}%
-            </h2>
-
-            <p className="text-sm text-gray-400">
-              {variacao(churn, churnAnterior).toFixed(1)}% vs mês anterior
-            </p>
-          </div>  
-          </div>
-
-       </div>
-
-      </div>
+</div>
 
       {/* GRÁFICO */}
       <div className="bg-[#0f1c33] p-6 rounded">
