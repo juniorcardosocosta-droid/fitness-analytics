@@ -113,33 +113,32 @@ export default function Dashboard() {
         }
 
         // 🔥 USA SOMENTE A COLUNA CERTA
-        const texto = String(item.forma || item.Forma || "").toLowerCase()
+        const texto = String(item.origem || "").toLowerCase()
         const valor = Number(item.valor || 0)
 
-        console.log("FORMA REAL:", item.forma)
 
-// 🔥 AGREGADOR (cartão)
-if (
-  texto.includes("cart") ||
-  texto.includes("credito") ||
-  texto.includes("débito") ||
-  texto.includes("debito")
-) {
-  acc[mesNumero].agregador += valor
-}
+        // 🔥 AGREGADOR (cartão)
+        if (
+          texto.includes("cart") ||
+          texto.includes("credito") ||
+          texto.includes("débito") ||
+          texto.includes("debito")
+        ) {
+          acc[mesNumero].agregador += valor
+        }
 
-// 🔥 OUTROS (pix e dinheiro)
-else if (
-  texto.includes("pix") ||
-  texto.includes("dinheiro")
-) {
-  acc[mesNumero].outros += valor
-}
+        // 🔥 OUTROS (pix e dinheiro)
+        else if (
+          texto.includes("pix") ||
+          texto.includes("dinheiro")
+        ) {
+          acc[mesNumero].outros += valor
+        }
 
-// 🔥 RECORRÊNCIA (TODO O RESTO)
-else {
-  acc[mesNumero].recorrencia += valor
-}
+        // 🔥 RECORRÊNCIA (TODO O RESTO)
+        else {
+           acc[mesNumero].recorrencia += valor
+        }
 
         return acc
 
