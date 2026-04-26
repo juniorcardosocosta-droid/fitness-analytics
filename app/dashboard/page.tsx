@@ -137,6 +137,62 @@ export default function Dashboard() {
 
   const totalAlunos = alunos.length
 
+  // ================= CHURN =================
+  const churn =
+    (ativos + cancelados) > 0
+      ? (cancelados / (ativos + cancelados)) * 100
+      : 0
+
+  // ================= PERÍODO ANTERIOR =================
+  const dadosMesAnterior = dados.filter((item:any) => {
+    if (!item.data) return false
+
+    const dataItem = new Date(item.data)
+    const mes = dataItem.getMonth() + 1
+    const ano = dataItem.getFullYear()
+
+    if (!mesSelecionado || !anoSelecionado) return false
+
+    let mesAnterior = Number(mesSelecionado) - 1
+    let anoAnterior = Number(anoSelecionado)
+
+    if (mesAnterior === 0) {
+    mesAnterior = 12
+    anoAnterior--
+    }
+
+    return mes === mesAnterior && ano === anoAnterior
+  })
+
+  // receita anterior
+  const receitaAnterior = dadosMesAnterior
+    .filter((i:any)=> i.tipo === "receita")
+    .reduce((t,i)=> t + Number(i.valor || 0), 0)
+
+  // ativos anterior
+  const ativosAnterior = dadosMesAnterior.filter((i:any)=>
+    i.tipo === "receita" &&
+    String(i.status_cliente).toLowerCase().includes("ativo")
+  ).length
+
+   // cancelados anterior
+   const canceladosAnterior = dadosMesAnterior.filter((i:any)=>
+     i.tipo === "receita" &&
+     String(i.status_cliente).toLowerCase().includes("cancel")
+   ).length
+
+   // churn anterior
+   const churnAnterior =
+     (ativosAnterior + canceladosAnterior) > 0
+       ? (canceladosAnterior / (ativosAnterior + canceladosAnterior)) * 100
+       : 0    
+
+  // ================= VARIAÇÃO (%) =================
+  const variacao = (atual:number, anterior:number) => {
+    if (!anterior) return 0
+    return ((atual - anterior) / anterior) * 100
+  }     
+
   // ================= GRÁFICO =================
   const dadosGrafico = Object.values(
     dadosFiltrados
@@ -221,6 +277,10 @@ export default function Dashboard() {
           <h2 className="text-2xl font-bold text-green-400">
             R$ {receita.toLocaleString("pt-BR",{minimumFractionDigits:2})}
           </h2>
+
+          <p className="text-sm text-gray-400"></p>
+          {variacao(receita, receitaAnterior).toFixed(1)}% vs mês anterior
+
         </div>
 
         <div className="bg-[#0f1c33] p-6 rounded">
@@ -276,6 +336,17 @@ export default function Dashboard() {
             <h2 className="text-2xl font-bold text-yellow-300">
               {bloqueados}
             </h2>
+
+          <div className="bg-[#0f1c33] p-6 rounded">
+            <p className="text-gray-400">Churn</p>
+            <h2 className="text-2xl font-bold text-red-400">
+              {churn.toFixed(1)}%
+            </h2>
+
+            <p className="text-sm text-gray-400">
+              {variacao(churn, churnAnterior).toFixed(1)}% vs mês anterior
+            </p>
+          </div>  
           </div>
 
        </div>
