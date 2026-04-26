@@ -109,20 +109,32 @@ export default function Dashboard() {
           }
         }
 
-        let categoria = "outros"
-        const texto = String(item.categoria || "").toLowerCase()
+        let valor = Number(item.valor || 0)
 
-        if (texto.includes("recorr")) {
-          categoria = "recorrencia"
-        } else if (
-          texto.includes("online") ||
-          texto.includes("cart") ||
-          texto.includes("credito")
+        const descricao = String(item.descricao || "").toLowerCase()
+        const forma = String(item.origem || "").toLowerCase()
+
+// 🔥 RECORRÊNCIA (planos)
+        if (
+          descricao.includes("plano") ||
+          descricao.includes("mensal")
         ) {
-          categoria = "agregador"
+         acc[mesNumero].recorrencia += valor
         }
 
-        (acc[mesNumero] as any)[categoria] += Number(item.valor || 0)
+// 🔥 AGREGADOR (cartão)
+        else if (
+          forma.includes("cart") ||
+          forma.includes("credito") ||
+          forma.includes("debito")
+        ) {
+          acc[mesNumero].agregador += valor
+        }
+
+// 🔥 OUTROS (pix, etc)
+        else {
+          acc[mesNumero].outros += valor
+        }
 
         return acc
 
