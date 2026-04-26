@@ -71,6 +71,7 @@ export default function Dashboard() {
     carregarDados()
   }, [academiaId])
 
+  // ================= FILTRO =================
   const dadosFiltrados = dados.filter((item: any) => {
     if (!item.data) return false
 
@@ -84,12 +85,14 @@ export default function Dashboard() {
     return true
   })
 
+  // ================= FATURAMENTO =================
   const faturamento = dadosFiltrados
     .filter((item: any) => item.tipo === "receita")
     .reduce((total: number, item: any) => {
       return total + Number(item.valor || 0)
     }, 0)
 
+  // ================= GRÁFICO =================
   const dadosGrafico = Object.values(
     dadosFiltrados
       .filter((item: any) => item.tipo === "receita")
@@ -109,29 +112,29 @@ export default function Dashboard() {
           }
         }
 
-        let valor = Number(item.valor || 0)
+        const valor = Number(item.valor || 0)
 
-        const descricao = String(item.descricao || "").toLowerCase()
-        const forma = String(item.origem || "").toLowerCase()
+        // 🔥 USA SOMENTE A COLUNA CERTA
+        const texto = String(item.forma || item.Forma || "").toLowerCase()
 
-// 🔥 RECORRÊNCIA (planos)
+        // RECORRÊNCIA
         if (
-          descricao.includes("plano") ||
-          descricao.includes("mensal")
+          texto.includes("plano") ||
+          texto.includes("mensal")
         ) {
-         acc[mesNumero].recorrencia += valor
+          acc[mesNumero].recorrencia += valor
         }
 
-// 🔥 AGREGADOR (cartão)
+        // AGREGADOR (cartão)
         else if (
-          forma.includes("cart") ||
-          forma.includes("credito") ||
-          forma.includes("debito")
+          texto.includes("cart") ||
+          texto.includes("credito") ||
+          texto.includes("debito")
         ) {
           acc[mesNumero].agregador += valor
         }
 
-// 🔥 OUTROS (pix, etc)
+        // OUTROS (pix etc)
         else {
           acc[mesNumero].outros += valor
         }
@@ -141,17 +144,18 @@ export default function Dashboard() {
       }, {})
   ).sort((a: any, b: any) => a.ordem - b.ordem)
 
+  // ================= TELA =================
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
 
       <h1 className="text-4xl font-bold mb-10">Dashboard</h1>
 
-      {/* SELECT ACADEMIA */}
+      {/* ACADEMIA */}
       {academias.length > 1 && (
         <select
           value={academiaId}
           onChange={(e) => setAcademiaId((e.target as any).value)}
-          className="bg-[#0f1c33] border border-gray-700 px-4 py-2 rounded-lg mb-4"
+          className="bg-[#0f1c33] border px-4 py-2 rounded mb-4"
         >
           <option value="">Todas as academias</option>
           {academias.map((a: any) => (
@@ -165,12 +169,12 @@ export default function Dashboard() {
         <select
           value={mesSelecionado}
           onChange={(e) => setMesSelecionado((e.target as any).value)}
-          className="bg-[#0f1c33] border px-4 py-2 rounded-lg"
+          className="bg-[#0f1c33] border px-4 py-2 rounded"
         >
           <option value="">Todos os meses</option>
           {[...Array(12)].map((_, i) => (
             <option key={i+1} value={i+1}>
-              {new Date(0, i).toLocaleString('pt-BR',{month:'long'})}
+              {new Date(0, i).toLocaleString("pt-BR",{month:"long"})}
             </option>
           ))}
         </select>
@@ -178,7 +182,7 @@ export default function Dashboard() {
         <select
           value={anoSelecionado}
           onChange={(e) => setAnoSelecionado((e.target as any).value)}
-          className="bg-[#0f1c33] border px-4 py-2 rounded-lg"
+          className="bg-[#0f1c33] border px-4 py-2 rounded"
         >
           <option value="">Todos os anos</option>
           {[...new Set(dados.map((d:any)=> new Date(d.data).getFullYear()))].map((ano:any)=>(
@@ -188,21 +192,20 @@ export default function Dashboard() {
       </div>
 
       {/* FATURAMENTO */}
-      <div className="bg-[#0f1c33] p-6 rounded-xl mb-10">
-        <p className="text-gray-400 text-sm">Faturamento</p>
-        <h2 className="text-4xl font-bold text-green-400">
+      <div className="bg-[#0f1c33] p-6 rounded mb-10">
+        <p className="text-gray-400">Faturamento</p>
+        <h2 className="text-3xl text-green-400">
           R$ {faturamento.toLocaleString("pt-BR",{minimumFractionDigits:2})}
         </h2>
       </div>
 
       {/* GRÁFICO */}
-      <div className="bg-[#0f1c33] p-6 rounded-xl">
-
-        <h2 className="text-xl mb-6">Receitas por Categoria</h2>
+      <div className="bg-[#0f1c33] p-6 rounded">
+        <h2 className="mb-4">Receitas por Categoria</h2>
 
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={dadosGrafico}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1f2a44" />
+            <CartesianGrid stroke="#1f2a44" />
             <XAxis dataKey="mes" stroke="#ccc" />
             <YAxis stroke="#ccc" />
             <Tooltip />
@@ -214,7 +217,6 @@ export default function Dashboard() {
 
           </BarChart>
         </ResponsiveContainer>
-
       </div>
 
     </div>
