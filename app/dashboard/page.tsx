@@ -5,8 +5,9 @@ import { supabase } from "../../lib/supabaseClient"
 import { useRouter } from "next/navigation"
 
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
+  Legend,
   XAxis,
   YAxis,
   Tooltip,
@@ -17,6 +18,7 @@ import {
 export default function Dashboard() {
 
   const router = useRouter()
+
   const [dados, setDados] = useState<any[]>([])
   const [academias, setAcademias] = useState<any[]>([])
   const [academiaId, setAcademiaId] = useState("")
@@ -26,14 +28,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function loadAcademias() {
-      const { data } = await supabase
-        .from("academias")
-        .select("*")
+      const { data } = await supabase.from("academias").select("*")
 
       if (data) {
         setAcademias(data)
-
-        // se tiver só 1 academia
         if (data.length === 1) {
           setAcademiaId(data[0].id)
         }
@@ -43,24 +41,18 @@ export default function Dashboard() {
     loadAcademias()
   }, [])
 
-  // LOGIN
   useEffect(() => {
     const checkUser = async () => {
       const { data } = await supabase.auth.getSession()
-      if (!data.session) {
-        router.push("/login")
-      }
+      if (!data.session) router.push("/login")
     }
+
     checkUser()
   }, [router])
 
-  // BUSCAR DADOS
   useEffect(() => {
     async function carregarDados() {
-
-      let query = supabase
-        .from("lancamentos")
-        .select("*")
+      let query = supabase.from("lancamentos").select("*")
 
       if (academiaId) {
         query = query.eq("academia_id", academiaId)
@@ -79,17 +71,7 @@ export default function Dashboard() {
     carregarDados()
   }, [academiaId])
 
-  // ANOS DINÂMICOS
-  const anosDisponiveis = [...new Set(
-    dados.map((item: any) => {
-      if (!item.data) return null
-      return new Date(item.data).getFullYear()
-    })
-  )].filter(Boolean)
-
-  // FILTRO REAL
   const dadosFiltrados = dados.filter((item: any) => {
-
     if (!item.data) return false
 
     const dataItem = new Date(item.data)
@@ -102,7 +84,6 @@ export default function Dashboard() {
     return true
   })
 
-  // FATURAMENTO REAL
   const faturamento = dadosFiltrados
     .filter((item: any) => item.tipo === "receita")
     .reduce((total: number, item: any) => {
@@ -110,146 +91,117 @@ export default function Dashboard() {
     }, 0)
 
   const dadosGrafico = Object.values(
-  dadosFiltrados
-    .filter((item: any) => item.tipo === "receita")
-    .reduce((acc: any, item: any) => {
+    dadosFiltrados
+      .filter((item: any) => item.tipo === "receita")
+      .reduce((acc: any, item: any) => {
 
-      const dataItem = new Date(item.data)
-      const mesNumero = dataItem.getMonth()
-      const mesNome = dataItem.toLocaleDateString("pt-BR", {
-        month: "short"
-      })
+        const dataItem = new Date(item.data)
+        const mesNumero = dataItem.getMonth()
+        const mesNome = dataItem.toLocaleDateString("pt-BR", { month: "short" })
 
-      if (!acc[mesNumero]) {
-        acc[mesNumero] = { mes: mesNome, total: 0, ordem: mesNumero }
-      }
+        if (!acc[mesNumero]) {
+          acc[mesNumero] = {
+            mes: mesNome,
+            ordem: mesNumero,
+            recorrencia: 0,
+            agregador: 0,
+            outros: 0,
+          }
+        }
 
-      acc[mesNumero].total += Number(item.valor || 0)
+        let categoria = "outros"
+        const texto = String(item.categoria || "").toLowerCase()
 
-      return acc
+        if (texto.includes("recorr")) {
+          categoria = "recorrencia"
+        } else if (
+          texto.includes("online") ||
+          texto.includes("cart") ||
+          texto.includes("credito")
+        ) {
+          categoria = "agregador"
+        }
 
-    }, {})
-)
-.sort((a: any, b: any) => a.ordem - b.ordem)
+        (acc[mesNumero] as any)[categoria] += Number(item.valor || 0)
+
+        return acc
+
+      }, {})
+  ).sort((a: any, b: any) => a.ordem - b.ordem)
 
   return (
-
     <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
 
-      <div className="flex justify-between items-center mb-10">
+      <h1 className="text-4xl font-bold mb-10">Dashboard</h1>
 
-        <h1 className="text-4xl font-bold">
-          Dashboard Real
-        </h1>
-
-        <button
-          onClick={async () => {
-            await supabase.auth.signOut()
-            router.push("/login")
-          }}
-          className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg"
-        >
-          Sair
-        </button>
-
-      </div>
-
-      {/* FILTROS */}
+      {/* SELECT ACADEMIA */}
       {academias.length > 1 && (
         <select
           value={academiaId}
-          onChange={(e) => setAcademiaId(e.target.value)}
-          className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg mb-4"
+          onChange={(e) => setAcademiaId((e.target as any).value)}
+          className="bg-[#0f1c33] border border-gray-700 px-4 py-2 rounded-lg mb-4"
         >
           <option value="">Todas as academias</option>
-
-          {academias.map((a) => (
-            <option key={a.id} value={a.id}>
-              {a.nome}
-            </option>
+          {academias.map((a: any) => (
+            <option key={a.id} value={a.id}>{a.nome}</option>
           ))}
         </select>
       )}
 
+      {/* FILTROS */}
       <div className="flex gap-4 mb-10">
-
-        {/* MÊS */}
         <select
           value={mesSelecionado}
-          onChange={(e) => setMesSelecionado(e.target.value)}
-          className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg"
+          onChange={(e) => setMesSelecionado((e.target as any).value)}
+          className="bg-[#0f1c33] border px-4 py-2 rounded-lg"
         >
           <option value="">Todos os meses</option>
-          <option value="1">Janeiro</option>
-          <option value="2">Fevereiro</option>
-          <option value="3">Março</option>
-          <option value="4">Abril</option>
-          <option value="5">Maio</option>
-          <option value="6">Junho</option>
-          <option value="7">Julho</option>
-          <option value="8">Agosto</option>
-          <option value="9">Setembro</option>
-          <option value="10">Outubro</option>
-          <option value="11">Novembro</option>
-          <option value="12">Dezembro</option>
-        </select>
-
-        {/* ANO DINÂMICO */}
-        <select
-          value={anoSelecionado}
-          onChange={(e) => setAnoSelecionado(e.target.value)}
-          className="bg-[#0f1c33] border border-gray-700 text-white px-4 py-2 rounded-lg"
-        >
-          <option value="">Todos os anos</option>
-          {anosDisponiveis.map((ano: any) => (
-            <option key={ano} value={ano}>
-              {ano}
+          {[...Array(12)].map((_, i) => (
+            <option key={i+1} value={i+1}>
+              {new Date(0, i).toLocaleString('pt-BR',{month:'long'})}
             </option>
           ))}
         </select>
 
+        <select
+          value={anoSelecionado}
+          onChange={(e) => setAnoSelecionado((e.target as any).value)}
+          className="bg-[#0f1c33] border px-4 py-2 rounded-lg"
+        >
+          <option value="">Todos os anos</option>
+          {[...new Set(dados.map((d:any)=> new Date(d.data).getFullYear()))].map((ano:any)=>(
+            <option key={ano} value={ano}>{ano}</option>
+          ))}
+        </select>
       </div>
 
       {/* FATURAMENTO */}
-
-      <div className="bg-[#0f1c33] p-6 rounded-xl">
-
-        <p className="text-gray-400 text-sm">
-          Faturamento
-        </p>
-
+      <div className="bg-[#0f1c33] p-6 rounded-xl mb-10">
+        <p className="text-gray-400 text-sm">Faturamento</p>
         <h2 className="text-4xl font-bold text-green-400">
-          R$ {faturamento.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+          R$ {faturamento.toLocaleString("pt-BR",{minimumFractionDigits:2})}
         </h2>
-
       </div>
 
-      <div className="bg-[#0f1c33] p-6 rounded-xl mt-10">
+      {/* GRÁFICO */}
+      <div className="bg-[#0f1c33] p-6 rounded-xl">
 
-        <h2 className="text-xl mb-4">
-          Evolução das Receitas Mensais
-        </h2>
+        <h2 className="text-xl mb-6">Receitas por Categoria</h2>
 
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={dadosGrafico}>
+          <BarChart data={dadosGrafico}>
             <CartesianGrid strokeDasharray="3 3" stroke="#1f2a44" />
             <XAxis dataKey="mes" stroke="#ccc" />
             <YAxis stroke="#ccc" />
             <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="total"
-              stroke="#22c55e"
-              strokeWidth={3}
-            />
-          </LineChart>
+            <Legend />
+
+            <Bar dataKey="recorrencia" stackId="a" fill="#22c55e" />
+            <Bar dataKey="agregador" stackId="a" fill="#64748b" />
+            <Bar dataKey="outros" stackId="a" fill="#3b82f6" />
+
+          </BarChart>
         </ResponsiveContainer>
-
-      </div>
-
-      {/* DEBUG (REMOVER DEPOIS) */}
-
-      <div className="mt-10">
 
       </div>
 
