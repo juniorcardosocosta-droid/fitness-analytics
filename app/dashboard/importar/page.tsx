@@ -102,6 +102,9 @@ export default function Importar() {
             ? item["Categoria"] || "outros"
             : "receita"
 
+         // ================= IMPORT_ID (🔥 CHAVE DO SISTEMA) =================
+        const import_id = JSON.stringify(item)    
+
         return {
           data,
           descricao,
@@ -111,7 +114,8 @@ export default function Importar() {
           valor_bruto: valorBruto,
           taxa,
           origem,
-          status, // 🔥 NOVO CAMPO
+          status,
+          import_id,
           academia_id: academiaId,
         }
       })
@@ -124,21 +128,18 @@ export default function Importar() {
       return
     }
 
-    // 🔥 LIMPA ANTES DE IMPORTAR
-    await supabase
-      .from("lancamentos")
-      .delete()
-      .eq("academia_id", academiaId)
-
+    // 🔥 UPSERT (NÃO DUPLICA)
     const { error } = await supabase
       .from("lancamentos")
-      .insert(dadosConvertidos)
+      .upsert(dadosConvertidos, {
+        onConflict: "academia_id,import_id"
+    })
 
     if (error) {
       console.error(error)
       alert("Erro ao importar")
     } else {
-      alert("Importação concluída!")
+      alert("Importação concluída sem duplicidade!")
     }
   }
 
