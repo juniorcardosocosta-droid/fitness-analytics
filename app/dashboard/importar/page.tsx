@@ -89,6 +89,8 @@ export default function Importar() {
           categoria = "agregador"
         }
 
+        const origem = item["Forma"] || ""
+
         return {
           data,
           descricao,
@@ -97,6 +99,7 @@ export default function Importar() {
           valor,
           valor_bruto: valorBruto,
           taxa,
+          origem,
           academia_id: academiaId,
         }
       })
