@@ -44,25 +44,42 @@ export default function Importar() {
     const dadosConvertidos = dados
       .map((item: any) => {
 
-        // 🔥 DESCRIÇÃO
+        // ================= STATUS (COLUNA A) =================
+        const statusTexto = String(item.A || "").toLowerCase()
+        const status =
+          statusTexto.includes("vencida") ? "pendente" : "pago"
+
+        // ================= DESCRIÇÃO =================
         const descricao =
           item["Descrição"] ||
           item["Cliente"] ||
           item["Fornecedor"] ||
           ""
 
-        // 🔥 VALORES CORRETOS
-        const valor = parseNumero(item["Valor Líquido"])
-        const valorBruto = parseNumero(item["Valor Bruto"])
-        const taxa = parseNumero(item["Valor Taxa"])
+        // ================= VALOR =================
+        const valor =
+          tipo === "receita"
+            ? parseNumero(item["Valor Líquido"])
+            : parseNumero(item["Valor Pago"] || item["Valor"])
 
-        if (!valor) {
-          console.log("❌ sem valor:", item)
-          return null
-        }
+        if (!valor) return null
 
-        // 🔥 DATA CORRETA (CRÉDITO)
-        const dataBruta = item["Data Crédito"]
+        // ================= VALORES EXTRA =================
+        const valorBruto =
+          tipo === "receita"
+            ? parseNumero(item["Valor Bruto"])
+            : 0
+
+        const taxa =
+          tipo === "receita"
+            ? parseNumero(item["Valor Taxa"])
+            : 0
+
+        // ================= DATA =================
+        const dataBruta =
+          tipo === "receita"
+            ? item["Data Crédito"]
+            : item["Data Pagamento"]
 
         let data = new Date().toISOString().split("T")[0]
 
@@ -75,21 +92,15 @@ export default function Importar() {
           }
         }
 
-        // 🔥 CATEGORIA
-        let categoria = "outros"
-        const desc = descricao.toLowerCase()
+        // ================= ORIGEM =================
+        const origem =
+          item["Forma"] || (tipo === "despesa" ? "despesa" : "")
 
-        if (desc.includes("plano") || desc.includes("mensalidade")) {
-          categoria = "recorrencia"
-        } else if (
-          desc.includes("online") ||
-          desc.includes("app") ||
-          desc.includes("ifood")
-        ) {
-          categoria = "agregador"
-        }
-
-        const origem = item["Forma"] || ""
+        // ================= CATEGORIA =================
+        const categoria =
+          tipo === "despesa"
+            ? item["Categoria"] || "outros"
+            : "receita"
 
         return {
           data,
@@ -100,6 +111,7 @@ export default function Importar() {
           valor_bruto: valorBruto,
           taxa,
           origem,
+          status, // 🔥 NOVO CAMPO
           academia_id: academiaId,
         }
       })
@@ -160,10 +172,9 @@ export default function Importar() {
         const workbook = XLSX.read(data, { type: "array" })
         const sheet = workbook.Sheets[workbook.SheetNames[0]]
 
-        // 🔥 AQUI ESTÁ O SEGREDO: SEM RANGE
         const jsonData = XLSX.utils.sheet_to_json(sheet, {
           range: 1
-        })  
+        })
 
         await processarDados(jsonData, tipo)
 
