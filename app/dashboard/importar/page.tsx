@@ -55,6 +55,12 @@ export default function Importar() {
           item["Cliente"] ||
           item["Fornecedor"] ||
           ""
+        // ================= STATUS DO CLIENTE =================
+        const status_cliente =
+          tipo === "receita"
+            ? item["Status do Cliente"] || ""
+            : ""
+
 
         // ================= VALOR =================
         const valor =
@@ -115,6 +121,7 @@ export default function Importar() {
           taxa,
           origem,
           status,
+          status_cliente,
           import_id,
           academia_id: academiaId,
         }

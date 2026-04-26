@@ -98,6 +98,27 @@ export default function Dashboard() {
     ? receita / receitas.length
     : 0
 
+  // ================= ALUNOS =================
+   const alunos = dadosFiltrados.filter(
+     (i:any) => i.tipo === "receita" && i.status_cliente
+   )
+
+   const totalAlunos = alunos.length
+
+   const ativos = alunos.filter((i:any) =>
+     String(i.status_cliente).toLowerCase().includes("ativo")
+   ).length
+
+   const cancelados = alunos.filter((i:any) =>
+     String(i.status_cliente).toLowerCase().includes("cancel")
+   ).length
+
+  // ================= TICKET POR CLIENTE =================
+   const ticketPorCliente =
+     totalAlunos > 0
+       ? receita / totalAlunos
+       : 0  
+
   // ================= GRÁFICO =================
   const dadosGrafico = Object.values(
     dadosFiltrados
@@ -204,6 +225,34 @@ export default function Dashboard() {
             R$ {ticketMedio.toLocaleString("pt-BR",{minimumFractionDigits:2})}
           </h2>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+
+          {/* TICKET POR CLIENTE */}
+          <div className="bg-[#0f1c33] p-6 rounded">
+            <p className="text-gray-400">Ticket por Cliente</p>
+            <h2 className="text-2xl font-bold text-blue-400">
+              R$ {ticketPorCliente.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+            </h2>
+          </div>
+
+          {/* ALUNOS ATIVOS */}
+          <div className="bg-[#0f1c33] p-6 rounded">
+            <p className="text-gray-400">Alunos Ativos</p>
+            <h2 className="text-2xl font-bold text-green-400">
+              {ativos}
+           </h2>
+         </div>
+
+          {/* CANCELADOS */}
+          <div className="bg-[#0f1c33] p-6 rounded">
+            <p className="text-gray-400">Cancelados</p>
+            <h2 className="text-2xl font-bold text-red-400">
+              {cancelados}
+            </h2>
+          </div>
+
+       </div>
 
       </div>
 
