@@ -119,21 +119,23 @@ export default function Dashboard() {
      (i:any) => i.tipo === "receita" && i.status_cliente
    )
 
-   const totalAlunos = alunos.length
+  // normaliza o texto (evita erro)
+  const getStatus = (i:any) =>
+    String(i.status_cliente || "").toLowerCase().trim()
 
-   const ativos = alunos.filter((i:any) =>
-     String(i.status_cliente).toLowerCase().includes("ativo")
-   ).length
+  const ativos = alunos.filter((i:any) =>
+    getStatus(i).includes("ativo")
+  ).length
 
-   const cancelados = alunos.filter((i:any) =>
-     String(i.status_cliente).toLowerCase().includes("cancel")
-   ).length
+  const cancelados = alunos.filter((i:any) =>
+    getStatus(i).includes("cancel")
+  ).length
 
-  // ================= TICKET POR CLIENTE =================
-   const ticketPorCliente =
-     totalAlunos > 0
-       ? receita / totalAlunos
-       : 0  
+  const bloqueados = alunos.filter((i:any) =>
+    getStatus(i).includes("bloque")
+  ).length
+
+  const totalAlunos = alunos.length
 
   // ================= GRÁFICO =================
   const dadosGrafico = Object.values(
@@ -242,7 +244,7 @@ export default function Dashboard() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
 
           {/* TICKET POR CLIENTE */}
           <div className="bg-[#0f1c33] p-6 rounded">
@@ -265,6 +267,14 @@ export default function Dashboard() {
             <p className="text-gray-400">Cancelados</p>
             <h2 className="text-2xl font-bold text-red-400">
               {cancelados}
+            </h2>
+          </div>
+
+          {/* BLOQUEADOS */}
+          <div className="bg-[#0f1c33] p-6 rounded">
+            <p className="text-gray-400">Bloqueados</p>
+            <h2 className="text-2xl font-bold text-yellow-300">
+              {bloqueados}
             </h2>
           </div>
 
