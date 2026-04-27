@@ -292,7 +292,7 @@ export default function Dashboard() {
           value={academiaId}
           onChange={(e) => setAcademiaId(e.target.value)}
           className="bg-[#0f1c33] border px-4 py-2 rounded"
->
+        >
           <option value="">Todas as unidades</option>
           {academias.map((a:any) => (
             <option key={a.id} value={a.id}>
@@ -303,179 +303,153 @@ export default function Dashboard() {
       </div>
 
       {/* ================= KPIs FINANCEIROS ================= */}
-<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
 
-  {/* Receita */}
-  <div className="bg-[#0f1c33] p-6 rounded">
-    <p className="text-gray-400">Receita</p>
-    <h2 className="text-2xl font-bold text-green-300">
-      R$ {receita.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-    </h2>
-    <p className="text-sm text-gray-400">
-      {variacao(receita, receitaAnterior).toFixed(1)}% vs mês anterior
-    </p>
-  </div>
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Receita</p>
+          <h2 className="text-2xl font-bold text-green-300">
+            R$ {receita.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+          </h2>
+          <p className="text-sm text-gray-400">
+            {variacao(receita, receitaAnterior).toFixed(1)}% vs mês anterior
+          </p>
+        </div>
 
-  {/* Despesas */}
-  <div className="bg-[#0f1c33] p-6 rounded">
-    <p className="text-gray-400">Despesas</p>
-    <h2 className="text-2xl font-bold text-red-300">
-      R$ {despesa.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-    </h2>
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Despesas</p>
+          <h2 className="text-2xl font-bold text-red-300">
+            R$ {despesa.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+          </h2>
+          <p className="text-sm text-gray-400">
+            {variacao(despesa, despesaAnterior).toFixed(1)}% vs mês anterior
+          </p>
+        </div>
 
-    <p className="text-sm text-gray-400">
-      {variacao(despesa, despesaAnterior).toFixed(1)}% vs mês anterior
-    </p>
-  </div>
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Resultado</p>
+          <h2 className={`text-2xl font-bold ${resultado >= 0 ? "text-green-300" : "text-red-300"}`}>
+            R$ {resultado.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+          </h2>
+          <p className="text-sm text-gray-400">
+            {variacao(resultado, resultadoAnterior).toFixed(1)}% vs mês anterior
+          </p>
+        </div>
 
-  {/* Resultado */}
-  <div className="bg-[#0f1c33] p-6 rounded">
-    <p className="text-gray-400">Resultado</p>
-    <h2 className={`text-2xl font-bold ${resultado >= 0 ? "text-green-300" : "text-red-300"}`}>
-      R$ {resultado.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-    </h2>
-
-    <p className="text-sm text-gray-400">
-      {variacao(resultado, resultadoAnterior).toFixed(1)}% vs mês anterior
-    </p>
-  </div>
-
-  {/* Ticket Financeiro */}
-  <div className="bg-[#0f1c33] p-6 rounded">
-    <p className="text-gray-400">Ticket Financeiro</p>
-    <h2 className="text-2xl font-bold text-blue-300">
-      R$ {ticketFinanceiro.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-    </h2>
-  </div>
-
-</div>
-
-{/* ================= KPIs DE ALUNOS ================= */}
-<div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-10">
-
-  {/* Ticket Aluno */}
-  <div className="bg-[#0f1c33] p-6 rounded">
-    <p className="text-gray-400">Ticket por Aluno</p>
-    <h2 className="text-2xl font-bold text-indigo-300">
-      R$ {ticketAluno.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-    </h2>
-  </div>
-
-  {/* Ativos */}
-  <div className="bg-[#0f1c33] p-6 rounded">
-    <p className="text-gray-400">Ativos</p>
-    <h2 className="text-2xl font-bold text-green-300">
-      {ativos}
-    </h2>
-  </div>
-
-  {/* Cancelados */}
-  <div className="bg-[#0f1c33] p-6 rounded">
-    <p className="text-gray-400">Cancelados</p>
-    <h2 className="text-2xl font-bold text-red-300">
-      {cancelados}
-    </h2>
-  </div>
-
-  {/* Bloqueados */}
-  <div className="bg-[#0f1c33] p-6 rounded">
-    <p className="text-gray-400">Bloqueados</p>
-    <h2 className="text-2xl font-bold text-yellow-300">
-      {bloqueados}
-    </h2>
-  </div>
-
-  {/* Churn */}
-  <div className="bg-[#0f1c33] p-6 rounded">
-    <p className="text-gray-400">Churn</p>
-    <h2 className="text-2xl font-bold text-red-300">
-      {churn.toFixed(1)}%
-    </h2>
-    <p className="text-sm text-gray-400">
-      {variacao(churn, churnAnterior).toFixed(1)}% vs mês anterior
-    </p>
-  </div>
-
-</div>
-
-      {/* GRÁFICO */}
-      <div className="bg-[#0f1c33] p-6 rounded">
-
-        <h2 className="mb-4">Receitas por Categoria</h2>
-
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={dadosGrafico} barGap={10}>
-
-            <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-            <XAxis dataKey="mes" stroke="#94a3b8" />
-            <YAxis stroke="#94a3b8" />
-
-            <Tooltip />
-            <Legend />
-
-            <Bar dataKey="outros" fill="#2563eb">
-              <LabelList dataKey="outros" position="top" formatter={(v) => Number(v).toLocaleString("pt-BR")} />
-            </Bar>
-
-            <Bar dataKey="agregador" fill="#94a3b8">
-              <LabelList dataKey="agregador" position="top" formatter={(v) => Number(v).toLocaleString("pt-BR")} />
-            </Bar>
-
-            <Bar dataKey="recorrencia" fill="#16a34a">
-              <LabelList dataKey="recorrencia" position="top" formatter={(v) => Number(v).toLocaleString("pt-BR")} />
-            </Bar>
-
-          </BarChart>
-        </ResponsiveContainer>
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Ticket Financeiro</p>
+          <h2 className="text-2xl font-bold text-blue-300">
+            R$ {ticketFinanceiro.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+          </h2>
+        </div>
 
       </div>
 
-      {/* ================= NOVO GRÁFICO (%) ================= */}
-<div className="bg-[#0f1c33] p-6 rounded mt-10">
+      {/* ================= KPIs DE ALUNOS ================= */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-10">
 
-  <h2 className="mb-4">Composição da Receita (%)</h2>
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Ticket por Aluno</p>
+          <h2 className="text-2xl font-bold text-indigo-300">
+            R$ {ticketAluno.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+          </h2>
+        </div>
 
-  <ResponsiveContainer width="100%" height={350}>
-    <BarChart data={dadosPercentuais}>
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Ativos</p>
+          <h2 className="text-2xl font-bold text-green-300">{ativos}</h2>
+        </div>
 
-      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-      <XAxis dataKey="mes" stroke="#94a3b8" />
-      <YAxis stroke="#94a3b8" domain={[0, 100]} />
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Cancelados</p>
+          <h2 className="text-2xl font-bold text-red-300">{cancelados}</h2>
+        </div>
 
-      <Tooltip />
-      <Legend />
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Bloqueados</p>
+          <h2 className="text-2xl font-bold text-yellow-300">{bloqueados}</h2>
+        </div>
 
-      {/* RECORRÊNCIA */}
-      <Bar dataKey="recorrencia" stackId="a" fill="#14b8a6">
-        <LabelList
-          dataKey="recorrencia"
-          position="inside"
-          formatter={(v:any)=> `${v.toFixed(0)}%`}
-        />
-      </Bar>
+        <div className="bg-[#0f1c33] p-6 rounded">
+          <p className="text-gray-400">Churn</p>
+          <h2 className="text-2xl font-bold text-red-300">{churn.toFixed(1)}%</h2>
+          <p className="text-sm text-gray-400">
+            {variacao(churn, churnAnterior).toFixed(1)}% vs mês anterior
+          </p>
+        </div>
 
-      {/* AGREGADOR */}
-      <Bar dataKey="agregador" stackId="a" fill="#9ca3af">
-        <LabelList
-          dataKey="agregador"
-          position="top"
-          formatter={(v:any)=> `${v.toFixed(0)}%`}
-        />
-      </Bar>
+      </div>
 
-      {/* 🔥 LINHA LIGANDO */}
-      <Line
-        type="monotone"
-        dataKey="agregador"
-        stroke="#ffffff"
-        strokeWidth={2}
-        dot={{ r: 4 }}
-      />
+      {/* ================= GRID DE GRÁFICOS ================= */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
 
-    </BarChart>
-  </ResponsiveContainer>
+        {/* GRÁFICO 1 */}
+        <div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
+          <h2 className="mb-4">Receitas por Categoria</h2>
 
-</div>
+          <ResponsiveContainer width="100%" height={350}>
+            <BarChart data={dadosGrafico} barGap={10}>
+              <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+              <XAxis dataKey="mes" stroke="#94a3b8" />
+              <YAxis stroke="#94a3b8" />
+              <Tooltip />
+              <Legend />
+
+              <Bar dataKey="outros" fill="#2563eb">
+                <LabelList dataKey="outros" position="top" />
+              </Bar>
+
+              <Bar dataKey="agregador" fill="#94a3b8">
+                <LabelList dataKey="agregador" position="top" />
+              </Bar>
+
+              <Bar dataKey="recorrencia" fill="#16a34a">
+                <LabelList dataKey="recorrencia" position="top" />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* GRÁFICO 2 */}
+        <div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
+          <h2 className="mb-4">Composição da Receita (%)</h2>
+
+          <ResponsiveContainer width="100%" height={350}>
+            <BarChart data={dadosPercentuais}>
+              <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+              <XAxis dataKey="mes" stroke="#94a3b8" />
+              <YAxis stroke="#94a3b8" domain={[0, 100]} />
+
+              <Tooltip />
+              <Legend />
+
+              <Bar dataKey="recorrencia" stackId="a" fill="#14b8a6">
+                <LabelList
+                  dataKey="recorrencia"
+                  position="inside"
+                  formatter={(v:any)=> `${v.toFixed(0)}%`}
+                  fill="#000"
+                />
+              </Bar>
+
+              <Bar dataKey="agregador" stackId="a" fill="#9ca3af">
+                <LabelList
+                  dataKey="agregador"
+                  position="top"
+                  formatter={(v:any)=> `${v.toFixed(0)}%`}
+                  fill="#fff"
+                />
+              </Bar>
+
+              <Line
+                type="monotone"
+                dataKey="agregador"
+                stroke="#ffffff"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+      </div>
 
     </div>
   )
