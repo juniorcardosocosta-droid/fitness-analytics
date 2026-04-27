@@ -395,15 +395,24 @@ export default function Dashboard() {
               <Legend />
 
               <Bar dataKey="outros" fill="#2563eb">
-                <LabelList dataKey="outros" position="top" />
+                <LabelList dataKey="outros" position="top" 
+                 formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
+                 fill="#ffffff"
+                />
               </Bar>
 
               <Bar dataKey="agregador" fill="#94a3b8">
-                <LabelList dataKey="agregador" position="top" />
+                <LabelList dataKey="agregador" position="top" 
+                formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
+                fill="#ffffff"
+                />
               </Bar>
 
               <Bar dataKey="recorrencia" fill="#16a34a">
-                <LabelList dataKey="recorrencia" position="top" />
+                <LabelList dataKey="recorrencia" position="top" 
+                formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
+                fill="#ffffff"
+                />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
