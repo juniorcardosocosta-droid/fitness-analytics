@@ -68,7 +68,11 @@ export default function Importar() {
             ? parseNumero(item["Valor Líquido"])
             : parseNumero(item["Valor Pago"] || item["Valor"])
 
-        if (!valor) return null
+        // ❌ NÃO descarta mais por zero
+        if (valor === null || valor === undefined || isNaN(valor)) {
+          console.log("ERRO NO VALOR:", item)
+          return null
+        }
 
         // ================= VALORES EXTRA =================
         const valorBruto =
