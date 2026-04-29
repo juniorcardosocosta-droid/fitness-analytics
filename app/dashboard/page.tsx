@@ -466,63 +466,108 @@ export default function Dashboard() {
       </div>
 
       {/* ================= HEATMAP ================= */}
-<div className="mt-10">
-  <div className="bg-[#0f1c33] p-6 rounded w-full">
-    
-    <h2 className="mb-6">Heatmap de Receita por Origem</h2>
+{(() => {
 
-    <div className="grid grid-cols-9 gap-2 text-xs text-white">
+  const maxValor = Math.max(
+    ...dadosGrafico.flatMap((m:any) => [
+      m.recorrencia,
+      m.agregador,
+      m.outros
+    ])
+  )
 
-      <div></div>
-      {dadosGrafico.map((m:any)=>(
-        <div key={m.mes} className="text-center text-gray-400">
-          {m.mes}
+  function getHeatColor(valor:number) {
+    const intensidade = valor / maxValor
+
+    if (intensidade > 0.85) return "bg-blue-700"
+    if (intensidade > 0.65) return "bg-blue-600"
+    if (intensidade > 0.45) return "bg-blue-500"
+    if (intensidade > 0.25) return "bg-blue-400"
+    if (intensidade > 0.1) return "bg-blue-300"
+    return "bg-[#1e293b]"
+  }
+
+  return (
+    <div className="mt-10">
+      <div className="bg-gradient-to-br from-[#0b1220] to-[#0f1c33] p-6 rounded-2xl shadow-lg w-full">
+        
+        <h2 className="mb-6 text-lg font-semibold">
+          Heatmap de Receita por Origem
+        </h2>
+
+        <div className="grid grid-cols-[120px_repeat(12,1fr)] gap-2 text-xs">
+
+          {/* MESES */}
+          <div></div>
+          {dadosGrafico.map((m:any)=>(
+            <div key={m.mes} className="text-center text-gray-400">
+              {m.mes}
+            </div>
+          ))}
+
+          {/* RECORRÊNCIA */}
+          <div className="text-gray-400 flex items-center">
+            Recorrência
+          </div>
+          {dadosGrafico.map((m:any)=>(
+            <div
+              key={m.mes}
+              className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.recorrencia)}`}
+            >
+              {m.recorrencia.toLocaleString("pt-BR")}
+            </div>
+          ))}
+
+          {/* CARTÃO */}
+          <div className="text-gray-400 flex items-center">
+            Cartão
+          </div>
+          {dadosGrafico.map((m:any)=>(
+            <div
+              key={m.mes}
+              className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.agregador)}`}
+            >
+              {m.agregador.toLocaleString("pt-BR")}
+            </div>
+          ))}
+
+          {/* OUTROS */}
+          <div className="text-gray-400 flex items-center">
+            Outros
+          </div>
+          {dadosGrafico.map((m:any)=>(
+            <div
+              key={m.mes}
+              className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.outros)}`}
+            >
+              {m.outros.toLocaleString("pt-BR")}
+            </div>
+          ))}
+
         </div>
-      ))}
 
-      <div className="text-gray-400">Recorrência</div>
-      {dadosGrafico.map((m:any)=>(
-        <div
-          key={m.mes}
-          className="h-10 rounded flex items-center justify-center"
-          style={{
-            backgroundColor: `rgba(34,197,94,${Math.min(m.recorrencia / 300000,1)})`
-          }}
-        >
-          {m.recorrencia.toLocaleString("pt-BR")}
+        {/* LEGENDA */}
+        <div className="flex items-center gap-2 mt-6">
+          <span className="text-xs text-gray-400">Menor</span>
+
+          {[
+            "bg-[#1e293b]",
+            "bg-blue-300",
+            "bg-blue-400",
+            "bg-blue-500",
+            "bg-blue-600",
+            "bg-blue-700"
+          ].map((c,i)=>(
+            <div key={i} className={`w-6 h-3 rounded ${c}`} />
+          ))}
+
+          <span className="text-xs text-gray-400">Maior</span>
         </div>
-      ))}
 
-      <div className="text-gray-400">Cartão</div>
-      {dadosGrafico.map((m:any)=>(
-        <div
-          key={m.mes}
-          className="h-10 rounded flex items-center justify-center"
-          style={{
-            backgroundColor: `rgba(59,130,246,${Math.min(m.agregador / 100000,1)})`
-          }}
-        >
-          {m.agregador.toLocaleString("pt-BR")}
-        </div>
-      ))}
-
-      <div className="text-gray-400">Outros</div>
-      {dadosGrafico.map((m:any)=>(
-        <div
-          key={m.mes}
-          className="h-10 rounded flex items-center justify-center"
-          style={{
-            backgroundColor: `rgba(168,85,247,${Math.min(m.outros / 50000,1)})`
-          }}
-        >
-          {m.outros.toLocaleString("pt-BR")}
-        </div>
-      ))}
-
+      </div>
     </div>
-
-  </div>
-</div>
+  )
+})()}
 
     </div>
   )
