@@ -42,7 +42,7 @@ export default function Importar() {
   async function processarDados(dados: any[], tipo: "receita" | "despesa") {
 
     const dadosConvertidos = dados
-      .map((item: any) => {
+      .map((item: any, index: number) => {
 
         // ================= STATUS (COLUNA A) =================
         const statusTexto = String(item.A || "").toLowerCase()
@@ -110,8 +110,8 @@ export default function Importar() {
 
          // ================= IMPORT_ID (🔥 CHAVE DO SISTEMA) =================
         const import_id = btoa(
-          `${item["Cliente"]}-${item["Data Crédito"]}-${item["Valor Líquido"]}-${item["Descrição"]}`
-        )   
+          `${item["Cliente"]}-${item["Data Crédito"]}-${item["Valor Líquido"]}-${item["Descrição"]}-${index}`
+        )
 
         return {
           data,
