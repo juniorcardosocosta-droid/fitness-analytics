@@ -32,7 +32,7 @@ export default function Importar() {
 
     return Number(
       String(v)
-        .replace("R$", "")
+        .replace(/R\$\s?/g, "")
         .replace(/\./g, "")
         .replace(",", ".")
         .trim()
