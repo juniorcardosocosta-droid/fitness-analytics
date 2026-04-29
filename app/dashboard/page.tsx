@@ -260,6 +260,48 @@ export default function Dashboard() {
     }
   })
 
+  // ================= GRÁFICO DE ALUNOS =================
+  const dadosAlunos = Object.values(
+     dadosFiltrados.reduce((acc:any, item:any) => {
+
+       if (!item.data) return acc
+
+       const [ano, mes] = item.data.split("-")
+       const mesNumero = Number(mes) - 1
+
+       const meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
+       const mesNome = meses[mesNumero]
+
+       if (!acc[mesNumero]) {
+         acc[mesNumero] = {
+           mes: mesNome,
+           ordem: mesNumero,
+           ativos: 0,
+           recorrencia: 0,
+           novos: 0
+         }
+       }
+
+       if (item.tipo === "receita") {
+
+      const status = String(item.status_cliente || "").toLowerCase()
+
+      acc[mesNumero].ativos++
+
+      if (status.includes("ativo")) {
+        acc[mesNumero].recorrencia++
+      }
+
+      if (status.includes("novo")) {
+        acc[mesNumero].novos++
+      }
+    }
+
+    return acc
+
+  }, {})
+).sort((a:any,b:any)=> a.ordem - b.ordem)
+
   // ================= TELA =================
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
@@ -462,6 +504,34 @@ export default function Dashboard() {
             </BarChart>
           </ResponsiveContainer>
         </div>
+
+        {/* GRÁFICO 3 - ALUNOS */}
+<div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
+  <h2 className="mb-4">Evolução de Alunos</h2>
+
+  <ResponsiveContainer width="100%" height={350}>
+    <BarChart data={dadosAlunos} barGap={10}>
+      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+      <XAxis dataKey="mes" stroke="#94a3b8" />
+      <YAxis stroke="#94a3b8" />
+      <Tooltip />
+      <Legend />
+
+      <Bar dataKey="ativos" fill="#22c55e" name="Ativos">
+        <LabelList dataKey="ativos" position="top" fill="#ffffff" />
+      </Bar>
+
+      <Bar dataKey="recorrencia" fill="#3b82f6" name="Recorrência">
+        <LabelList dataKey="recorrencia" position="top" fill="#ffffff" />
+      </Bar>
+
+      <Bar dataKey="novos" fill="#a855f7" name="Novos">
+        <LabelList dataKey="novos" position="top" fill="#ffffff" />
+      </Bar>
+
+    </BarChart>
+  </ResponsiveContainer>
+</div>
 
       </div>
 
