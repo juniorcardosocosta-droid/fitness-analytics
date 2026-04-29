@@ -468,12 +468,21 @@ export default function Dashboard() {
       {/* ================= HEATMAP ================= */}
 {(() => {
 
+  const mesesFixos = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
+
+  const dadosMap = Object.fromEntries(
+    dadosGrafico.map((m:any) => [m.mes, m])
+  )
+
   const maxValor = Math.max(
-    ...dadosGrafico.flatMap((m:any) => [
-      m.recorrencia,
-      m.agregador,
-      m.outros
-    ])
+    ...mesesFixos.flatMap((mes) => {
+      const m = dadosMap[mes] || {}
+      return [
+        m.recorrencia || 0,
+        m.agregador || 0,
+        m.outros || 0
+      ]
+    })
   )
 
   function getHeatColor(valor:number) {
@@ -499,50 +508,53 @@ export default function Dashboard() {
 
           {/* MESES */}
           <div></div>
-          {dadosGrafico.map((m:any)=>(
-            <div key={m.mes} className="text-center text-gray-400">
-              {m.mes}
+          {mesesFixos.map((mes)=>(
+            <div key={mes} className="text-center text-gray-400">
+              {mes}
             </div>
           ))}
 
           {/* RECORRÊNCIA */}
-          <div className="text-gray-400 flex items-center">
-            Recorrência
-          </div>
-          {dadosGrafico.map((m:any)=>(
-            <div
-              key={m.mes}
-              className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.recorrencia)}`}
-            >
-              {m.recorrencia.toLocaleString("pt-BR")}
-            </div>
-          ))}
+          <div className="text-gray-400 flex items-center">Recorrência</div>
+          {mesesFixos.map((mes)=>{
+            const m = dadosMap[mes] || {}
+            return (
+              <div
+                key={mes}
+                className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.recorrencia || 0)}`}
+              >
+                {(m.recorrencia || 0).toLocaleString("pt-BR")}
+              </div>
+            )
+          })}
 
           {/* CARTÃO */}
-          <div className="text-gray-400 flex items-center">
-            Cartão
-          </div>
-          {dadosGrafico.map((m:any)=>(
-            <div
-              key={m.mes}
-              className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.agregador)}`}
-            >
-              {m.agregador.toLocaleString("pt-BR")}
-            </div>
-          ))}
+          <div className="text-gray-400 flex items-center">Cartão</div>
+          {mesesFixos.map((mes)=>{
+            const m = dadosMap[mes] || {}
+            return (
+              <div
+                key={mes}
+                className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.agregador || 0)}`}
+              >
+                {(m.agregador || 0).toLocaleString("pt-BR")}
+              </div>
+            )
+          })}
 
           {/* OUTROS */}
-          <div className="text-gray-400 flex items-center">
-            Outros
-          </div>
-          {dadosGrafico.map((m:any)=>(
-            <div
-              key={m.mes}
-              className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.outros)}`}
-            >
-              {m.outros.toLocaleString("pt-BR")}
-            </div>
-          ))}
+          <div className="text-gray-400 flex items-center">Outros</div>
+          {mesesFixos.map((mes)=>{
+            const m = dadosMap[mes] || {}
+            return (
+              <div
+                key={mes}
+                className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.outros || 0)}`}
+              >
+                {(m.outros || 0).toLocaleString("pt-BR")}
+              </div>
+            )
+          })}
 
         </div>
 
@@ -568,7 +580,6 @@ export default function Dashboard() {
     </div>
   )
 })()}
-
     </div>
   )
 }
