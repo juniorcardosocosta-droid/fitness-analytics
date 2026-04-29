@@ -109,7 +109,9 @@ export default function Importar() {
             : "receita"
 
          // ================= IMPORT_ID (🔥 CHAVE DO SISTEMA) =================
-        const import_id = JSON.stringify(item)    
+        const import_id = btoa(
+          `${item["Cliente"]}-${item["Data Crédito"]}-${item["Valor Líquido"]}-${item["Descrição"]}`
+        )   
 
         return {
           data,
