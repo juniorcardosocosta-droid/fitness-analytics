@@ -68,11 +68,7 @@ export default function Importar() {
             ? parseNumero(item["Valor Líquido"])
             : parseNumero(item["Valor Pago"] || item["Valor"])
 
-        // ❌ NÃO descarta mais por zero
-        if (valor === null || valor === undefined || isNaN(valor)) {
-          console.log("ERRO NO VALOR:", item)
-          return null
-        }
+        if (!valor) return null
 
         // ================= VALORES EXTRA =================
         const valorBruto =
@@ -113,9 +109,7 @@ export default function Importar() {
             : "receita"
 
          // ================= IMPORT_ID (🔥 CHAVE DO SISTEMA) =================
-        const import_id = btoa(
-          `${item["Cliente"]}-${item["Data Crédito"]}-${item["Valor Líquido"]}-${item["Descrição"]}-${index}`
-        )
+         const import_id = JSON.stringify(item)
 
         return {
           data,
