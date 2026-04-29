@@ -77,7 +77,10 @@ export default function Dashboard() {
   const dadosFiltrados = dados.filter((item: any) => {
     if (!item.data) return false
 
-    const [ano, mes] = item.data.split("-")
+    const [anoStr, mesStr] = item.data.split("-")
+
+    const ano = Number(anoStr)
+    const mes = Number(mesStr)
 
     if (mesSelecionado && Number(mesSelecionado) !== mes) return false
     if (anoSelecionado && Number(anoSelecionado) !== ano) return false
@@ -146,7 +149,10 @@ export default function Dashboard() {
   const dadosMesAnterior = dados.filter((item:any) => {
     if (!item.data) return false
 
-     const [ano, mes] = item.data.split("-")
+     const [anoStr, mesStr] = item.data.split("-")
+
+     const ano = Number(anoStr)
+     const mes = Number(mesStr)
 
     if (!mesSelecionado || !anoSelecionado) return false
 
@@ -281,8 +287,9 @@ export default function Dashboard() {
           className="bg-[#0f1c33] border px-4 py-2 rounded"
         >
           <option value="">Todos os anos</option>
-          {[...new Set(dados.map((d:any)=> new Date(d.data).getFullYear()))].map((ano:any)=>(
-            <option key={ano} value={ano}>{ano}</option>
+          {[...new Set(dados.map((d:any)=> Number(d.data.split("-")[0])))]
+            .map((ano:any)=>(
+              <option key={ano} value={ano}>{ano}</option>
           ))}
         </select>
 
