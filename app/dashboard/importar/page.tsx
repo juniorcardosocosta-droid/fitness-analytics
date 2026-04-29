@@ -90,20 +90,46 @@ export default function Importar() {
             ? item["Data Crédito"]
             : item["Data Pagamento"]
 
-        let data = new Date().toISOString().split("T")[0]
+        let data = null
 
         if (dataBruta) {
-          const partes = String(dataBruta).split("/")
 
-          if (partes.length === 3) {
-            const [dia, mes, ano] = partes
-            data = `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`
+        // 🔥 se vier como número do Excel
+        if (typeof dataBruta === "number") {
+          const excelDate = XLSX.SSF.parse_date_code(dataBruta)
+
+          if (excelDate) {
+            data = `${excelDate.y}-${String(excelDate.m).padStart(2,"0")}-${String(excelDate.d).padStart(2,"0")}`
           }
         }
 
-        if (!dataBruta) {
-          console.log("ERRO DATA VAZIA:", item)
+        // 🔥 se vier como string
+        else {
+          const partes = String(dataBruta).split("/")
+
+          if (partes.length === 3) {
+            let dia = partes[0]
+            let mes = partes[1]
+            const ano = partes[2]
+
+            // 🔥 detecta formato invertido (MM/DD)
+            if (Number(dia) <= 12 && Number(mes) <= 12) {
+              // ambíguo → assume padrão brasileiro (não mexe)
+           } else if (Number(dia) <= 12) {
+             // provavelmente MM/DD → inverter
+             dia = partes[1]
+             mes = partes[0]
+           }
+
+           data = `${ano}-${mes.padStart(2,"0")}-${dia.padStart(2,"0")}`
         }
+     }
+  }
+
+  if (!data) {
+    console.log("ERRO DATA:", item)
+    return null
+  }
 
         // ================= ORIGEM =================
         const origem =
