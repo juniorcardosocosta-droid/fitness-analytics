@@ -68,7 +68,10 @@ export default function Importar() {
             ? parseNumero(item["Valor Líquido"])
             : parseNumero(item["Valor Pago"] || item["Valor"])
 
-        if (!valor) return null
+        if (!valor) {
+          console.log("LINHA DESCARTADA (SEM VALOR):", item)
+          return null
+        }
 
         // ================= VALORES EXTRA =================
         const valorBruto =
@@ -96,6 +99,10 @@ export default function Importar() {
             const [dia, mes, ano] = partes
             data = `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`
           }
+        }
+
+        if (!dataBruta) {
+          console.log("ERRO DATA VAZIA:", item)
         }
 
         // ================= ORIGEM =================
@@ -216,6 +223,10 @@ if (primeiraData) {
         const jsonData = XLSX.utils.sheet_to_json(sheet, {
           range: 1
         })
+
+        console.log("TOTAL LINHAS EXCEL:", jsonData.length)
+        console.log("PRIMEIRA LINHA EXCEL:", jsonData[0])
+        console.log("TODAS AS CHAVES:", Object.keys(jsonData[0] || {}))
 
         await processarDados(jsonData, tipo)
 
