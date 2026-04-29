@@ -465,6 +465,65 @@ export default function Dashboard() {
 
       </div>
 
+      {/* ================= HEATMAP ================= */}
+<div className="mt-10">
+  <div className="bg-[#0f1c33] p-6 rounded w-full">
+    
+    <h2 className="mb-6">Heatmap de Receita por Origem</h2>
+
+    <div className="grid grid-cols-9 gap-2 text-xs text-white">
+
+      <div></div>
+      {dadosGrafico.map((m:any)=>(
+        <div key={m.mes} className="text-center text-gray-400">
+          {m.mes}
+        </div>
+      ))}
+
+      <div className="text-gray-400">Recorrência</div>
+      {dadosGrafico.map((m:any)=>(
+        <div
+          key={m.mes}
+          className="h-10 rounded flex items-center justify-center"
+          style={{
+            backgroundColor: `rgba(34,197,94,${Math.min(m.recorrencia / 300000,1)})`
+          }}
+        >
+          {m.recorrencia.toLocaleString("pt-BR")}
+        </div>
+      ))}
+
+      <div className="text-gray-400">Cartão</div>
+      {dadosGrafico.map((m:any)=>(
+        <div
+          key={m.mes}
+          className="h-10 rounded flex items-center justify-center"
+          style={{
+            backgroundColor: `rgba(59,130,246,${Math.min(m.agregador / 100000,1)})`
+          }}
+        >
+          {m.agregador.toLocaleString("pt-BR")}
+        </div>
+      ))}
+
+      <div className="text-gray-400">Outros</div>
+      {dadosGrafico.map((m:any)=>(
+        <div
+          key={m.mes}
+          className="h-10 rounded flex items-center justify-center"
+          style={{
+            backgroundColor: `rgba(168,85,247,${Math.min(m.outros / 50000,1)})`
+          }}
+        >
+          {m.outros.toLocaleString("pt-BR")}
+        </div>
+      ))}
+
+    </div>
+
+  </div>
+</div>
+
     </div>
   )
 }
