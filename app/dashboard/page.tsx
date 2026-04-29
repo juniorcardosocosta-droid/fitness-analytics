@@ -77,9 +77,7 @@ export default function Dashboard() {
   const dadosFiltrados = dados.filter((item: any) => {
     if (!item.data) return false
 
-    const dataItem = new Date(item.data)
-    const mes = dataItem.getMonth() + 1
-    const ano = dataItem.getFullYear()
+    const [ano, mes] = item.data.split("-")
 
     if (mesSelecionado && Number(mesSelecionado) !== mes) return false
     if (anoSelecionado && Number(anoSelecionado) !== ano) return false
@@ -148,9 +146,7 @@ export default function Dashboard() {
   const dadosMesAnterior = dados.filter((item:any) => {
     if (!item.data) return false
 
-    const dataItem = new Date(item.data)
-    const mes = dataItem.getMonth() + 1
-    const ano = dataItem.getFullYear()
+     const [ano, mes] = item.data.split("-")
 
     if (!mesSelecionado || !anoSelecionado) return false
 
@@ -208,9 +204,11 @@ export default function Dashboard() {
       .filter((item: any) => item.tipo === "receita")
       .reduce((acc: any, item: any) => {
 
-        const dataItem = new Date(item.data)
-        const mesNumero = dataItem.getMonth()
-        const mesNome = dataItem.toLocaleDateString("pt-BR", { month: "short" })
+        const [ano, mes] = item.data.split("-")
+        const mesNumero = Number(mes) - 1
+
+        const meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
+        const mesNome = meses[mesNumero]
 
         if (!acc[mesNumero]) {
           acc[mesNumero] = {
