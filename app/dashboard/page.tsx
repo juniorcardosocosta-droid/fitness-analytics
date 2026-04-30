@@ -302,6 +302,51 @@ export default function Dashboard() {
   }, {})
 ).sort((a:any,b:any)=> a.ordem - b.ordem)
 
+   // ================= GRÁFICO DE CHURN =================
+const dadosChurn = Object.values(
+  dadosFiltrados.reduce((acc:any, item:any) => {
+
+    if (!item.data) return acc
+
+    const [ano, mes] = item.data.split("-")
+    const mesNumero = Number(mes) - 1
+
+    const meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
+    const mesNome = meses[mesNumero]
+
+    if (!acc[mesNumero]) {
+      acc[mesNumero] = {
+        mes: mesNome,
+        ordem: mesNumero,
+        ativos: 0,
+        cancelados: 0
+      }
+    }
+
+    if (item.tipo === "receita") {
+      const status = String(item.status_cliente || "").toLowerCase()
+
+      if (status.includes("ativo")) {
+        acc[mesNumero].ativos++
+      }
+
+      if (status.includes("cancel")) {
+        acc[mesNumero].cancelados++
+      }
+    }
+
+    return acc
+
+  }, {})
+).map((m:any) => {
+  const total = m.ativos + m.cancelados
+
+  return {
+    ...m,
+    churn: total > 0 ? (m.cancelados / total) * 100 : 0
+  }
+}).sort((a:any,b:any)=> a.ordem - b.ordem)
+
   // ================= TELA =================
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
@@ -527,6 +572,31 @@ export default function Dashboard() {
 
       <Bar dataKey="novos" fill="#a855f7" name="Novos">
         <LabelList dataKey="novos" position="top" fill="#ffffff" />
+      </Bar>
+
+    </BarChart>
+  </ResponsiveContainer>
+</div>
+
+{/* GRÁFICO 4 - CHURN */}
+<div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
+  <h2 className="mb-4">Churn Mensal (%)</h2>
+
+  <ResponsiveContainer width="100%" height={350}>
+    <BarChart data={dadosChurn}>
+      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+      <XAxis dataKey="mes" stroke="#94a3b8" />
+      <YAxis stroke="#94a3b8" domain={[0, 100]} />
+      <Tooltip formatter={(v:any)=> `${v.toFixed(1)}%`} />
+      <Legend />
+
+      <Bar dataKey="churn" fill="#ef4444" name="Churn (%)">
+        <LabelList
+          dataKey="churn"
+          position="top"
+          formatter={(v:any)=> `${v.toFixed(1)}%`}
+          fill="#ffffff"
+        />
       </Bar>
 
     </BarChart>
