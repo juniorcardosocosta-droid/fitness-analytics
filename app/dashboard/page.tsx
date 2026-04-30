@@ -1121,9 +1121,9 @@ return (
 
   return (
     <div className="mt-10">
-      <div className="bg-gradient-to-br from-[#1a0f0f] to-[#2a0f0f] p-6 rounded-2xl shadow-lg w-full">
+      <div className="bg-[#0f1c33] p-6 rounded-2xl shadow-lg w-full">
 
-        <h2 className="mb-6 text-lg font-semibold text-red-300">
+        <h2 className="mb-6 text-lg font-semibold text-red-400">
           Heatmap de Despesas por Categoria
         </h2>
 
