@@ -464,6 +464,43 @@ else {
 }))
 .sort((a:any,b:any)=> a.ordem - b.ordem)
 
+const categoriasDespesas = dadosFiltrados
+  .filter((i:any) => i.tipo === "despesa")
+  .map((i:any) => i.categoria || "Outros")
+  .filter((v, i, arr) => arr.indexOf(v) === i)
+
+  const dadosDespesas = Object.values(
+  dadosFiltrados.reduce((acc:any, item:any) => {
+
+    if (!item.data || item.tipo !== "despesa") return acc
+
+    const [ano, mes] = item.data.split("-")
+    const mesNumero = Number(mes) - 1
+
+    const meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
+    const mesNome = meses[mesNumero]
+
+    if (!acc[mesNumero]) {
+      acc[mesNumero] = {
+        mes: mesNome,
+        ordem: mesNumero
+      }
+
+      categoriasDespesas.forEach((cat:any)=>{
+        acc[mesNumero][cat] = 0
+      })
+    }
+
+    const categoria = item.categoria || "Outros"
+    const valor = Number(item.valor || 0)
+
+    acc[mesNumero][categoria] += valor
+
+    return acc
+
+  }, {})
+).sort((a:any,b:any)=> a.ordem - b.ordem)
+
   // ================= TELA =================
 return (
   <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
@@ -1047,6 +1084,78 @@ return (
           ))}
 
           <span className="text-xs text-gray-400">Maior</span>
+        </div>
+
+      </div>
+    </div>
+  )
+})()}
+
+{/* ================= HEATMAP DESPESAS ================= */}
+{(() => {
+
+  const mesesFixos = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
+
+  const dadosMap = Object.fromEntries(
+    dadosDespesas.map((m:any) => [m.mes, m])
+  )
+
+  const maxValor = Math.max(
+    ...mesesFixos.flatMap((mes)=>{
+      const m = dadosMap[mes] || {}
+      return categoriasDespesas.map((cat:any)=> m[cat] || 0)
+    })
+  )
+
+  function getHeatColor(valor:number) {
+    const intensidade = maxValor > 0 ? valor / maxValor : 0
+
+    if (intensidade > 0.85) return "bg-red-700"
+    if (intensidade > 0.65) return "bg-red-600"
+    if (intensidade > 0.45) return "bg-red-500"
+    if (intensidade > 0.25) return "bg-red-400"
+    if (intensidade > 0.1) return "bg-red-300"
+
+    return "bg-[#1e293b]"
+  }
+
+  return (
+    <div className="mt-10">
+      <div className="bg-gradient-to-br from-[#1a0f0f] to-[#2a0f0f] p-6 rounded-2xl shadow-lg w-full">
+
+        <h2 className="mb-6 text-lg font-semibold text-red-300">
+          Heatmap de Despesas por Categoria
+        </h2>
+
+        <div className="grid grid-cols-[160px_repeat(12,1fr)] gap-2 text-xs">
+
+          {/* MESES */}
+          <div></div>
+          {mesesFixos.map((mes)=>(
+            <div key={mes} className="text-center text-gray-400">{mes}</div>
+          ))}
+
+          {/* LINHAS DINÂMICAS */}
+          {categoriasDespesas.map((cat:any)=>(
+            <>
+              <div className="text-gray-400 flex items-center">
+                {cat}
+              </div>
+
+              {mesesFixos.map((mes)=>{
+                const m = dadosMap[mes] || {}
+
+                return (
+                  <div
+                    className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m[cat] || 0)}`}
+                  >
+                    {(m[cat] || 0).toLocaleString("pt-BR")}
+                  </div>
+                )
+              })}
+            </>
+          ))}
+
         </div>
 
       </div>
