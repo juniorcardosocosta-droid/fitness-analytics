@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabaseClient"
 import { useRouter } from "next/navigation"
+import { ComposedChart } from "recharts"
 
 import {
   BarChart,
@@ -790,31 +791,34 @@ return (
           <h2 className="mb-4">Composição da Receita (%)</h2>
 
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={dadosPercentuais}>
-              <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-              <XAxis dataKey="mes" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" domain={[0, 100]} />
+  <ComposedChart data={dadosPercentuais}>
 
-              <Tooltip />
-              <Legend />
+    <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
 
-              <Bar dataKey="recorrencia" stackId="a" fill="#14b8a6">
-                <LabelList
-                  dataKey="recorrencia"
-                  position="inside"
-                  formatter={(v:any)=> `${v.toFixed(0)}%`}
-                  fill="#000"
-                />
-              </Bar>
+    <XAxis dataKey="mes" stroke="#94a3b8" />
+    <YAxis stroke="#94a3b8" domain={[0, 100]} />
 
-              <Bar dataKey="cartao" stackId="a" fill="#3b82f6" />
-<Bar dataKey="pix" stackId="a" fill="#22c55e" />
-<Bar dataKey="boleto" stackId="a" fill="#eab308" />
-<Bar dataKey="dinheiro" stackId="a" fill="#a3a3a3" />
-<Bar dataKey="recorrencia" stackId="a" fill="#06b6d4" />
-              
-            </BarChart>
-          </ResponsiveContainer>
+    <Tooltip />
+    <Legend />
+
+    {/* BARRAS */}
+    <Bar dataKey="recorrencia" stackId="a" fill="#14b8a6" />
+    <Bar dataKey="cartao" stackId="a" fill="#3b82f6" />
+    <Bar dataKey="pix" stackId="a" fill="#22c55e" />
+    <Bar dataKey="boleto" stackId="a" fill="#eab308" />
+    <Bar dataKey="dinheiro" stackId="a" fill="#a3a3a3" />
+
+    {/* 🔥 LINHA (VOLTA DO JEITO CERTO) */}
+    <Line
+      type="monotone"
+      dataKey="cartao"
+      stroke="#ffffff"
+      strokeWidth={3}
+      dot={{ r: 4 }}
+    />
+
+  </ComposedChart>
+</ResponsiveContainer>
         </div>
 
         {/* GRÁFICO 3 - ALUNOS */}
