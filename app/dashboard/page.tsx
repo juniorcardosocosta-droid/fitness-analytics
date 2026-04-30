@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import {
   BarChart,
   Bar,
+  LineChart,
   Line,
   Legend,
   XAxis,
@@ -354,6 +355,43 @@ const dadosChurn = Object.values(
     churn: total > 0 ? (m.cancelados / total) * 100 : 0
   }
 }).sort((a:any,b:any)=> a.ordem - b.ordem)
+
+const dadosEvolucao = Object.values(
+  dadosFiltrados.reduce((acc:any, item:any) => {
+
+    if (!item.data) return acc
+
+    const [ano, mes] = item.data.split("-")
+    const mesNumero = Number(mes) - 1
+
+    const meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
+    const mesNome = meses[mesNumero]
+
+    if (!acc[mesNumero]) {
+      acc[mesNumero] = {
+        mes: mesNome,
+        ordem: mesNumero,
+        receita: 0,
+        despesa: 0,
+        resultado: 0
+      }
+    }
+
+    if (item.tipo === "receita") {
+      acc[mesNumero].receita += Number(item.valor || 0)
+    }
+
+    if (item.tipo === "despesa") {
+      acc[mesNumero].despesa += Number(item.valor || 0)
+    }
+
+    acc[mesNumero].resultado =
+      acc[mesNumero].receita - acc[mesNumero].despesa
+
+    return acc
+
+  }, {})
+).sort((a:any,b:any)=> a.ordem - b.ordem)
 
   // ================= TELA =================
 return (
@@ -722,6 +760,48 @@ return (
 
     </BarChart>
   </ResponsiveContainer>
+</div>
+
+{/* GRÁFICO NOVO - EVOLUÇÃO FINANCEIRA */}
+<div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
+
+  <h2 className="mb-4">Evolução Financeira</h2>
+
+  <ResponsiveContainer width="100%" height={350}>
+    <LineChart data={dadosEvolucao}>
+
+      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+
+      <XAxis dataKey="mes" stroke="#94a3b8" />
+      <YAxis stroke="#94a3b8" />
+
+      <Tooltip />
+      <Legend />
+
+      <Line
+        type="monotone"
+        dataKey="receita"
+        stroke="#22c55e"
+        strokeWidth={3}
+      />
+
+      <Line
+        type="monotone"
+        dataKey="despesa"
+        stroke="#ef4444"
+        strokeWidth={3}
+      />
+
+      <Line
+        type="monotone"
+        dataKey="resultado"
+        stroke="#3b82f6"
+        strokeWidth={3}
+      />
+
+    </LineChart>
+  </ResponsiveContainer>
+
 </div>
 
       </div>
