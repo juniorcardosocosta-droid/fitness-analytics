@@ -246,7 +246,8 @@ export default function Dashboard() {
           acc[mesNumero].agregador += valor
         } else if (
           texto.includes("pix") ||
-          texto.includes("dinheiro")
+          texto.includes("dinheiro") ||
+          texto.includes("boleto")
         ) {
           acc[mesNumero].outros += valor
         } else {
@@ -417,17 +418,32 @@ const dadosTicket = Object.values(
       }
     }
 
-    // Recorrência
-    if (item.tipo === "receita" && item.origem === "recorrencia") {
-      acc[mesNumero].recorrencia += Number(item.valor || 0)
-      acc[mesNumero].countRec += 1
-    }
+    const texto = String(item.origem || "").toLowerCase()
+const valor = Number(item.valor || 0)
 
-    // Agregador (cartão/pix etc)
-    if (item.tipo === "receita" && item.origem === "agregador") {
-      acc[mesNumero].agregador += Number(item.valor || 0)
-      acc[mesNumero].countAgr += 1
-    }
+// agregador
+if (
+  texto.includes("cart") ||
+  texto.includes("credito") ||
+  texto.includes("debito")
+) {
+  acc[mesNumero].agregador += valor
+  acc[mesNumero].countAgr += 1
+}
+
+// outros (pix/dinheiro) → você pode ignorar no ticket médio ou incluir
+else if (
+  texto.includes("pix") ||
+  texto.includes("dinheiro")
+) {
+  // opcional: pode tratar como agregador se quiser
+}
+
+// recorrência (todo resto)
+else {
+  acc[mesNumero].recorrencia += valor
+  acc[mesNumero].countRec += 1
+}
 
     return acc
 
