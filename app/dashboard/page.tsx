@@ -230,29 +230,36 @@ export default function Dashboard() {
             mes: mesNome,
             ordem: mesNumero,
             recorrencia: 0,
-            agregador: 0,
-            outros: 0,
+            cartao: 0,
+            pix: 0,
+            boleto: 0,
+            dinheiro: 0,
+            
           }
         }
 
         const texto = String(item.origem || "").toLowerCase()
-        const valor = Number(item.valor || 0)
+const valor = Number(item.valor || 0)
 
-        if (
-          texto.includes("cart") ||
-          texto.includes("credito") ||
-          texto.includes("debito")
-        ) {
-          acc[mesNumero].agregador += valor
-        } else if (
-          texto.includes("pix") ||
-          texto.includes("dinheiro") ||
-          texto.includes("boleto")
-        ) {
-          acc[mesNumero].outros += valor
-        } else {
-          acc[mesNumero].recorrencia += valor
-        }
+if (
+  texto.includes("cart") ||
+  texto.includes("credito") ||
+  texto.includes("debito")
+) {
+  acc[mesNumero].cartao += valor
+}
+else if (texto.includes("pix")) {
+  acc[mesNumero].pix += valor
+}
+else if (texto.includes("boleto")) {
+  acc[mesNumero].boleto += valor
+}
+else if (texto.includes("dinheiro")) {
+  acc[mesNumero].dinheiro += valor
+}
+else {
+  acc[mesNumero].recorrencia += valor
+}
 
         return acc
 
@@ -930,14 +937,16 @@ return (
       const m = dadosMap[mes] || {}
       return [
         m.recorrencia || 0,
-        m.agregador || 0,
-        m.outros || 0
+        m.cartao || 0,
+        m.pix || 0,
+        m.boleto || 0,
+        m.dinheiro || 0
       ]
     })
   )
 
   function getHeatColor(valor:number) {
-    const intensidade = valor / maxValor
+    const intensidade = maxValor > 0 ? valor / maxValor : 0
 
     if (intensidade > 0.85) return "bg-blue-700"
     if (intensidade > 0.65) return "bg-blue-600"
@@ -950,7 +959,7 @@ return (
   return (
     <div className="mt-10">
       <div className="bg-gradient-to-br from-[#0b1220] to-[#0f1c33] p-6 rounded-2xl shadow-lg w-full">
-        
+
         <h2 className="mb-6 text-lg font-semibold">
           Heatmap de Receita por Origem
         </h2>
@@ -970,10 +979,7 @@ return (
           {mesesFixos.map((mes)=>{
             const m = dadosMap[mes] || {}
             return (
-              <div
-                key={mes}
-                className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.recorrencia || 0)}`}
-              >
+              <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.recorrencia || 0)}`}>
                 {(m.recorrencia || 0).toLocaleString("pt-BR")}
               </div>
             )
@@ -984,25 +990,41 @@ return (
           {mesesFixos.map((mes)=>{
             const m = dadosMap[mes] || {}
             return (
-              <div
-                key={mes}
-                className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.agregador || 0)}`}
-              >
-                {(m.agregador || 0).toLocaleString("pt-BR")}
+              <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.cartao || 0)}`}>
+                {(m.cartao || 0).toLocaleString("pt-BR")}
               </div>
             )
           })}
 
-          {/* OUTROS */}
-          <div className="text-gray-400 flex items-center">Outros</div>
+          {/* PIX */}
+          <div className="text-gray-400 flex items-center">PIX</div>
           {mesesFixos.map((mes)=>{
             const m = dadosMap[mes] || {}
             return (
-              <div
-                key={mes}
-                className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.outros || 0)}`}
-              >
-                {(m.outros || 0).toLocaleString("pt-BR")}
+              <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.pix || 0)}`}>
+                {(m.pix || 0).toLocaleString("pt-BR")}
+              </div>
+            )
+          })}
+
+          {/* BOLETO */}
+          <div className="text-gray-400 flex items-center">Boleto</div>
+          {mesesFixos.map((mes)=>{
+            const m = dadosMap[mes] || {}
+            return (
+              <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.boleto || 0)}`}>
+                {(m.boleto || 0).toLocaleString("pt-BR")}
+              </div>
+            )
+          })}
+
+          {/* DINHEIRO */}
+          <div className="text-gray-400 flex items-center">Dinheiro</div>
+          {mesesFixos.map((mes)=>{
+            const m = dadosMap[mes] || {}
+            return (
+              <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.dinheiro || 0)}`}>
+                {(m.dinheiro || 0).toLocaleString("pt-BR")}
               </div>
             )
           })}
