@@ -17,6 +17,14 @@ import {
   LabelList
 } from "recharts"
 
+import {
+  DollarSign,
+  TrendingDown,
+  BarChart3,
+  Users,
+  AlertTriangle
+} from "lucide-react"
+
 export default function Dashboard() {
 
   const router = useRouter()
@@ -348,56 +356,60 @@ const dadosChurn = Object.values(
 }).sort((a:any,b:any)=> a.ordem - b.ordem)
 
   // ================= TELA =================
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
+return (
+  <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
 
-      <h1 className="text-4xl font-bold mb-10">Dashboard</h1>
+    <h1 className="text-4xl font-bold mb-10">Dashboard</h1>
 
-      {/* FILTROS */}
-      <div className="flex gap-4 mb-10">
-        <select
-          value={mesSelecionado}
-          onChange={(e) => setMesSelecionado((e.target as any).value)}
-          className="bg-[#0f1c33] border px-4 py-2 rounded"
-        >
-          <option value="">Todos os meses</option>
-          {[...Array(12)].map((_, i) => (
-            <option key={i+1} value={i+1}>
-              {new Date(0, i).toLocaleString("pt-BR",{month:"long"})}
-            </option>
-          ))}
-        </select>
+    {/* FILTROS */}
+    <div className="flex gap-4 mb-10">
+      <select
+        value={mesSelecionado}
+        onChange={(e) => setMesSelecionado((e.target as any).value)}
+        className="bg-[#0f1c33] border px-4 py-2 rounded"
+      >
+        <option value="">Todos os meses</option>
+        {[...Array(12)].map((_, i) => (
+          <option key={i+1} value={i+1}>
+            {new Date(0, i).toLocaleString("pt-BR",{month:"long"})}
+          </option>
+        ))}
+      </select>
 
-        <select
-          value={anoSelecionado}
-          onChange={(e) => setAnoSelecionado((e.target as any).value)}
-          className="bg-[#0f1c33] border px-4 py-2 rounded"
-        >
-          <option value="">Todos os anos</option>
-          {[...new Set(dados.map((d:any)=> Number(d.data.split("-")[0])))]
-            .map((ano:any)=>(
-              <option key={ano} value={ano}>{ano}</option>
-          ))}
-        </select>
+      <select
+        value={anoSelecionado}
+        onChange={(e) => setAnoSelecionado((e.target as any).value)}
+        className="bg-[#0f1c33] border px-4 py-2 rounded"
+      >
+        <option value="">Todos os anos</option>
+        {[...new Set(dados.map((d:any)=> Number(d.data.split("-")[0])))]
+          .map((ano:any)=>(
+            <option key={ano} value={ano}>{ano}</option>
+        ))}
+      </select>
 
-        <select
-          value={academiaId}
-          onChange={(e) => setAcademiaId(e.target.value)}
-          className="bg-[#0f1c33] border px-4 py-2 rounded"
-        >
-          <option value="">Todas as unidades</option>
-          {academias.map((a:any) => (
-            <option key={a.id} value={a.id}>
-              {a.nome}
-            </option>
-          ))}
-        </select>
-      </div>
+      <select
+        value={academiaId}
+        onChange={(e) => setAcademiaId(e.target.value)}
+        className="bg-[#0f1c33] border px-4 py-2 rounded"
+      >
+        <option value="">Todas as unidades</option>
+        {academias.map((a:any) => (
+          <option key={a.id} value={a.id}>
+            {a.nome}
+          </option>
+        ))}
+      </select>
+    </div>
 
-      {/* ================= KPIs FINANCEIROS ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    {/* ================= KPIs FINANCEIROS ================= */}
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
 
-        <div className="bg-[#0f1c33] p-6 rounded">
+      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
+        <div className="bg-green-500/20 p-3 rounded-lg">
+          <DollarSign className="text-green-400" />
+        </div>
+        <div>
           <p className="text-gray-400">Receita</p>
           <h2 className="text-2xl font-bold text-green-300">
             R$ {receita.toLocaleString("pt-BR",{minimumFractionDigits:2})}
@@ -406,70 +418,114 @@ const dadosChurn = Object.values(
             {variacao(receita, receitaAnterior).toFixed(1)}% vs mês anterior
           </p>
         </div>
+      </div>
 
-        <div className="bg-[#0f1c33] p-6 rounded">
+      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
+        <div className="bg-red-500/20 p-3 rounded-lg">
+          <TrendingDown className="text-red-400" />
+        </div>
+        <div>
           <p className="text-gray-400">Despesas</p>
           <h2 className="text-2xl font-bold text-red-300">
             R$ {despesa.toLocaleString("pt-BR",{minimumFractionDigits:2})}
           </h2>
-          <p className="text-sm text-gray-400">
-            {variacao(despesa, despesaAnterior).toFixed(1)}% vs mês anterior
-          </p>
         </div>
+      </div>
 
-        <div className="bg-[#0f1c33] p-6 rounded">
+      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
+        <div className="bg-blue-500/20 p-3 rounded-lg">
+          <BarChart3 className="text-blue-400" />
+        </div>
+        <div>
           <p className="text-gray-400">Resultado</p>
-          <h2 className={`text-2xl font-bold ${resultado >= 0 ? "text-green-300" : "text-red-300"}`}>
+          <h2 className="text-2xl font-bold">
             R$ {resultado.toLocaleString("pt-BR",{minimumFractionDigits:2})}
           </h2>
-          <p className="text-sm text-gray-400">
-            {variacao(resultado, resultadoAnterior).toFixed(1)}% vs mês anterior
-          </p>
         </div>
+      </div>
 
-        <div className="bg-[#0f1c33] p-6 rounded">
+      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
+        <div className="bg-indigo-500/20 p-3 rounded-lg">
+          <BarChart3 className="text-indigo-400" />
+        </div>
+        <div>
           <p className="text-gray-400">Ticket Financeiro</p>
-          <h2 className="text-2xl font-bold text-blue-300">
+          <h2 className="text-2xl font-bold text-indigo-300">
             R$ {ticketFinanceiro.toLocaleString("pt-BR",{minimumFractionDigits:2})}
           </h2>
         </div>
-
       </div>
 
-      {/* ================= KPIs DE ALUNOS ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-10">
+    </div>
 
-        <div className="bg-[#0f1c33] p-6 rounded">
-          <p className="text-gray-400">Ticket por Aluno</p>
-          <h2 className="text-2xl font-bold text-indigo-300">
-            R$ {ticketAluno.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-          </h2>
+    {/* ================= KPIs DE ALUNOS ================= */}
+    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-10">
+
+      <div className="bg-[#0f1c33] p-6 rounded">
+        <p className="text-gray-400">Ticket por Aluno</p>
+        <h2 className="text-2xl font-bold text-indigo-300">
+          R$ {ticketAluno.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+        </h2>
+      </div>
+
+      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
+        <div className="bg-yellow-500/20 p-3 rounded-lg">
+          <Users className="text-yellow-400" />
         </div>
+        <div>
+          <p className="text-gray-400">Total de Alunos</p>
+          <h2 className="text-2xl font-bold text-white">
+            {ativos + cancelados + bloqueados}
+          </h2>
+          <p className="text-sm text-gray-400">
+            {ativos} ativos • {cancelados} cancelados • {bloqueados} bloqueados
+          </p>
+        </div>
+      </div>
 
-        <div className="bg-[#0f1c33] p-6 rounded">
+      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
+        <div className="bg-green-500/20 p-3 rounded-lg">
+          <Users className="text-green-400" />
+        </div>
+        <div>
           <p className="text-gray-400">Ativos</p>
           <h2 className="text-2xl font-bold text-green-300">{ativos}</h2>
         </div>
+      </div>
 
-        <div className="bg-[#0f1c33] p-6 rounded">
+      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
+        <div className="bg-red-500/20 p-3 rounded-lg">
+          <Users className="text-red-400" />
+        </div>
+        <div>
           <p className="text-gray-400">Cancelados</p>
           <h2 className="text-2xl font-bold text-red-300">{cancelados}</h2>
         </div>
+      </div>
 
-        <div className="bg-[#0f1c33] p-6 rounded">
+      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
+        <div className="bg-yellow-500/20 p-3 rounded-lg">
+          <Users className="text-yellow-400" />
+        </div>
+        <div>
           <p className="text-gray-400">Bloqueados</p>
           <h2 className="text-2xl font-bold text-yellow-300">{bloqueados}</h2>
         </div>
-
-        <div className="bg-[#0f1c33] p-6 rounded">
-          <p className="text-gray-400">Churn</p>
-          <h2 className="text-2xl font-bold text-red-300">{churn.toFixed(1)}%</h2>
-          <p className="text-sm text-gray-400">
-            {variacao(churn, churnAnterior).toFixed(1)}% vs mês anterior
-          </p>
-        </div>
-
       </div>
+
+      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
+        <div className="bg-red-500/20 p-3 rounded-lg">
+          <AlertTriangle className="text-red-400" />
+        </div>
+        <div>
+          <p className="text-gray-400">Churn</p>
+          <h2 className="text-2xl font-bold text-red-300">
+            {churn.toFixed(1)}%
+          </h2>
+        </div>
+      </div>
+
+    </div>
 
       {/* ================= GRID DE GRÁFICOS ================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
