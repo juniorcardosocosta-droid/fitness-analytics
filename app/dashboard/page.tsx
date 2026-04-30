@@ -415,9 +415,20 @@ return (
       <h2 className="text-lg font-bold text-green-300">
         R$ {receita.toLocaleString("pt-BR",{minimumFractionDigits:2})}
       </h2>
-      <p className="text-xs text-gray-500">
-        {variacao(receita, receitaAnterior).toFixed(1)}% vs mês anterior
-      </p>
+       {(() => {
+      const v = variacao(receita, receitaAnterior)
+
+      return (
+        <p className={`text-xs font-medium flex items-center gap-1 
+          ${v > 0 ? "text-green-400" : v < 0 ? "text-red-400" : "text-gray-400"}`}>
+
+          {v > 0 && "▲"}
+          {v < 0 && "▼"}
+
+          {v.toFixed(1)}% vs mês anterior
+        </p>
+      )
+    })()}
     </div>
   </div>
 
@@ -431,6 +442,20 @@ return (
       <h2 className="text-lg font-bold text-red-300">
         R$ {despesa.toLocaleString("pt-BR",{minimumFractionDigits:2})}
       </h2>
+      {(() => {
+      const v = variacao(despesa, despesaAnterior)
+
+      return (
+        <p className={`text-xs font-medium flex items-center gap-1 
+          ${v > 0 ? "text-red-400" : v < 0 ? "text-green-400" : "text-gray-400"}`}>
+
+          {v > 0 && "▲"}
+          {v < 0 && "▼"}
+
+          {v.toFixed(1)}% vs mês anterior
+        </p>
+      )
+    })()}
     </div>
   </div>
 
@@ -444,6 +469,20 @@ return (
       <h2 className="text-lg font-bold text-white">
         R$ {resultado.toLocaleString("pt-BR",{minimumFractionDigits:2})}
       </h2>
+       {(() => {
+      const v = variacao(resultado, resultadoAnterior)
+
+      return (
+        <p className={`text-xs font-medium flex items-center gap-1 
+          ${v > 0 ? "text-green-400" : v < 0 ? "text-red-400" : "text-gray-400"}`}>
+
+          {v > 0 && "▲"}
+          {v < 0 && "▼"}
+
+          {v.toFixed(1)}% vs mês anterior
+        </p>
+      )
+    })()}
     </div>
   </div>
 
@@ -534,6 +573,20 @@ return (
       <h2 className="text-lg font-bold text-red-300">
         {churn.toFixed(1)}%
       </h2>
+       {(() => {
+      const v = variacao(churn, churnAnterior)
+
+      return (
+        <p className={`text-xs font-medium flex items-center gap-1 
+          ${v > 0 ? "text-red-400" : v < 0 ? "text-green-400" : "text-gray-400"}`}>
+
+          {v > 0 && "▲"}
+          {v < 0 && "▼"}
+
+          {v.toFixed(1)}% vs mês anterior
+        </p>
+      )
+    })()}
     </div>
   </div>
 
