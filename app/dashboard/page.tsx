@@ -268,14 +268,22 @@ else {
 
   // ================= % PARA GRÁFICO =================
   const dadosPercentuais = dadosGrafico.map((m:any) => {
-    const total = m.recorrencia + m.agregador + m.outros
+  const total =
+    m.recorrencia +
+    m.cartao +
+    m.pix +
+    m.boleto +
+    m.dinheiro
 
-    return {
-      mes: m.mes,
-      recorrencia: total ? (m.recorrencia / total) * 100 : 0,
-      agregador: total ? (m.agregador / total) * 100 : 0,
-    }
-  })
+  return {
+    mes: m.mes,
+    recorrencia: total ? (m.recorrencia / total) * 100 : 0,
+    cartao: total ? (m.cartao / total) * 100 : 0,
+    pix: total ? (m.pix / total) * 100 : 0,
+    boleto: total ? (m.boleto / total) * 100 : 0,
+    dinheiro: total ? (m.dinheiro / total) * 100 : 0,
+  }
+})
 
   // ================= GRÁFICO DE ALUNOS =================
   const dadosAlunos = Object.values(
@@ -799,20 +807,26 @@ return (
                 />
               </Bar>
 
-              <Bar dataKey="agregador" stackId="a" fill="#9ca3af">
-                <LabelList
-                  dataKey="agregador"
-                  position="top"
-                  formatter={(v:any)=> `${v.toFixed(0)}%`}
-                  fill="#fff"
-                />
-              </Bar>
+              <Bar dataKey="cartao" stackId="a" fill="#3b82f6">
+  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#fff" />
+</Bar>
 
-              <Line
-                type="monotone"
-                dataKey="agregador"
-                stroke="#ffffff"
-              />
+<Bar dataKey="pix" stackId="a" fill="#22c55e">
+  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#000" />
+</Bar>
+
+<Bar dataKey="boleto" stackId="a" fill="#eab308">
+  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#000" />
+</Bar>
+
+<Bar dataKey="dinheiro" stackId="a" fill="#a3a3a3">
+  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#000" />
+</Bar>
+
+<Bar dataKey="recorrencia" stackId="a" fill="#06b6d4">
+  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#000" />
+</Bar>
+              
             </BarChart>
           </ResponsiveContainer>
         </div>
