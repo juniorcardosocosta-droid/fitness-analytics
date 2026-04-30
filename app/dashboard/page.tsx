@@ -802,11 +802,25 @@ return (
     <Legend />
 
     {/* BARRAS */}
-    <Bar dataKey="recorrencia" stackId="a" fill="#14b8a6" />
-    <Bar dataKey="cartao" stackId="a" fill="#3b82f6" />
-    <Bar dataKey="pix" stackId="a" fill="#22c55e" />
-    <Bar dataKey="boleto" stackId="a" fill="#eab308" />
-    <Bar dataKey="dinheiro" stackId="a" fill="#a3a3a3" />
+    <Bar dataKey="recorrencia" stackId="a" fill="#14b8a6">
+  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#fff" />
+</Bar>
+
+<Bar dataKey="cartao" stackId="a" fill="#3b82f6">
+  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#fff" />
+</Bar>
+
+<Bar dataKey="pix" stackId="a" fill="#22c55e">
+  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#000" />
+</Bar>
+
+<Bar dataKey="boleto" stackId="a" fill="#eab308">
+  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#000" />
+</Bar>
+
+<Bar dataKey="dinheiro" stackId="a" fill="#a3a3a3">
+  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#000" />
+</Bar>
 
     {/* 🔥 LINHA (VOLTA DO JEITO CERTO) */}
     <Line
