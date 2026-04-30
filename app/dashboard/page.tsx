@@ -356,6 +356,7 @@ const dadosChurn = Object.values(
   }
 }).sort((a:any,b:any)=> a.ordem - b.ordem)
 
+// ================= GRÁFICO EVOLUÇAÕ FINANCEIRA =================
 const dadosEvolucao = Object.values(
   dadosFiltrados.reduce((acc:any, item:any) => {
 
@@ -392,6 +393,53 @@ const dadosEvolucao = Object.values(
 
   }, {})
 ).sort((a:any,b:any)=> a.ordem - b.ordem)
+
+// ================= GRÁFICO EVOLUÇAÕ DO TICKET MEDIO EFETIVO =================
+const dadosTicket = Object.values(
+  dadosFiltrados.reduce((acc:any, item:any) => {
+
+    if (!item.data) return acc
+
+    const [ano, mes] = item.data.split("-")
+    const mesNumero = Number(mes) - 1
+
+    const meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
+    const mesNome = meses[mesNumero]
+
+    if (!acc[mesNumero]) {
+      acc[mesNumero] = {
+        mes: mesNome,
+        ordem: mesNumero,
+        recorrencia: 0,
+        agregador: 0,
+        countRec: 0,
+        countAgr: 0
+      }
+    }
+
+    // Recorrência
+    if (item.tipo === "receita" && item.origem === "recorrencia") {
+      acc[mesNumero].recorrencia += Number(item.valor || 0)
+      acc[mesNumero].countRec += 1
+    }
+
+    // Agregador (cartão/pix etc)
+    if (item.tipo === "receita" && item.origem === "agregador") {
+      acc[mesNumero].agregador += Number(item.valor || 0)
+      acc[mesNumero].countAgr += 1
+    }
+
+    return acc
+
+  }, {})
+).map((m:any) => ({
+  ...m,
+  recorrencia:
+    m.countRec > 0 ? m.recorrencia / m.countRec : 0,
+  agregador:
+    m.countAgr > 0 ? m.agregador / m.countAgr : 0
+}))
+.sort((a:any,b:any)=> a.ordem - b.ordem)
 
   // ================= TELA =================
 return (
@@ -797,6 +845,52 @@ return (
         dataKey="resultado"
         stroke="#3b82f6"
         strokeWidth={3}
+      />
+
+    </LineChart>
+  </ResponsiveContainer>
+
+</div>
+
+{/* EVOLUÇÃO DO TICKET MÉDIO */}
+<div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
+
+  <h2 className="mb-4">
+    Evolução do Ticket Médio (R$)
+  </h2>
+
+  <ResponsiveContainer width="100%" height={350}>
+    <LineChart data={dadosTicket}>
+
+      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+
+      <XAxis dataKey="mes" stroke="#94a3b8" />
+      <YAxis stroke="#94a3b8" />
+
+      <Tooltip
+        formatter={(value:any)=> 
+          `R$ ${Number(value).toFixed(2)}`
+        }
+      />
+
+      <Legend />
+
+      {/* RECORRÊNCIA */}
+      <Line
+        type="monotone"
+        dataKey="recorrencia"
+        stroke="#9ca3af"
+        strokeWidth={3}
+        dot={{ r: 4 }}
+      />
+
+      {/* AGREGADOR */}
+      <Line
+        type="monotone"
+        dataKey="agregador"
+        stroke="#3b82f6"
+        strokeWidth={3}
+        dot={{ r: 4 }}
       />
 
     </LineChart>
