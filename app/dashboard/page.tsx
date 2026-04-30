@@ -403,129 +403,141 @@ return (
     </div>
 
     {/* ================= KPIs FINANCEIROS ================= */}
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+<div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
 
-      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
-        <div className="bg-green-500/20 p-3 rounded-lg">
-          <DollarSign className="text-green-400" />
-        </div>
-        <div>
-          <p className="text-gray-400">Receita</p>
-          <h2 className="text-2xl font-bold text-green-300">
-            R$ {receita.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-          </h2>
-          <p className="text-sm text-gray-400">
-            {variacao(receita, receitaAnterior).toFixed(1)}% vs mês anterior
-          </p>
-        </div>
-      </div>
-
-      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
-        <div className="bg-red-500/20 p-3 rounded-lg">
-          <TrendingDown className="text-red-400" />
-        </div>
-        <div>
-          <p className="text-gray-400">Despesas</p>
-          <h2 className="text-2xl font-bold text-red-300">
-            R$ {despesa.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-          </h2>
-        </div>
-      </div>
-
-      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
-        <div className="bg-blue-500/20 p-3 rounded-lg">
-          <BarChart3 className="text-blue-400" />
-        </div>
-        <div>
-          <p className="text-gray-400">Resultado</p>
-          <h2 className="text-2xl font-bold">
-            R$ {resultado.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-          </h2>
-        </div>
-      </div>
-
-      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
-        <div className="bg-indigo-500/20 p-3 rounded-lg">
-          <BarChart3 className="text-indigo-400" />
-        </div>
-        <div>
-          <p className="text-gray-400">Ticket Financeiro</p>
-          <h2 className="text-2xl font-bold text-indigo-300">
-            R$ {ticketFinanceiro.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-          </h2>
-        </div>
-      </div>
-
+  {/* Receita */}
+  <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
+    <div className="bg-green-500/20 p-2 rounded-xl">
+      <DollarSign className="text-green-400 w-5 h-5" />
     </div>
-
-    {/* ================= KPIs DE ALUNOS ================= */}
-    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-10">
-
-      <div className="bg-[#0f1c33] p-6 rounded">
-        <p className="text-gray-400">Ticket por Aluno</p>
-        <h2 className="text-2xl font-bold text-indigo-300">
-          R$ {ticketAluno.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-        </h2>
-      </div>
-
-      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
-        <div className="bg-yellow-500/20 p-3 rounded-lg">
-          <Users className="text-yellow-400" />
-        </div>
-        <div>
-          <p className="text-gray-400">Total de Alunos</p>
-          <h2 className="text-2xl font-bold text-white">
-            {ativos + cancelados + bloqueados}
-          </h2>
-          <p className="text-sm text-gray-400">
-            {ativos} ativos • {cancelados} cancelados • {bloqueados} bloqueados
-          </p>
-        </div>
-      </div>
-
-      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
-        <div className="bg-green-500/20 p-3 rounded-lg">
-          <Users className="text-green-400" />
-        </div>
-        <div>
-          <p className="text-gray-400">Ativos</p>
-          <h2 className="text-2xl font-bold text-green-300">{ativos}</h2>
-        </div>
-      </div>
-
-      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
-        <div className="bg-red-500/20 p-3 rounded-lg">
-          <Users className="text-red-400" />
-        </div>
-        <div>
-          <p className="text-gray-400">Cancelados</p>
-          <h2 className="text-2xl font-bold text-red-300">{cancelados}</h2>
-        </div>
-      </div>
-
-      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
-        <div className="bg-yellow-500/20 p-3 rounded-lg">
-          <Users className="text-yellow-400" />
-        </div>
-        <div>
-          <p className="text-gray-400">Bloqueados</p>
-          <h2 className="text-2xl font-bold text-yellow-300">{bloqueados}</h2>
-        </div>
-      </div>
-
-      <div className="bg-[#0f1c33] p-6 rounded flex items-center gap-4">
-        <div className="bg-red-500/20 p-3 rounded-lg">
-          <AlertTriangle className="text-red-400" />
-        </div>
-        <div>
-          <p className="text-gray-400">Churn</p>
-          <h2 className="text-2xl font-bold text-red-300">
-            {churn.toFixed(1)}%
-          </h2>
-        </div>
-      </div>
-
+    <div>
+      <p className="text-gray-400 text-sm">Receita</p>
+      <h2 className="text-lg font-bold text-green-300">
+        R$ {receita.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+      </h2>
+      <p className="text-xs text-gray-500">
+        {variacao(receita, receitaAnterior).toFixed(1)}% vs mês anterior
+      </p>
     </div>
+  </div>
+
+  {/* Despesas */}
+  <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
+    <div className="bg-red-500/20 p-2 rounded-xl">
+      <TrendingDown className="text-red-400 w-5 h-5" />
+    </div>
+    <div>
+      <p className="text-gray-400 text-sm">Despesas</p>
+      <h2 className="text-lg font-bold text-red-300">
+        R$ {despesa.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+      </h2>
+    </div>
+  </div>
+
+  {/* Resultado */}
+  <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
+    <div className="bg-blue-500/20 p-2 rounded-xl">
+      <BarChart3 className="text-blue-400 w-5 h-5" />
+    </div>
+    <div>
+      <p className="text-gray-400 text-sm">Resultado</p>
+      <h2 className="text-lg font-bold text-white">
+        R$ {resultado.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+      </h2>
+    </div>
+  </div>
+
+  {/* Ticket Financeiro */}
+  <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
+    <div className="bg-indigo-500/20 p-2 rounded-xl">
+      <BarChart3 className="text-indigo-400 w-5 h-5" />
+    </div>
+    <div>
+      <p className="text-gray-400 text-sm">Ticket Financeiro</p>
+      <h2 className="text-lg font-bold text-indigo-300">
+        R$ {ticketFinanceiro.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+      </h2>
+    </div>
+  </div>
+
+</div>
+
+{/* ================= KPIs DE ALUNOS ================= */}
+<div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-10">
+
+  {/* Ticket por Aluno */}
+  <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
+    <div className="bg-indigo-500/20 p-2 rounded-xl">
+      <Users className="text-indigo-400 w-5 h-5" />
+    </div>
+    <div>
+      <p className="text-gray-400 text-sm">Ticket por Aluno</p>
+      <h2 className="text-lg font-bold text-indigo-300">
+        R$ {ticketAluno.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+      </h2>
+    </div>
+  </div>
+
+  {/* Total de Alunos */}
+  <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
+    <div className="bg-yellow-500/20 p-2 rounded-xl">
+      <Users className="text-yellow-400 w-5 h-5" />
+    </div>
+    <div>
+      <p className="text-gray-400 text-sm">Total de Alunos</p>
+      <h2 className="text-lg font-bold text-white">
+        {ativos + cancelados + bloqueados}
+      </h2>
+    </div>
+  </div>
+
+  {/* Ativos */}
+  <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
+    <div className="bg-green-500/20 p-2 rounded-xl">
+      <Users className="text-green-400 w-5 h-5" />
+    </div>
+    <div>
+      <p className="text-gray-400 text-sm">Ativos</p>
+      <h2 className="text-lg font-bold text-green-300">{ativos}</h2>
+    </div>
+  </div>
+
+  {/* Cancelados */}
+  <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
+    <div className="bg-red-500/20 p-2 rounded-xl">
+      <Users className="text-red-400 w-5 h-5" />
+    </div>
+    <div>
+      <p className="text-gray-400 text-sm">Cancelados</p>
+      <h2 className="text-lg font-bold text-red-300">{cancelados}</h2>
+    </div>
+  </div>
+
+  {/* Bloqueados */}
+  <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
+    <div className="bg-yellow-500/20 p-2 rounded-xl">
+      <Users className="text-yellow-400 w-5 h-5" />
+    </div>
+    <div>
+      <p className="text-gray-400 text-sm">Bloqueados</p>
+      <h2 className="text-lg font-bold text-yellow-300">{bloqueados}</h2>
+    </div>
+  </div>
+
+  {/* Churn */}
+  <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
+    <div className="bg-red-500/20 p-2 rounded-xl">
+      <AlertTriangle className="text-red-400 w-5 h-5" />
+    </div>
+    <div>
+      <p className="text-gray-400 text-sm">Churn</p>
+      <h2 className="text-lg font-bold text-red-300">
+        {churn.toFixed(1)}%
+      </h2>
+    </div>
+  </div>
+
+</div>
 
       {/* ================= GRID DE GRÁFICOS ================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
