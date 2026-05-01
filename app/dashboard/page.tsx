@@ -1124,15 +1124,31 @@ return (
       : 0
 
     return (
-      <text
-        x={x}
-        y={y - 10}
-        fill="#3b82f6"
-        fontSize={12}
-        textAnchor="middle"
-      >
-        {perc.toFixed(0)}%
-      </text>
+      <g>
+        {/* CAIXINHA */}
+        <rect
+          x={x - 20}
+          y={y - 28}
+          width={40}
+          height={18}
+          rx={6}
+          fill="#0f1c33"
+          stroke="#3b82f6"
+          strokeWidth={1}
+        />
+
+        {/* TEXTO */}
+        <text
+          x={x}
+          y={y - 15}
+          fill="#3b82f6"
+          fontSize={11}
+          fontWeight="600"
+          textAnchor="middle"
+        >
+          {perc.toFixed(0)}%
+        </text>
+      </g>
     )
   }}
   />
