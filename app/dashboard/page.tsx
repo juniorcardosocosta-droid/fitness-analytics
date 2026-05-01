@@ -1079,6 +1079,14 @@ return (
         tick={{ fontSize: 12 }}
       />
 
+      <YAxis
+  yAxisId="right"
+  orientation="right"
+  stroke="#3b82f6"
+  domain={[0, 100]}
+  tick={{ fontSize: 12 }}
+/>
+
       <Tooltip
         formatter={(value:any, name:any, props:any) => {
   if (name === "% sobre receita") {
@@ -1111,7 +1119,8 @@ return (
       {/* LINHA - % */}
       <Line
   type="monotone"
-  dataKey="percentual"
+  dataKey="percentualReal"
+  yAxisId="right" // 👈 ESSENCIAL
   stroke="#3b82f6"
   strokeWidth={3}
   dot={{ r: 4 }}
