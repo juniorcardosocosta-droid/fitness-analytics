@@ -509,14 +509,20 @@ const dadosCustos = Object.values(
 
   }, {})
 )
-.map((m:any) => ({
-  mes: m.mes,
-  receita: m.receita,
-  despesa: m.despesa,
-  percentual: m.receita > 0
-    ? (m.despesa / m.receita) * m.receita
+.map((m:any) => {
+  const percentualReal = m.receita > 0
+    ? (m.despesa / m.receita) * 100
     : 0
-}))
+
+  return {
+    mes: m.mes,
+    ordem: m.ordem, // 👉 SÓ ISSO QUE FALTAVA
+    receita: m.receita,
+    despesa: m.despesa,
+    percentual: m.despesa,
+    percentualReal
+  }
+})
 .sort((a:any,b:any)=> a.ordem - b.ordem)
 
 const categoriasDespesas = dadosFiltrados
@@ -1074,12 +1080,13 @@ return (
       />
 
       <Tooltip
-        formatter={(value:any, name:any) => {
-          if (name === "percentual") {
-            return `${value.toFixed(1)}%`
-          }
-          return `R$ ${Number(value).toLocaleString("pt-BR",{minimumFractionDigits:2})}`
-        }}
+        formatter={(value:any, name:any, props:any) => {
+  if (name === "% sobre receita") {
+    return `${props.payload.percentualReal.toFixed(1)}%`
+  }
+
+  return `R$ ${Number(value).toLocaleString("pt-BR",{minimumFractionDigits:2})}`
+}}
       />
 
       <Legend />
@@ -1116,12 +1123,7 @@ return (
   content={(props:any) => {
     const { x, y, payload } = props
 
-    const receita = payload?.receita || 0
-    const despesa = payload?.despesa || 0
-
-    const perc = receita > 0
-      ? (despesa / receita) * 100
-      : 0
+     const perc = payload?.percentualReal || 0
 
     return (
       <g>
