@@ -262,6 +262,7 @@ else {
   acc[mesNumero].recorrencia += valor
 }
 
+
         return acc
 
       }, {})
@@ -470,6 +471,51 @@ else {
     m.countRec > 0 ? m.recorrencia / m.countRec : 0,
   agregador:
     m.countAgr > 0 ? m.agregador / m.countAgr : 0
+}))
+.sort((a:any,b:any)=> a.ordem - b.ordem)
+
+// ================= GRÁFICO EVOLUÇAÕ DOS CUSTOS OPERACIONAIS TOTAIS =================
+const dadosCustos = Object.values(
+  dadosFiltrados.reduce((acc:any, item:any) => {
+
+    if (!item.data) return acc
+
+    const [ano, mes] = item.data.split("-")
+    const mesNumero = Number(mes) - 1
+
+    const meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
+    const mesNome = meses[mesNumero]
+
+    if (!acc[mesNumero]) {
+      acc[mesNumero] = {
+        mes: mesNome,
+        ordem: mesNumero,
+        receita: 0,
+        despesa: 0
+      }
+    }
+
+    const valor = Number(item.valor || 0)
+
+    if (item.tipo === "receita") {
+      acc[mesNumero].receita += valor
+    }
+
+    if (item.tipo === "despesa") {
+      acc[mesNumero].despesa += valor
+    }
+
+    return acc
+
+  }, {})
+)
+.map((m:any) => ({
+  mes: m.mes,
+  receita: m.receita,
+  despesa: m.despesa,
+  percentual: m.receita > 0
+    ? (m.despesa / m.receita) * 100
+    : 0
 }))
 .sort((a:any,b:any)=> a.ordem - b.ordem)
 
@@ -762,26 +808,50 @@ return (
               <Tooltip />
               <Legend />
 
-              <Bar dataKey="outros" fill="#2563eb">
-                <LabelList dataKey="outros" position="top" 
-                 formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
-                 fill="#ffffff"
-                />
-              </Bar>
+              <Bar dataKey="cartao" fill="#3b82f6">
+  <LabelList 
+    dataKey="cartao" 
+    position="top"
+    formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
+    fill="#ffffff"
+  />
+</Bar>
 
-              <Bar dataKey="agregador" fill="#94a3b8">
-                <LabelList dataKey="agregador" position="top" 
-                formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
-                fill="#ffffff"
-                />
-              </Bar>
+<Bar dataKey="pix" fill="#22c55e">
+  <LabelList 
+    dataKey="pix" 
+    position="top"
+    formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
+    fill="#ffffff"
+  />
+</Bar>
 
-              <Bar dataKey="recorrencia" fill="#16a34a">
-                <LabelList dataKey="recorrencia" position="top" 
-                formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
-                fill="#ffffff"
-                />
-              </Bar>
+<Bar dataKey="boleto" fill="#eab308">
+  <LabelList 
+    dataKey="boleto" 
+    position="top"
+    formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
+    fill="#ffffff"
+  />
+</Bar>
+
+<Bar dataKey="dinheiro" fill="#a3a3a3">
+  <LabelList 
+    dataKey="dinheiro" 
+    position="top"
+    formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
+    fill="#ffffff"
+  />
+</Bar>
+
+<Bar dataKey="recorrencia" fill="#06b6d4">
+  <LabelList 
+    dataKey="recorrencia" 
+    position="top"
+    formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
+    fill="#ffffff"
+  />
+</Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -974,6 +1044,75 @@ return (
     </LineChart>
   </ResponsiveContainer>
 
+</div>
+
+{/* GRÁFICO NOVO - EVOLUÇÃO DOS CUSTOS OPERACIOANIS TOTAIS */}
+<div className="bg-[#0f1c33] p-6 rounded-2xl border border-white/5">
+
+  <h2 className="mb-1 text-lg font-semibold">
+    Evolução dos Custos Operacionais
+  </h2>
+
+  <p className="text-sm text-gray-400 mb-4">
+    Custos mensais e percentual sobre a receita
+  </p>
+
+  <ResponsiveContainer width="100%" height={320}>
+    <ComposedChart data={dadosCustos}>
+
+      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+
+      <XAxis 
+        dataKey="mes" 
+        stroke="#94a3b8" 
+        tick={{ fontSize: 12 }}
+      />
+
+      <YAxis 
+        stroke="#94a3b8"
+        tick={{ fontSize: 12 }}
+      />
+
+      <Tooltip
+        formatter={(value:any, name:any) => {
+          if (name === "percentual") {
+            return `${value.toFixed(1)}%`
+          }
+          return `R$ ${Number(value).toLocaleString("pt-BR",{minimumFractionDigits:2})}`
+        }}
+      />
+
+      <Legend />
+
+      {/* BARRAS - CUSTOS */}
+      <Bar 
+        dataKey="despesa" 
+        fill="#22c55e" 
+        name="Custos (R$)"
+        radius={[6,6,0,0]}
+      >
+        <LabelList
+          dataKey="despesa"
+          position="top"
+          formatter={(v:any)=> 
+            `R$ ${Number(v).toLocaleString("pt-BR",{maximumFractionDigits:0})}`
+          }
+          fill="#ffffff"
+        />
+      </Bar>
+
+      {/* LINHA - % */}
+      <Line
+        type="monotone"
+        dataKey="percentual"
+        stroke="#3b82f6"
+        strokeWidth={3}
+        dot={{ r: 4 }}
+        name="% sobre receita"
+      />
+
+    </ComposedChart>
+  </ResponsiveContainer>
 </div>
 
       </div>
