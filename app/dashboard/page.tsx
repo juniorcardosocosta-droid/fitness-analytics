@@ -1103,13 +1103,20 @@ return (
 
       {/* LINHA - % */}
       <Line
-        type="monotone"
-        dataKey="percentual"
-        stroke="#3b82f6"
-        strokeWidth={3}
-        dot={{ r: 4 }}
-        name="% sobre receita"
-      />
+  type="monotone"
+  dataKey="percentual"
+  stroke="#3b82f6"
+  strokeWidth={3}
+  dot={{ r: 4 }}
+  name="% sobre receita"
+>
+  <LabelList
+    dataKey="percentual"
+    position="top"
+    formatter={(v:any)=> `${v.toFixed(0)}%`}
+    fill="#3b82f6"
+  />
+</Line>
 
     </ComposedChart>
   </ResponsiveContainer>
