@@ -641,13 +641,13 @@ return (
     </div>
   </div>
 
-  {/* Ticket Financeiro */}
+  {/* Ticket Medio Total */}
   <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
     <div className="bg-indigo-500/20 p-2 rounded-xl">
       <BarChart3 className="text-indigo-400 w-5 h-5" />
     </div>
     <div>
-      <p className="text-gray-400 text-sm">Ticket Financeiro</p>
+      <p className="text-gray-400 text-sm">Ticket Medio Total</p>
       <h2 className="text-lg font-bold text-indigo-300">
         R$ {ticketFinanceiro.toLocaleString("pt-BR",{minimumFractionDigits:2})}
       </h2>
@@ -659,13 +659,13 @@ return (
 {/* ================= KPIs DE ALUNOS ================= */}
 <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-10">
 
-  {/* Ticket por Aluno */}
+  {/* Ticket por Aluno Ativos */}
   <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
     <div className="bg-indigo-500/20 p-2 rounded-xl">
       <Users className="text-indigo-400 w-5 h-5" />
     </div>
     <div>
-      <p className="text-gray-400 text-sm">Ticket por Aluno</p>
+      <p className="text-gray-400 text-sm">Ticket por Alunos Ativos</p>
       <h2 className="text-lg font-bold text-indigo-300">
         R$ {ticketAluno.toLocaleString("pt-BR",{minimumFractionDigits:2})}
       </h2>
