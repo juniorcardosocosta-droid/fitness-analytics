@@ -514,7 +514,7 @@ const dadosCustos = Object.values(
   receita: m.receita,
   despesa: m.despesa,
   percentual: m.receita > 0
-    ? (m.despesa / m.receita) * 100
+    ? (m.despesa / m.receita) * m.receita
     : 0
 }))
 .sort((a:any,b:any)=> a.ordem - b.ordem)
@@ -1111,10 +1111,30 @@ return (
   name="% sobre receita"
 >
   <LabelList
-    dataKey="percentual"
-    position="top"
-    formatter={(v:any)=> `${v.toFixed(0)}%`}
-    fill="#3b82f6"
+  dataKey="percentual"
+  position="top"
+  content={(props:any) => {
+    const { x, y, payload } = props
+
+    const receita = payload?.receita || 0
+    const despesa = payload?.despesa || 0
+
+    const perc = receita > 0
+      ? (despesa / receita) * 100
+      : 0
+
+    return (
+      <text
+        x={x}
+        y={y - 10}
+        fill="#3b82f6"
+        fontSize={12}
+        textAnchor="middle"
+      >
+        {perc.toFixed(0)}%
+      </text>
+    )
+  }}
   />
 </Line>
 
