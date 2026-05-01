@@ -1128,7 +1128,7 @@ return (
         {/* CAIXINHA */}
         <rect
           x={x - 20}
-          y={y - 28}
+          y={y + 12}
           width={40}
           height={18}
           rx={6}
@@ -1140,7 +1140,7 @@ return (
         {/* TEXTO */}
         <text
           x={x}
-          y={y - 15}
+          y={y + 21}
           fill="#3b82f6"
           fontSize={11}
           fontWeight="600"
