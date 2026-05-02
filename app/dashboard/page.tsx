@@ -1122,19 +1122,21 @@ return (
         />
       </Bar>
  {/* 🔵 Percentual */}
-      <Bar
+      <Line
+  type="monotone"
   dataKey="percentualReal"
-  fill="#3b82f6"
+  stroke="#3b82f6"
+  strokeWidth={3}
+  yAxisId="right"   // 👈 ESSENCIAL
   name="% sobre receita"
 >
   <LabelList
     dataKey="percentualReal"
     position="top"
-    formatter={(v:any) => `${v.toFixed(0)}%`}
+    formatter={(v:any)=> `${v.toFixed(0)}%`}
     fill="#3b82f6"
-    fontSize={11}
   />
-</Bar>
+</Line>
 
     </ComposedChart>
   </ResponsiveContainer>
