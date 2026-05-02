@@ -1012,12 +1012,21 @@ return (
           />
         </Bar>
 
-        <Line
-          type="monotone"
-          dataKey="percentualReal"
-          stroke="#3b82f6"
-          yAxisId="right"
-        />
+       <Line
+  type="monotone"
+  dataKey="percentualReal"
+  stroke="#3b82f6"
+  yAxisId="right"
+  strokeWidth={3}
+  dot={{ r: 4 }}
+>
+  <LabelList
+    dataKey="percentualReal"
+    position="top"
+    formatter={(v:any)=> `${Number(v).toFixed(0)}%`}
+    fill="#3b82f6"
+  />
+</Line>
 
       </ComposedChart>
     </ResponsiveContainer>
