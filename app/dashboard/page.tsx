@@ -33,28 +33,33 @@ export default function Dashboard() {
 
   const gerarPDF = async () => {
   try {
-    console.log("Iniciando PDF...")
-
     const elemento = document.getElementById("dashboard-pdf")
-    if (!elemento) {
-      alert("Erro: dashboard não encontrado")
-      return
-    }
+    if (!elemento) return
 
-    // 👇 força scroll pro topo (importante)
     window.scrollTo(0, 0)
-
-    // 👇 pequena pausa pra garantir renderização
     await new Promise((r) => setTimeout(r, 500))
 
     const canvas = await html2canvas(elemento, {
-      scale: 1.5, // 🔥 reduz peso (ANTES estava 2)
+      scale: 1.5,
       useCORS: true,
-      logging: true,
-      scrollY: -window.scrollY
-    })
+      backgroundColor: "#0a162b",
 
-    console.log("Canvas criado")
+      onclone: (doc: Document) => {
+  const win = doc.defaultView || window
+
+  doc.querySelectorAll("*").forEach((el: any) => {
+    const style = win.getComputedStyle(el)
+
+    if (style.color.includes("lab") || style.color.includes("oklch")) {
+      el.style.color = "#ffffff"
+    }
+
+    if (style.backgroundColor.includes("lab") || style.backgroundColor.includes("oklch")) {
+      el.style.backgroundColor = "#0f1c33"
+    }
+  })
+}
+    })
 
     const imgData = canvas.toDataURL("image/jpeg", 0.8)
 
@@ -68,7 +73,6 @@ export default function Dashboard() {
     let position = 0
 
     pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight)
-
     heightLeft -= pageHeight
 
     while (heightLeft > 0) {
@@ -80,11 +84,9 @@ export default function Dashboard() {
 
     pdf.save("dashboard.pdf")
 
-    console.log("PDF gerado com sucesso")
-
   } catch (error) {
     console.error("Erro ao gerar PDF:", error)
-    alert("Erro ao gerar PDF. Veja o console (F12)")
+    alert("Erro ao gerar PDF")
   }
 }
 
