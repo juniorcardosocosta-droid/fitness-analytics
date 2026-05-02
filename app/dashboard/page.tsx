@@ -805,70 +805,69 @@ return (
 
 </div>
 
-      {/* ================= GRID DE GRÁFICOS ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+      {/* ================= GRÁFICOS ================= */}
 
-        {/* GRÁFICO 1 */}
-        <div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
-          <h2 className="mb-4">Receitas por Categoria</h2>
+{/* 1 - RECEITAS (FULL WIDTH) */}
+<div className="mt-10">
+  <div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
+    <h2 className="mb-4">Receitas por Categoria</h2>
 
-          <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={dadosGrafico} barGap={10}>
-              <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-              <XAxis dataKey="mes" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip />
-              <Legend />
+    <ResponsiveContainer width="100%" height={350}>
+      <BarChart data={dadosGrafico} barGap={10}>
+        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+        <XAxis dataKey="mes" stroke="#94a3b8" />
+        <YAxis stroke="#94a3b8" />
+        <Tooltip />
+        <Legend />
 
-              <Bar dataKey="cartao" fill="#3b82f6">
-  <LabelList 
-    dataKey="cartao" 
-    position="top"
-    formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
-    fill="#ffffff"
-  />
-</Bar>
+        <Bar dataKey="cartao" fill="#3b82f6">
+          <LabelList dataKey="cartao" position="top" fill="#fff" />
+        </Bar>
 
-<Bar dataKey="pix" fill="#22c55e">
-  <LabelList 
-    dataKey="pix" 
-    position="top"
-    formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
-    fill="#ffffff"
-  />
-</Bar>
+        <Bar dataKey="pix" fill="#22c55e">
+          <LabelList dataKey="pix" position="top" fill="#fff" />
+        </Bar>
 
-<Bar dataKey="boleto" fill="#eab308">
-  <LabelList 
-    dataKey="boleto" 
-    position="top"
-    formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
-    fill="#ffffff"
-  />
-</Bar>
+        <Bar dataKey="boleto" fill="#eab308">
+          <LabelList dataKey="boleto" position="top" fill="#fff" />
+        </Bar>
 
-<Bar dataKey="dinheiro" fill="#a3a3a3">
-  <LabelList 
-    dataKey="dinheiro" 
-    position="top"
-    formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
-    fill="#ffffff"
-  />
-</Bar>
+        <Bar dataKey="dinheiro" fill="#a3a3a3">
+          <LabelList dataKey="dinheiro" position="top" fill="#fff" />
+        </Bar>
 
-<Bar dataKey="recorrencia" fill="#06b6d4">
-  <LabelList 
-    dataKey="recorrencia" 
-    position="top"
-    formatter={(v:any)=> Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2})}
-    fill="#ffffff"
-  />
-</Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <Bar dataKey="recorrencia" fill="#06b6d4">
+          <LabelList dataKey="recorrencia" position="top" fill="#fff" />
+        </Bar>
 
-        {/* GRÁFICO 2 */}
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+</div>
+
+{/* 2 - EVOLUÇÃO DE ALUNOS (FULL WIDTH) */}
+<div className="mt-6">
+  <div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
+    <h2 className="mb-4">Evolução de Alunos</h2>
+
+    <ResponsiveContainer width="100%" height={350}>
+      <BarChart data={dadosAlunos}>
+        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+        <XAxis dataKey="mes" stroke="#94a3b8" />
+        <YAxis stroke="#94a3b8" />
+        <Tooltip />
+        <Legend />
+
+        <Bar dataKey="ativos" fill="#22c55e" />
+        <Bar dataKey="recorrencia" fill="#3b82f6" />
+        <Bar dataKey="novos" fill="#a855f7" />
+
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+</div>
+
+        {/* GRÁFICO COMPOSIÇÃO DA RECEITA */}
         <div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
           <h2 className="mb-4">Composição da Receita (%)</h2>
 
@@ -916,34 +915,6 @@ return (
   </ComposedChart>
 </ResponsiveContainer>
         </div>
-
-        {/* GRÁFICO 3 - ALUNOS */}
-<div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
-  <h2 className="mb-4">Evolução de Alunos</h2>
-
-  <ResponsiveContainer width="100%" height={350}>
-    <BarChart data={dadosAlunos} barGap={10}>
-      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-      <XAxis dataKey="mes" stroke="#94a3b8" />
-      <YAxis stroke="#94a3b8" />
-      <Tooltip />
-      <Legend />
-
-      <Bar dataKey="ativos" fill="#22c55e" name="Ativos">
-        <LabelList dataKey="ativos" position="top" fill="#ffffff" />
-      </Bar>
-
-      <Bar dataKey="recorrencia" fill="#3b82f6" name="Recorrência">
-        <LabelList dataKey="recorrencia" position="top" fill="#ffffff" />
-      </Bar>
-
-      <Bar dataKey="novos" fill="#a855f7" name="Novos">
-        <LabelList dataKey="novos" position="top" fill="#ffffff" />
-      </Bar>
-
-    </BarChart>
-  </ResponsiveContainer>
-</div>
 
 {/* GRÁFICO 4 - CHURN */}
 <div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
