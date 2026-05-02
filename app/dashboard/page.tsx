@@ -38,6 +38,12 @@ export default function Dashboard() {
   const [mesSelecionado, setMesSelecionado] = useState("")
   const [anoSelecionado, setAnoSelecionado] = useState("")
 
+   const isReceita = (item:any) =>
+    String(item.tipo).toLowerCase().includes("receita")
+
+  const isDespesa = (item:any) =>
+    String(item.tipo).toLowerCase().includes("despesa")
+
   useEffect(() => {
     async function loadAcademias() {
       const { data } = await supabase.from("academias").select("*")
@@ -99,8 +105,8 @@ export default function Dashboard() {
   })
 
   // ================= INDICADORES =================
-  const receitas = dadosFiltrados.filter((i:any)=> i.tipo === "receita")
-  const despesasLista = dadosFiltrados.filter((i:any)=> i.tipo === "despesa")
+  const receitas = dadosFiltrados.filter((i:any)=> isReceita(i))
+  const despesasLista = dadosFiltrados.filter((i:any)=> isDespesa(i))
 
   const receita = receitas.reduce((t,i)=> t + Number(i.valor || 0), 0)
   const despesa = despesasLista.reduce((t,i)=> t + Number(i.valor || 0), 0)
@@ -117,7 +123,7 @@ export default function Dashboard() {
   // ================= TICKET POR ALUNO =================
   const alunosAtivos = dadosFiltrados.filter(
     (i:any) =>
-      i.tipo === "receita" &&
+      isReceita(i) &&
       String(i.status_cliente).toLowerCase().includes("ativo")
   ).length
 
@@ -128,7 +134,7 @@ export default function Dashboard() {
 
   // ================= ALUNOS =================
    const alunos = dadosFiltrados.filter(
-     (i:any) => i.tipo === "receita" && i.status_cliente
+     (i:any) => isReceita(i) && i.status_cliente
    )
 
   // normaliza o texto (evita erro)
@@ -179,12 +185,12 @@ export default function Dashboard() {
 
   // receita anterior
   const receitaAnterior = dadosMesAnterior
-    .filter((i:any)=> i.tipo === "receita")
+    .filter((i:any)=> isReceita(i))
     .reduce((t,i)=> t + Number(i.valor || 0), 0)
 
   // despesa anterior
   const despesaAnterior = dadosMesAnterior
-    .filter((i:any)=> i.tipo === "despesa")
+    .filter((i:any)=> isDespesa(i))
     .reduce((t,i)=> t + Number(i.valor || 0), 0)
 
   // resultado anterior
@@ -192,13 +198,13 @@ export default function Dashboard() {
 
   // ativos anterior
   const ativosAnterior = dadosMesAnterior.filter((i:any)=>
-    i.tipo === "receita" &&
+    isReceita(i) &&
     String(i.status_cliente).toLowerCase().includes("ativo")
   ).length
 
    // cancelados anterior
    const canceladosAnterior = dadosMesAnterior.filter((i:any)=>
-     i.tipo === "receita" &&
+     isReceita(i) &&
      String(i.status_cliente).toLowerCase().includes("cancel")
    ).length
 
@@ -217,7 +223,7 @@ export default function Dashboard() {
   // ================= GRÁFICO =================
   const dadosGrafico = Object.values(
     dadosFiltrados
-      .filter((item: any) => item.tipo === "receita")
+      .filter((item: any) => isReceita(item))
       .reduce((acc: any, item: any) => {
 
         const [ano, mes] = item.data.split("-")
@@ -309,7 +315,7 @@ else {
          }
        }
 
-       if (item.tipo === "receita") {
+       if (isReceita(item)) {
 
       const status = String(item.status_cliente || "").toLowerCase()
 
@@ -350,7 +356,7 @@ const dadosChurn = Object.values(
       }
     }
 
-    if (item.tipo === "receita") {
+    if (isReceita(item)) {
       const status = String(item.status_cliente || "").toLowerCase()
 
       if (status.includes("ativo")) {
@@ -396,11 +402,11 @@ const dadosEvolucao = Object.values(
       }
     }
 
-    if (item.tipo === "receita") {
+    if (isReceita(item)) {
       acc[mesNumero].receita += Number(item.valor || 0)
     }
 
-    if (item.tipo === "despesa") {
+    if (isDespesa(item)) {
       acc[mesNumero].despesa += Number(item.valor || 0)
     }
 
@@ -497,11 +503,11 @@ const dadosCustos = Object.values(
 
     const valor = Number(item.valor || 0)
 
-    if (item.tipo === "receita") {
+    if (isReceita(item)) {
       acc[mesNumero].receita += valor
     }
 
-    if (item.tipo === "despesa") {
+    if (isDespesa(item)) {
       acc[mesNumero].despesa += valor
     }
 
@@ -526,14 +532,14 @@ const dadosCustos = Object.values(
 .sort((a:any,b:any)=> a.ordem - b.ordem)
 
 const categoriasDespesas = dadosFiltrados
-  .filter((i:any) => i.tipo === "despesa")
+  .filter((i:any) => isDespesa(i))
   .map((i:any) => i.categoria || "Outros")
   .filter((v, i, arr) => arr.indexOf(v) === i)
 
   const dadosDespesas = Object.values(
   dadosFiltrados.reduce((acc:any, item:any) => {
 
-    if (!item.data || item.tipo !== "despesa") return acc
+    if (!item.data || !isDespesa(item)) return acc
 
     const [ano, mes] = item.data.split("-")
     const mesNumero = Number(mes) - 1
@@ -1120,7 +1126,6 @@ return (
       <Line
   type="monotone"
   dataKey="percentualReal"
-  yAxisId="right" // 👈 ESSENCIAL
   stroke="#3b82f6"
   strokeWidth={3}
   dot={{ r: 4 }}
