@@ -1121,54 +1121,20 @@ return (
           fill="#ffffff"
         />
       </Bar>
-
-      {/* LINHA - % */}
-      <Line
-  type="monotone"
+ {/* 🔵 Percentual */}
+      <Bar
   dataKey="percentualReal"
-  stroke="#3b82f6"
-  strokeWidth={3}
-  dot={{ r: 4 }}
+  fill="#3b82f6"
   name="% sobre receita"
 >
   <LabelList
-  dataKey="percentual"
-  position="top"
-  content={(props:any) => {
-    const { x, y, payload } = props
-
-     const perc = payload?.percentualReal || 0
-
-    return (
-      <g>
-        {/* CAIXINHA */}
-        <rect
-          x={x - 20}
-          y={y + 12}
-          width={40}
-          height={18}
-          rx={6}
-          fill="#0f1c33"
-          stroke="#3b82f6"
-          strokeWidth={1}
-        />
-
-        {/* TEXTO */}
-        <text
-          x={x}
-          y={y + 21}
-          fill="#3b82f6"
-          fontSize={11}
-          fontWeight="600"
-          textAnchor="middle"
-        >
-          {perc.toFixed(0)}%
-        </text>
-      </g>
-    )
-  }}
+    dataKey="percentualReal"
+    position="top"
+    formatter={(v:any) => `${v.toFixed(0)}%`}
+    fill="#3b82f6"
+    fontSize={11}
   />
-</Line>
+</Bar>
 
     </ComposedChart>
   </ResponsiveContainer>
