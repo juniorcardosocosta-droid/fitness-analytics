@@ -6,7 +6,12 @@ import { useRouter } from "next/navigation"
 import { ComposedChart } from "recharts"
 import html2canvas from "html2canvas"
 import jsPDF from "jspdf"
-import BotaoPDF from "@/components/BotaoPDF"
+
+import dynamic from "next/dynamic"
+
+const BotaoPDF = dynamic(() => import("@/components/BotaoPDF"), {
+   ssr: false
+   })
 
 import {
   BarChart,
