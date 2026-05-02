@@ -109,17 +109,42 @@ export default function Dashboard() {
   const el = document.getElementById(id)
   if (!el) return null
 
-  // 🔥 FORÇA CORES COMPATÍVEIS
-  document.body.style.backgroundColor = "#0a162b"
-  document.body.style.color = "#ffffff"
+  // 🔥 CLONA O ELEMENTO
+  const clone = el.cloneNode(true) as HTMLElement
 
-  const canvas = await html2canvas(el, {
-    scale: 2,
-    backgroundColor: "#0a162b",
-    useCORS: true
+  // 🔥 CRIA CONTAINER TEMPORÁRIO
+  const wrapper = document.createElement("div")
+  wrapper.style.position = "fixed"
+  wrapper.style.top = "-9999px"
+  wrapper.style.left = "-9999px"
+  wrapper.style.background = "#0a162b"
+  wrapper.style.padding = "20px"
+
+  wrapper.appendChild(clone)
+  document.body.appendChild(wrapper)
+
+  // 🔥 REMOVE PROBLEMA DE CORES (FORÇA CSS SIMPLES)
+  const allElements = wrapper.querySelectorAll("*")
+  allElements.forEach((node: any) => {
+    node.style.color = "#ffffff"
+    node.style.backgroundColor = "transparent"
+    node.style.borderColor = "#1f2a44"
   })
 
-  return canvas.toDataURL("image/png")
+  try {
+    const canvas = await html2canvas(wrapper, {
+      scale: 2,
+      backgroundColor: "#0a162b",
+      useCORS: true
+    })
+
+    return canvas.toDataURL("image/png")
+  } catch (err) {
+    console.error("Erro ao capturar:", err)
+    return null
+  } finally {
+    document.body.removeChild(wrapper)
+  }
 }
 
 const gerarImagens = async () => {
@@ -690,22 +715,27 @@ return (
   className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10"
 >
 
-    <div className="flex justify-between items-center mb-10">
+    <div className="flex items-center justify-between mb-6">
+  
+  {/* ESQUERDA */}
   <h1 className="text-4xl font-bold">Dashboard</h1>
 
-</div>
+  {/* DIREITA */}
+  <div>
+    <BotaoPDF
+      gerarImagens={gerarImagens}
+      dados={{
+        receita: receita.toFixed(2),
+        despesa: despesa.toFixed(2),
+        resultado: resultado.toFixed(2),
+        margem: receita > 0
+          ? ((resultado / receita) * 100).toFixed(1)
+          : "0"
+      }}
+    />
+  </div>
 
-<BotaoPDF
-  gerarImagens={gerarImagens}
-  dados={{
-    receita: receita.toFixed(2),
-    despesa: despesa.toFixed(2),
-    resultado: resultado.toFixed(2),
-    margem: receita > 0
-      ? ((resultado / receita) * 100).toFixed(1)
-      : "0"
-  }}
-/>
+</div>
 
     {/* FILTROS */}
     <div className="flex gap-4 mb-10">
