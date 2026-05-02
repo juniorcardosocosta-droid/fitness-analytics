@@ -909,7 +909,7 @@ return (
 
 {/* 1 - RECEITAS (FULL WIDTH) */}
 <div className="mt-10">
-  <div className="bg-[#0f1c33] p-6 rounded w-full">
+  <div id="grafico-receita" className="bg-[#0f1c33] p-6 rounded w-full">
     <h2 className="mb-4">Receitas por Categoria</h2>
 
     <ResponsiveContainer width="100%" height={350}>
@@ -948,7 +948,7 @@ return (
 
 {/* 2 - EVOLUÇÃO DE ALUNOS */}
 <div className="mt-6">
-  <div className="bg-[#0f1c33] p-6 rounded w-full">
+  <div id="grafico-alunos" className="bg-[#0f1c33] p-6 rounded w-full">
     <h2 className="mb-4">Evolução de Alunos</h2>
 
     <ResponsiveContainer width="100%" height={350}>
@@ -982,7 +982,7 @@ return (
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
   {/* COMPOSIÇÃO */}
-  <div className="bg-[#0f1c33] p-6 rounded w-full">
+  <div id="grafico-composicao" className="bg-[#0f1c33] p-6 rounded w-full">
     <h2 className="mb-4">Composição da Receita (%)</h2>
 
     <ResponsiveContainer width="100%" height={350}>
@@ -1019,7 +1019,7 @@ return (
   </div>
 
   {/* CHURN */}
-  <div className="bg-[#0f1c33] p-6 rounded w-full">
+  <div id="grafico-churn" className="bg-[#0f1c33] p-6 rounded w-full">
     <h2 className="mb-4">Churn Mensal (%)</h2>
 
     <ResponsiveContainer width="100%" height={350}>
@@ -1049,7 +1049,7 @@ return (
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
   {/* EVOLUÇÃO FINANCEIRA */}
-  <div className="bg-[#0f1c33] p-6 rounded w-full">
+  <div id="grafico-evolucao" className="bg-[#0f1c33] p-6 rounded w-full">
      <h2 className="mb-4">Evolução Financeira</h2>
     <ResponsiveContainer width="100%" height={350}>
       <LineChart data={dadosEvolucao}>
@@ -1066,8 +1066,8 @@ return (
     </ResponsiveContainer>
   </div>
 
-  {/* TICKET */}
-  <div className="bg-[#0f1c33] p-6 rounded w-full">
+  {/* TICKET MEDIO */}
+  <div id="grafico-ticket" className="bg-[#0f1c33] p-6 rounded w-full">
       <h2 className="mb-4">Ticket Médio</h2>
     <ResponsiveContainer width="100%" height={350}>
       <LineChart data={dadosTicket}>
@@ -1083,8 +1083,8 @@ return (
     </ResponsiveContainer>
   </div>
 
-  {/* CUSTOS */}
-  <div className="bg-[#0f1c33] p-6 rounded w-full">
+  {/* CUSTOS OPERACIONAL*/}
+  <div id="grafico-custos" className="bg-[#0f1c33] p-6 rounded w-full">
       <h2 className="mb-4">Custos Operacionais</h2>
     <ResponsiveContainer width="100%" height={320}>
       <ComposedChart data={dadosCustos}>
@@ -1126,7 +1126,7 @@ return (
   </div>
 
   {/* MARGEM OPERACIONAL */}
-<div className="bg-[#0f1c33] p-6 rounded w-full">
+<div id="grafico-margem" className="bg-[#0f1c33] p-6 rounded w-full">
   <h2 className="mb-4">Margem Operacional (%)</h2>
 
   <ResponsiveContainer width="100%" height={300}>
@@ -1195,7 +1195,7 @@ return (
 
   return (
     <div className="mt-10">
-      <div className="bg-gradient-to-br from-[#0b1220] to-[#0f1c33] p-6 rounded-2xl shadow-lg w-full">
+      <div id="grafico-heatmap-receita" className="bg-gradient-to-br from-[#0b1220] to-[#0f1c33] p-6 rounded-2xl shadow-lg w-full">
 
         <h2 className="mb-6 text-lg font-semibold">
           Heatmap de Receita por Origem
@@ -1321,7 +1321,7 @@ return (
 
   return (
     <div className="mt-10">
-      <div className="bg-[#0f1c33] p-6 rounded-2xl shadow-lg w-full">
+      <div id="grafico-heatmap-despesas" className="bg-[#0f1c33] p-6 rounded-2xl shadow-lg w-full">
 
         <h2 className="mb-6 text-lg font-semibold text-red-400">
           Heatmap de Despesas por Categoria
