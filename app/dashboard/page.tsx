@@ -39,27 +39,35 @@ export default function Dashboard() {
     window.scrollTo(0, 0)
     await new Promise((r) => setTimeout(r, 500))
 
-    const canvas = await html2canvas(elemento, {
-      scale: 1.5,
-      useCORS: true,
-      backgroundColor: "#0a162b",
+    // 🔥 CLONA O DASHBOARD
+    const clone = elemento.cloneNode(true) as HTMLElement
 
-      onclone: (doc: Document) => {
-  const win = doc.defaultView || window
+    // 🔥 FORÇA CORES COMPATÍVEIS DIRETO NO CLONE
+    const todos = clone.querySelectorAll("*")
 
-  doc.querySelectorAll("*").forEach((el: any) => {
-    const style = win.getComputedStyle(el)
-
-    if (style.color.includes("lab") || style.color.includes("oklch")) {
+    todos.forEach((el: any) => {
       el.style.color = "#ffffff"
-    }
-
-    if (style.backgroundColor.includes("lab") || style.backgroundColor.includes("oklch")) {
       el.style.backgroundColor = "#0f1c33"
-    }
-  })
-}
+      el.style.borderColor = "#1f2a44"
     })
+
+    // 🔥 CRIA UM CONTAINER TEMPORÁRIO
+    const container = document.createElement("div")
+    container.style.position = "fixed"
+    container.style.top = "0"
+    container.style.left = "0"
+    container.style.width = "1200px"
+    container.style.zIndex = "-1"
+    container.appendChild(clone)
+
+    document.body.appendChild(container)
+
+    const canvas = await html2canvas(container, {
+      scale: 1.5,
+      useCORS: true
+    })
+
+    document.body.removeChild(container)
 
     const imgData = canvas.toDataURL("image/jpeg", 0.8)
 
@@ -73,6 +81,7 @@ export default function Dashboard() {
     let position = 0
 
     pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight)
+
     heightLeft -= pageHeight
 
     while (heightLeft > 0) {
