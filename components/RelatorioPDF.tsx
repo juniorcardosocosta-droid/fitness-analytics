@@ -4,7 +4,7 @@ const styles = StyleSheet.create({
   page: {
     padding: 30,
     backgroundColor: "#0a162b",
-    color: "#fff"
+    color: "#ffffff"
   },
   title: {
     fontSize: 22,
@@ -15,8 +15,39 @@ const styles = StyleSheet.create({
   },
   img: {
     width: "100%",
-    marginBottom: 15
+    maxHeight: 180,
+    objectFit: "contain",
+    marginBottom: 10
+  },
+
+  // 🔥 ADICIONA AQUI 👇
+  cardContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginTop: 20
+  },
+
+  card: {
+    width: "48%",
+    backgroundColor: "#0f1c33",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12
+  },
+
+  cardTitle: {
+    fontSize: 10,
+    color: "#94a3b8"
+  },
+
+  cardValue: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 4,
+    color: "#ffffff"
   }
+
 })
 
 export default function RelatorioPDF({ dados, imagens }: any) {
@@ -36,10 +67,29 @@ export default function RelatorioPDF({ dados, imagens }: any) {
       <Page style={styles.page}>
         <Text style={styles.title}>Resumo Executivo</Text>
 
-        <Text>Receita: R$ {receita}</Text>
-        <Text>Despesa: R$ {despesa}</Text>
-        <Text>Resultado: R$ {resultado}</Text>
-        <Text>Margem: {margem}%</Text>
+        <View style={styles.cardContainer}>
+
+  <View style={styles.card}>
+    <Text style={styles.cardTitle}>Receita</Text>
+    <Text style={styles.cardValue}>R$ {receita}</Text>
+  </View>
+
+  <View style={styles.card}>
+    <Text style={styles.cardTitle}>Despesas</Text>
+    <Text style={styles.cardValue}>R$ {despesa}</Text>
+  </View>
+
+  <View style={styles.card}>
+    <Text style={styles.cardTitle}>Resultado</Text>
+    <Text style={styles.cardValue}>R$ {resultado}</Text>
+  </View>
+
+  <View style={styles.card}>
+    <Text style={styles.cardTitle}>Margem</Text>
+    <Text style={styles.cardValue}>{margem}%</Text>
+  </View>
+
+</View>
       </Page>
 
       {/* GRÁFICOS */}
