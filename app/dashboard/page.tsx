@@ -805,7 +805,7 @@ return (
 
 </div>
 
-      {/* ================= GRÁFICOS ================= */}
+     {/* ================= GRÁFICOS ================= */}
 
 {/* 1 - RECEITAS (FULL WIDTH) */}
 <div className="mt-10">
@@ -813,32 +813,18 @@ return (
     <h2 className="mb-4">Receitas por Categoria</h2>
 
     <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={dadosGrafico} barGap={10}>
+      <BarChart data={dadosGrafico}>
         <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
         <XAxis dataKey="mes" stroke="#94a3b8" />
         <YAxis stroke="#94a3b8" />
         <Tooltip />
         <Legend />
 
-        <Bar dataKey="cartao" fill="#3b82f6">
-          <LabelList dataKey="cartao" position="top" fill="#fff" />
-        </Bar>
-
-        <Bar dataKey="pix" fill="#22c55e">
-          <LabelList dataKey="pix" position="top" fill="#fff" />
-        </Bar>
-
-        <Bar dataKey="boleto" fill="#eab308">
-          <LabelList dataKey="boleto" position="top" fill="#fff" />
-        </Bar>
-
-        <Bar dataKey="dinheiro" fill="#a3a3a3">
-          <LabelList dataKey="dinheiro" position="top" fill="#fff" />
-        </Bar>
-
-        <Bar dataKey="recorrencia" fill="#06b6d4">
-          <LabelList dataKey="recorrencia" position="top" fill="#fff" />
-        </Bar>
+        <Bar dataKey="cartao" fill="#3b82f6" />
+        <Bar dataKey="pix" fill="#22c55e" />
+        <Bar dataKey="boleto" fill="#eab308" />
+        <Bar dataKey="dinheiro" fill="#a3a3a3" />
+        <Bar dataKey="recorrencia" fill="#06b6d4" />
 
       </BarChart>
     </ResponsiveContainer>
@@ -867,253 +853,115 @@ return (
   </div>
 </div>
 
-        {/* GRÁFICO COMPOSIÇÃO DA RECEITA */}
-        <div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
-          <h2 className="mb-4">Composição da Receita (%)</h2>
+{/* 3 - COMPOSIÇÃO + CHURN */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
-          <ResponsiveContainer width="100%" height={350}>
-  <ComposedChart data={dadosPercentuais}>
+  {/* COMPOSIÇÃO */}
+  <div className="bg-[#0f1c33] p-6 rounded w-full">
+    <h2 className="mb-4">Composição da Receita (%)</h2>
 
-    <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+    <ResponsiveContainer width="100%" height={350}>
+      <ComposedChart data={dadosPercentuais}>
+        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+        <XAxis dataKey="mes" stroke="#94a3b8" />
+        <YAxis domain={[0, 100]} stroke="#94a3b8" />
+        <Tooltip />
+        <Legend />
 
-    <XAxis dataKey="mes" stroke="#94a3b8" />
-    <YAxis stroke="#94a3b8" domain={[0, 100]} />
+        <Bar dataKey="recorrencia" stackId="a" fill="#14b8a6" />
+        <Bar dataKey="cartao" stackId="a" fill="#3b82f6" />
+        <Bar dataKey="pix" stackId="a" fill="#22c55e" />
+        <Bar dataKey="boleto" stackId="a" fill="#eab308" />
+        <Bar dataKey="dinheiro" stackId="a" fill="#a3a3a3" />
 
-    <Tooltip />
-    <Legend />
+      </ComposedChart>
+    </ResponsiveContainer>
+  </div>
 
-    {/* BARRAS */}
-    <Bar dataKey="recorrencia" stackId="a" fill="#14b8a6">
-  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#fff" />
-</Bar>
+  {/* CHURN */}
+  <div className="bg-[#0f1c33] p-6 rounded w-full">
+    <h2 className="mb-4">Churn Mensal (%)</h2>
 
-<Bar dataKey="cartao" stackId="a" fill="#3b82f6">
-  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#fff" />
-</Bar>
+    <ResponsiveContainer width="100%" height={350}>
+      <BarChart data={dadosChurn}>
+        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+        <XAxis dataKey="mes" stroke="#94a3b8" />
+        <YAxis domain={[0, 100]} stroke="#94a3b8" />
+        <Tooltip formatter={(v:any)=> `${v.toFixed(1)}%`} />
+        <Legend />
 
-<Bar dataKey="pix" stackId="a" fill="#22c55e">
-  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#000" />
-</Bar>
+        <Bar dataKey="churn" fill="#ef4444" />
 
-<Bar dataKey="boleto" stackId="a" fill="#eab308">
-  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#000" />
-</Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
 
-<Bar dataKey="dinheiro" stackId="a" fill="#a3a3a3">
-  <LabelList formatter={(v:any)=> `${v.toFixed(0)}%`} fill="#000" />
-</Bar>
+</div>
 
-    {/* 🔥 LINHA (VOLTA DO JEITO CERTO) */}
-    <Line
-      type="monotone"
-      dataKey="cartao"
-      stroke="#ffffff"
-      strokeWidth={3}
-      dot={{ r: 4 }}
-    />
+{/* 4 - RESTANTE */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
-  </ComposedChart>
-</ResponsiveContainer>
-        </div>
+  {/* EVOLUÇÃO FINANCEIRA */}
+  <div className="bg-[#0f1c33] p-6 rounded w-full">
+    <ResponsiveContainer width="100%" height={350}>
+      <LineChart data={dadosEvolucao}>
+        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+        <XAxis dataKey="mes" stroke="#94a3b8" />
+        <YAxis stroke="#94a3b8" />
+        <Tooltip />
+        <Legend />
 
-{/* GRÁFICO 4 - CHURN */}
-<div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
-  <h2 className="mb-4">Churn Mensal (%)</h2>
+        <Line dataKey="receita" stroke="#22c55e" />
+        <Line dataKey="despesa" stroke="#ef4444" />
+        <Line dataKey="resultado" stroke="#3b82f6" />
 
-  <ResponsiveContainer width="100%" height={350}>
-    <BarChart data={dadosChurn}>
-      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-      <XAxis dataKey="mes" stroke="#94a3b8" />
-      <YAxis stroke="#94a3b8" domain={[0, 100]} />
-      <Tooltip formatter={(v:any)=> `${v.toFixed(1)}%`} />
-      <Legend />
+      </LineChart>
+    </ResponsiveContainer>
+  </div>
 
-      <Bar dataKey="churn" fill="#ef4444" name="Churn (%)">
-        <LabelList
-          dataKey="churn"
-          position="top"
-          formatter={(v:any)=> `${v.toFixed(1)}%`}
-          fill="#ffffff"
+  {/* TICKET */}
+  <div className="bg-[#0f1c33] p-6 rounded w-full">
+    <ResponsiveContainer width="100%" height={350}>
+      <LineChart data={dadosTicket}>
+        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+        <XAxis dataKey="mes" stroke="#94a3b8" />
+        <YAxis stroke="#94a3b8" />
+        <Tooltip />
+        <Legend />
+
+        <Line dataKey="recorrencia" stroke="#9ca3af" />
+        <Line dataKey="agregador" stroke="#3b82f6" />
+
+      </LineChart>
+    </ResponsiveContainer>
+  </div>
+
+  {/* CUSTOS */}
+  <div className="bg-[#0f1c33] p-6 rounded w-full">
+    <ResponsiveContainer width="100%" height={320}>
+      <ComposedChart data={dadosCustos}>
+        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+        <XAxis dataKey="mes" stroke="#94a3b8" />
+        <YAxis stroke="#94a3b8" />
+        <YAxis yAxisId="right" orientation="right" domain={[0,100]} stroke="#3b82f6" />
+
+        <Tooltip />
+        <Legend />
+
+        <Bar dataKey="despesa" fill="#22c55e" />
+
+        <Line
+          type="monotone"
+          dataKey="percentualReal"
+          stroke="#3b82f6"
+          yAxisId="right"
         />
-      </Bar>
 
-    </BarChart>
-  </ResponsiveContainer>
-</div>
-
-{/* GRÁFICO NOVO - EVOLUÇÃO FINANCEIRA */}
-<div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
-
-  <h2 className="mb-4">Evolução Financeira</h2>
-
-  <ResponsiveContainer width="100%" height={350}>
-    <LineChart data={dadosEvolucao}>
-
-      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-
-      <XAxis dataKey="mes" stroke="#94a3b8" />
-      <YAxis stroke="#94a3b8" />
-
-      <Tooltip />
-      <Legend />
-
-      <Line
-        type="monotone"
-        dataKey="receita"
-        stroke="#22c55e"
-        strokeWidth={3}
-      />
-
-      <Line
-        type="monotone"
-        dataKey="despesa"
-        stroke="#ef4444"
-        strokeWidth={3}
-      />
-
-      <Line
-        type="monotone"
-        dataKey="resultado"
-        stroke="#3b82f6"
-        strokeWidth={3}
-      />
-
-    </LineChart>
-  </ResponsiveContainer>
+      </ComposedChart>
+    </ResponsiveContainer>
+  </div>
 
 </div>
-
-{/* EVOLUÇÃO DO TICKET MÉDIO */}
-<div className="bg-[#0f1c33] p-6 rounded w-full" style={{ minHeight: 350 }}>
-
-  <h2 className="mb-4">
-    Evolução do Ticket Médio (R$)
-  </h2>
-
-  <ResponsiveContainer width="100%" height={350}>
-    <LineChart data={dadosTicket}>
-
-      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-
-      <XAxis dataKey="mes" stroke="#94a3b8" />
-      <YAxis stroke="#94a3b8" />
-
-      <Tooltip
-        formatter={(value:any)=> 
-          `R$ ${Number(value).toFixed(2)}`
-        }
-      />
-
-      <Legend />
-
-      {/* RECORRÊNCIA */}
-      <Line
-        type="monotone"
-        dataKey="recorrencia"
-        stroke="#9ca3af"
-        strokeWidth={3}
-        dot={{ r: 4 }}
-      />
-
-      {/* AGREGADOR */}
-      <Line
-        type="monotone"
-        dataKey="agregador"
-        stroke="#3b82f6"
-        strokeWidth={3}
-        dot={{ r: 4 }}
-      />
-
-    </LineChart>
-  </ResponsiveContainer>
-
-</div>
-
-{/* GRÁFICO NOVO - EVOLUÇÃO DOS CUSTOS OPERACIOANIS TOTAIS */}
-<div className="bg-[#0f1c33] p-6 rounded-2xl border border-white/5">
-
-  <h2 className="mb-1 text-lg font-semibold">
-    Evolução dos Custos Operacionais
-  </h2>
-
-  <p className="text-sm text-gray-400 mb-4">
-    Custos mensais e percentual sobre a receita
-  </p>
-
-  <ResponsiveContainer width="100%" height={320}>
-    <ComposedChart data={dadosCustos}>
-
-      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-
-      <XAxis 
-        dataKey="mes" 
-        stroke="#94a3b8" 
-        tick={{ fontSize: 12 }}
-      />
-
-      <YAxis 
-        stroke="#94a3b8"
-        tick={{ fontSize: 12 }}
-      />
-
-      <YAxis
-  yAxisId="right"
-  orientation="right"
-  stroke="#3b82f6"
-  domain={[0, 100]}
-  tick={{ fontSize: 12 }}
-/>
-
-      <Tooltip
-        formatter={(value:any, name:any, props:any) => {
-  if (name === "% sobre receita") {
-    return `${props.payload.percentualReal.toFixed(1)}%`
-  }
-
-  return `R$ ${Number(value).toLocaleString("pt-BR",{minimumFractionDigits:2})}`
-}}
-      />
-
-      <Legend />
-
-      {/* BARRAS - CUSTOS */}
-      <Bar 
-        dataKey="despesa" 
-        fill="#22c55e" 
-        name="Custos (R$)"
-        radius={[6,6,0,0]}
-      >
-        <LabelList
-          dataKey="despesa"
-          position="top"
-          formatter={(v:any)=> 
-            `R$ ${Number(v).toLocaleString("pt-BR",{maximumFractionDigits:0})}`
-          }
-          fill="#ffffff"
-        />
-      </Bar>
- {/* 🔵 Percentual */}
-      <Line
-  type="monotone"
-  dataKey="percentualReal"
-  stroke="#3b82f6"
-  strokeWidth={3}
-  yAxisId="right"   // 👈 ESSENCIAL
-  name="% sobre receita"
->
-  <LabelList
-    dataKey="percentualReal"
-    position="top"
-    formatter={(v:any)=> `${v.toFixed(0)}%`}
-    fill="#3b82f6"
-  />
-</Line>
-
-    </ComposedChart>
-  </ResponsiveContainer>
-</div>
-
-      </div>
 
       {/* ================= HEATMAP ================= */}
 {(() => {
