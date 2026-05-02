@@ -32,37 +32,60 @@ import {
 export default function Dashboard() {
 
   const gerarPDF = async () => {
-  const elemento = document.getElementById("dashboard-pdf")
+  try {
+    console.log("Iniciando PDF...")
 
-  if (!elemento) return
+    const elemento = document.getElementById("dashboard-pdf")
+    if (!elemento) {
+      alert("Erro: dashboard não encontrado")
+      return
+    }
 
-  const canvas = await html2canvas(elemento, {
-    scale: 2,
-    useCORS: true
-  })
+    // 👇 força scroll pro topo (importante)
+    window.scrollTo(0, 0)
 
-  const imgData = canvas.toDataURL("image/png")
+    // 👇 pequena pausa pra garantir renderização
+    await new Promise((r) => setTimeout(r, 500))
 
-  const pdf = new jsPDF("p", "mm", "a4")
+    const canvas = await html2canvas(elemento, {
+      scale: 1.5, // 🔥 reduz peso (ANTES estava 2)
+      useCORS: true,
+      logging: true,
+      scrollY: -window.scrollY
+    })
 
-  const imgWidth = 210
-  const pageHeight = 295
-  const imgHeight = (canvas.height * imgWidth) / canvas.width
+    console.log("Canvas criado")
 
-  let heightLeft = imgHeight
-  let position = 0
+    const imgData = canvas.toDataURL("image/jpeg", 0.8)
 
-  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight)
-  heightLeft -= pageHeight
+    const pdf = new jsPDF("p", "mm", "a4")
 
-  while (heightLeft > 0) {
-    position = heightLeft - imgHeight
-    pdf.addPage()
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight)
+    const imgWidth = 210
+    const pageHeight = 295
+    const imgHeight = (canvas.height * imgWidth) / canvas.width
+
+    let heightLeft = imgHeight
+    let position = 0
+
+    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight)
+
     heightLeft -= pageHeight
-  }
 
-  pdf.save("dashboard.pdf")
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight
+      pdf.addPage()
+      pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight)
+      heightLeft -= pageHeight
+    }
+
+    pdf.save("dashboard.pdf")
+
+    console.log("PDF gerado com sucesso")
+
+  } catch (error) {
+    console.error("Erro ao gerar PDF:", error)
+    alert("Erro ao gerar PDF. Veja o console (F12)")
+  }
 }
 
   const router = useRouter()
