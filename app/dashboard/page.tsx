@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation"
 import { ComposedChart } from "recharts"
 import html2canvas from "html2canvas"
 import jsPDF from "jspdf"
+import { PDFDownloadLink } from "@react-pdf/renderer"
+import RelatorioPDF from "@/components/RelatorioPDF"
 
 import {
   BarChart,
@@ -655,13 +657,29 @@ return (
     <div className="flex justify-between items-center mb-10">
   <h1 className="text-4xl font-bold">Dashboard</h1>
 
-  <button
-    onClick={gerarPDF}
-    className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-semibold"
-  >
-    Gerar PDF
-  </button>
 </div>
+
+<PDFDownloadLink
+  document={
+    <RelatorioPDF
+      dados={{
+        receita: "106.421",
+        despesa: "86.214",
+        resultado: "20.207",
+        margem: "19"
+      }}
+    />
+  }
+  fileName="relatorio.pdf"
+>
+  {({ loading }) =>
+    loading ? "Gerando PDF..." : (
+      <button className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-semibold">
+        Baixar Relatório
+      </button>
+    )
+  }
+</PDFDownloadLink>
 
     {/* FILTROS */}
     <div className="flex gap-4 mb-10">
