@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabaseClient"
 import { useRouter } from "next/navigation"
 import { ComposedChart } from "recharts"
+import html2canvas from "html2canvas"
+import jsPDF from "jspdf"
 
 import {
   BarChart,
@@ -28,6 +30,40 @@ import {
 } from "lucide-react"
 
 export default function Dashboard() {
+
+  const gerarPDF = async () => {
+  const elemento = document.getElementById("dashboard-pdf")
+
+  if (!elemento) return
+
+  const canvas = await html2canvas(elemento, {
+    scale: 2,
+    useCORS: true
+  })
+
+  const imgData = canvas.toDataURL("image/png")
+
+  const pdf = new jsPDF("p", "mm", "a4")
+
+  const imgWidth = 210
+  const pageHeight = 295
+  const imgHeight = (canvas.height * imgWidth) / canvas.width
+
+  let heightLeft = imgHeight
+  let position = 0
+
+  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight)
+  heightLeft -= pageHeight
+
+  while (heightLeft > 0) {
+    position = heightLeft - imgHeight
+    pdf.addPage()
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight)
+    heightLeft -= pageHeight
+  }
+
+  pdf.save("dashboard.pdf")
+}
 
   const router = useRouter()
 
@@ -577,9 +613,21 @@ const categoriasDespesas = dadosFiltrados
 
   // ================= TELA =================
 return (
-  <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
+  <div
+  id="dashboard-pdf"
+  className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10"
+>
 
-    <h1 className="text-4xl font-bold mb-10">Dashboard</h1>
+    <div className="flex justify-between items-center mb-10">
+  <h1 className="text-4xl font-bold">Dashboard</h1>
+
+  <button
+    onClick={gerarPDF}
+    className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-semibold"
+  >
+    Gerar PDF
+  </button>
+</div>
 
     {/* FILTROS */}
     <div className="flex gap-4 mb-10">
