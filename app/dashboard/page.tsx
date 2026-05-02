@@ -957,6 +957,7 @@ return (
 
   {/* EVOLUÇÃO FINANCEIRA */}
   <div className="bg-[#0f1c33] p-6 rounded w-full">
+     <h2 className="mb-4">Evolução Financeira</h2>
     <ResponsiveContainer width="100%" height={350}>
       <LineChart data={dadosEvolucao}>
         <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
@@ -974,6 +975,7 @@ return (
 
   {/* TICKET */}
   <div className="bg-[#0f1c33] p-6 rounded w-full">
+      <h2 className="mb-4">Ticket Médio</h2>
     <ResponsiveContainer width="100%" height={350}>
       <LineChart data={dadosTicket}>
         <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
@@ -990,6 +992,7 @@ return (
 
   {/* CUSTOS */}
   <div className="bg-[#0f1c33] p-6 rounded w-full">
+      <h2 className="mb-4">Custos Operacionais</h2>
     <ResponsiveContainer width="100%" height={320}>
       <ComposedChart data={dadosCustos}>
         <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
