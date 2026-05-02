@@ -966,9 +966,9 @@ return (
         <Tooltip />
         <Legend />
 
-        <Line dataKey="receita" stroke="#22c55e" />
-        <Line dataKey="despesa" stroke="#ef4444" />
-        <Line dataKey="resultado" stroke="#3b82f6" />
+        <Line dataKey="receita" stroke="#22c55e" strokeWidth={3} dot={{ r: 4 }} />
+        <Line dataKey="despesa" stroke="#ef4444" strokeWidth={3} dot={{ r: 4 }} />
+        <Line dataKey="resultado" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} />
       </LineChart>
     </ResponsiveContainer>
   </div>
@@ -984,8 +984,8 @@ return (
         <Tooltip />
         <Legend />
 
-        <Line dataKey="recorrencia" stroke="#9ca3af" />
-        <Line dataKey="agregador" stroke="#3b82f6" />
+        <Line dataKey="recorrencia" stroke="#9ca3af" strokeWidth={3} dot={{ r: 4 }} />
+        <Line dataKey="agregador" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} />
       </LineChart>
     </ResponsiveContainer>
   </div>
