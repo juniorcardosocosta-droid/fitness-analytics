@@ -47,11 +47,17 @@ export default function Dashboard() {
 
   // 🔥 CRIA CONTAINER TEMPORÁRIO
   const wrapper = document.createElement("div")
-  wrapper.style.position = "fixed"
-  wrapper.style.top = "-9999px"
-  wrapper.style.left = "-9999px"
-  wrapper.style.background = "#0a162b"
-  wrapper.style.padding = "20px"
+
+wrapper.style.position = "fixed"
+wrapper.style.top = "0"
+wrapper.style.left = "0"
+wrapper.style.width = "1200px"
+wrapper.style.height = "700px"
+wrapper.style.background = "#0a162b"
+wrapper.style.display = "flex"
+wrapper.style.alignItems = "center"
+wrapper.style.justifyContent = "center"
+wrapper.style.zIndex = "-1"
 
   wrapper.appendChild(clone)
   document.body.appendChild(wrapper)
