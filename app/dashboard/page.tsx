@@ -105,6 +105,29 @@ export default function Dashboard() {
   }
 }
 
+  const capturarGrafico = async (id: string) => {
+  const el = document.getElementById(id)
+  if (!el) return null
+
+  const canvas = await html2canvas(el, { scale: 2 })
+  return canvas.toDataURL("image/png")
+}
+
+const gerarImagens = async () => {
+  return {
+    receita: await capturarGrafico("grafico-receita"),
+    alunos: await capturarGrafico("grafico-alunos"),
+    composicao: await capturarGrafico("grafico-composicao"),
+    churn: await capturarGrafico("grafico-churn"),
+    evolucao: await capturarGrafico("grafico-evolucao"),
+    ticket: await capturarGrafico("grafico-ticket"),
+    custos: await capturarGrafico("grafico-custos"),
+    margem: await capturarGrafico("grafico-margem"),
+    heatReceita: await capturarGrafico("grafico-heatmap-receita"),
+    heatDespesa: await capturarGrafico("grafico-heatmap-despesas"),
+  }
+}
+
   const router = useRouter()
 
   const [dados, setDados] = useState<any[]>([])
@@ -664,6 +687,7 @@ return (
 </div>
 
 <BotaoPDF
+  gerarImagens={gerarImagens}
   dados={{
     receita: receita.toFixed(2),
     despesa: despesa.toFixed(2),
