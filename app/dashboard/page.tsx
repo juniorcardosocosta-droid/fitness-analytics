@@ -1268,25 +1268,47 @@ return (
             )
           })}
 
+          {/* TOTAL POR MÊS */}
+<div className="text-green-400 flex items-center font-bold">
+  TOTAL
+</div>
+
+{mesesFixos.map((mes)=>{
+  const m = dadosMap[mes] || {}
+
+  const total =
+    (m.recorrencia || 0) +
+    (m.cartao || 0) +
+    (m.pix || 0) +
+    (m.boleto || 0) +
+    (m.dinheiro || 0)
+
+  return (
+    <div className="h-12 flex items-center justify-center text-green-400 font-bold">
+      {total.toLocaleString("pt-BR")}
+    </div>
+  )
+})}
+
         </div>
 
         {/* LEGENDA */}
         <div className="flex items-center gap-2 mt-6">
-          <span className="text-xs text-gray-400">Menor</span>
+  <span className="text-xs text-gray-400">Menor</span>
 
-          {[
-            "bg-[#1e293b]",
-            "bg-blue-300",
-            "bg-blue-400",
-            "bg-blue-500",
-            "bg-blue-600",
-            "bg-blue-700"
-          ].map((c,i)=>(
-            <div key={i} className={`w-6 h-3 rounded ${c}`} />
-          ))}
+  {[
+    "bg-[#1e293b]",
+    "bg-blue-300",
+    "bg-blue-400",
+    "bg-blue-500",
+    "bg-blue-600",
+    "bg-blue-700"
+  ].map((c,i)=>(
+    <div key={i} className={`w-6 h-3 rounded ${c}`} />
+  ))}
 
-          <span className="text-xs text-gray-400">Maior</span>
-        </div>
+  <span className="text-xs text-gray-400">Maior</span>
+</div>
 
       </div>
     </div>
@@ -1357,6 +1379,25 @@ return (
               })}
             </>
           ))}
+
+          {/* TOTAL POR MÊS */}
+<div className="text-red-400 flex items-center font-bold">
+  TOTAL
+</div>
+
+{mesesFixos.map((mes)=>{
+  const m = dadosMap[mes] || {}
+
+  const total = categoriasDespesas.reduce((acc:any, cat:any)=>{
+    return acc + (m[cat] || 0)
+  }, 0)
+
+  return (
+    <div className="h-12 flex items-center justify-center text-red-400 font-bold">
+      {total.toLocaleString("pt-BR")}
+    </div>
+  )
+})}
 
         </div>
 
