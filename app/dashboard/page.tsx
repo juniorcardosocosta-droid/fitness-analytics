@@ -6,8 +6,7 @@ import { useRouter } from "next/navigation"
 import { ComposedChart } from "recharts"
 import html2canvas from "html2canvas"
 import jsPDF from "jspdf"
-import { PDFDownloadLink } from "@react-pdf/renderer"
-import RelatorioPDF from "@/components/RelatorioPDF"
+import BotaoPDF from "@/components/BotaoPDF"
 
 import {
   BarChart,
@@ -659,27 +658,16 @@ return (
 
 </div>
 
-<PDFDownloadLink
-  document={
-    <RelatorioPDF
-      dados={{
-        receita: "106.421",
-        despesa: "86.214",
-        resultado: "20.207",
-        margem: "19"
-      }}
-    />
-  }
-  fileName="relatorio.pdf"
->
-  {({ loading }) =>
-    loading ? "Gerando PDF..." : (
-      <button className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-semibold">
-        Baixar Relatório
-      </button>
-    )
-  }
-</PDFDownloadLink>
+<BotaoPDF
+  dados={{
+    receita: receita.toFixed(2),
+    despesa: despesa.toFixed(2),
+    resultado: resultado.toFixed(2),
+    margem: receita > 0
+      ? ((resultado / receita) * 100).toFixed(1)
+      : "0"
+  }}
+/>
 
     {/* FILTROS */}
     <div className="flex gap-4 mb-10">
