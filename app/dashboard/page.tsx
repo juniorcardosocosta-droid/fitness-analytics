@@ -418,6 +418,13 @@ const dadosEvolucao = Object.values(
   }, {})
 ).sort((a:any,b:any)=> a.ordem - b.ordem)
 
+const dadosMargem = dadosEvolucao.map((m:any) => ({
+  mes: m.mes,
+  margem: m.receita > 0
+    ? (m.resultado / m.receita) * 100
+    : 0
+}))
+
 // ================= GRÁFICO EVOLUÇAÕ DO TICKET MEDIO EFETIVO =================
 const dadosTicket = Object.values(
   dadosFiltrados.reduce((acc:any, item:any) => {
@@ -1012,6 +1019,39 @@ return (
       </ComposedChart>
     </ResponsiveContainer>
   </div>
+
+  {/* MARGEM OPERACIONAL */}
+<div className="bg-[#0f1c33] p-6 rounded w-full">
+  <h2 className="mb-4">Margem Operacional (%)</h2>
+
+  <ResponsiveContainer width="100%" height={300}>
+    <LineChart data={dadosMargem}>
+
+      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+      <XAxis dataKey="mes" stroke="#94a3b8" />
+      <YAxis stroke="#94a3b8" />
+
+      <Tooltip formatter={(v:any)=> `${v.toFixed(1)}%`} />
+      <Legend />
+
+      <Line
+        type="monotone"
+        dataKey="margem"
+        stroke="#22c55e"
+        strokeWidth={3}
+        dot={{ r: 4 }}
+      >
+        <LabelList
+          dataKey="margem"
+          position="top"
+          formatter={(v:any)=> `${v.toFixed(1)}%`}
+          fill="#fff"
+        />
+      </Line>
+
+    </LineChart>
+  </ResponsiveContainer>
+</div>
 
 </div>
 
