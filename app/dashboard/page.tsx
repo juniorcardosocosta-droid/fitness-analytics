@@ -109,7 +109,16 @@ export default function Dashboard() {
   const el = document.getElementById(id)
   if (!el) return null
 
-  const canvas = await html2canvas(el, { scale: 2 })
+  // 🔥 FORÇA CORES COMPATÍVEIS
+  document.body.style.backgroundColor = "#0a162b"
+  document.body.style.color = "#ffffff"
+
+  const canvas = await html2canvas(el, {
+    scale: 2,
+    backgroundColor: "#0a162b",
+    useCORS: true
+  })
+
   return canvas.toDataURL("image/png")
 }
 
