@@ -1292,24 +1292,6 @@ return (
 
         </div>
 
-        {/* LEGENDA */}
-        <div className="flex items-center gap-2 mt-6">
-  <span className="text-xs text-gray-400">Menor</span>
-
-  {[
-    "bg-[#1e293b]",
-    "bg-blue-300",
-    "bg-blue-400",
-    "bg-blue-500",
-    "bg-blue-600",
-    "bg-blue-700"
-  ].map((c,i)=>(
-    <div key={i} className={`w-6 h-3 rounded ${c}`} />
-  ))}
-
-  <span className="text-xs text-gray-400">Maior</span>
-</div>
-
       </div>
     </div>
   )
