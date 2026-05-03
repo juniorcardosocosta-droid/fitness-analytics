@@ -943,25 +943,30 @@ return (
   content={(props:any)=>{
     const { x, y, width, value } = props
 
+    const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
+
     return (
       <g>
+        {/* BOX */}
         <rect
-          x={x + width/2 - 38}
-          y={y + 10}
-          width={76}
-          height={20}
+          x={x + width / 2 - 45}
+          y={y - 18}
+          width={90}
+          height={24}
           rx={6}
           fill="#22c55e"
         />
+
+        {/* TEXTO */}
         <text
-          x={x + width/2}
-          y={y + 20}
+          x={x + width / 2}
+          y={y - 2}
           textAnchor="middle"
           fill="#fff"
-          fontSize={11}
-          fontWeight="600"
+          fontSize={12}
+          fontWeight="bold"
         >
-          {`R$ ${Number(value).toLocaleString("pt-BR")}`}
+          {text}
         </text>
       </g>
     )
@@ -976,25 +981,28 @@ return (
   content={(props:any)=>{
     const { x, y, width, value } = props
 
+    const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
+
     return (
       <g>
         <rect
-          x={x + width/2 - 38}
-          y={y + 10}
-          width={76}
-          height={20}
+          x={x + width / 2 - 45}
+          y={y - 18}
+          width={90}
+          height={24}
           rx={6}
           fill="#ef4444"
         />
+
         <text
-          x={x + width/2}
-          y={y + 20}
+          x={x + width / 2}
+          y={y - 2}
           textAnchor="middle"
           fill="#fff"
-          fontSize={11}
-          fontWeight="600"
+          fontSize={12}
+          fontWeight="bold"
         >
-          {`R$ ${Number(value).toLocaleString("pt-BR")}`}
+          {text}
         </text>
       </g>
     )
@@ -1009,25 +1017,30 @@ return (
   content={(props:any)=>{
     const { x, y, width, value } = props
 
+    const negativo = value < 0
+
+    const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
+
     return (
       <g>
         <rect
-          x={x + width/2 - 38}
-          y={y + 10}
-          width={76}
-          height={20}
+          x={x + width / 2 - 45}
+          y={negativo ? y + 10 : y - 18}
+          width={90}
+          height={24}
           rx={6}
           fill="#3b82f6"
         />
+
         <text
-          x={x + width/2}
-          y={y + 20}
+          x={x + width / 2}
+          y={negativo ? y + 26 : y - 2}
           textAnchor="middle"
           fill="#fff"
-          fontSize={11}
-          fontWeight="600"
+          fontSize={12}
+          fontWeight="bold"
         >
-          {`R$ ${Number(value).toLocaleString("pt-BR")}`}
+          {text}
         </text>
       </g>
     )
