@@ -909,43 +909,134 @@ return (
 
      {/* ================= GRÁFICOS ================= */}
 
-{/* 1 - RECEITAS (FULL WIDTH) */}
-<div className="mt-10">
-  <div id="grafico-receita" className="bg-[#0f1c33] p-6 rounded w-full">
-    <h2 className="mb-4">Receitas por Categoria</h2>
+{/* EVOLUÇÃO FINANCEIRA - NOVO PADRÃO */}
+<div id="grafico-evolucao" className="bg-[#0f1c33] p-6 rounded w-full">
+  <h2 className="mb-4">Receita vs Despesa vs Resultado</h2>
 
-    <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={dadosGrafico}>
-        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-        <XAxis dataKey="mes" stroke="#94a3b8" />
-        <YAxis stroke="#94a3b8" />
-        <Tooltip />
-        <Legend />
+  <ResponsiveContainer width="100%" height={350}>
+    <BarChart data={dadosEvolucao}>
+      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+      
+      <XAxis dataKey="mes" stroke="#94a3b8" />
+      <YAxis
+        stroke="#94a3b8"
+        tickFormatter={(v)=> `R$ ${(v/1000).toFixed(0)}k`}
+      />
 
-        {["cartao","pix","boleto","dinheiro","recorrencia"].map((key, i) => {
-          const colors:any = {
-            cartao:"#3b82f6",
-            pix:"#22c55e",
-            boleto:"#eab308",
-            dinheiro:"#a3a3a3",
-            recorrencia:"#06b6d4"
-          }
+      <Tooltip
+        formatter={(v:any)=> 
+          `R$ ${Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2})}`
+        }
+        contentStyle={{
+          backgroundColor: "#0a162b",
+          border: "none",
+          color: "#fff"
+        }}
+      />
 
-          return (
-            <Bar key={key} dataKey={key} fill={colors[key]}>
-              <LabelList
-                dataKey={key}
-                position="top"
-                formatter={(v:any)=> Number(v).toLocaleString("pt-BR")}
-                fill="#fff"
-              />
-            </Bar>
-          )
-        })}
+      <Legend />
 
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
+      {/* RECEITA */}
+      <Bar dataKey="receita" fill="#22c55e" name="Receita">
+        <LabelList
+          dataKey="receita"
+          position="insideTop"
+          content={(props:any)=>{
+            const { x, y, width, value } = props
+
+            return (
+              <g>
+                <rect
+                  x={x + width/2 - 35}
+                  y={y + 5}
+                  width={70}
+                  height={18}
+                  rx={4}
+                  fill="#22c55e"
+                />
+                <text
+                  x={x + width/2}
+                  y={y + 18}
+                  textAnchor="middle"
+                  fill="#fff"
+                  fontSize={10}
+                >
+                  {`R$ ${Number(value).toLocaleString("pt-BR")}`}
+                </text>
+              </g>
+            )
+          }}
+        />
+      </Bar>
+
+      {/* DESPESA */}
+      <Bar dataKey="despesa" fill="#ef4444" name="Despesa">
+        <LabelList
+          dataKey="despesa"
+          position="insideTop"
+          content={(props:any)=>{
+            const { x, y, width, value } = props
+
+            return (
+              <g>
+                <rect
+                  x={x + width/2 - 35}
+                  y={y + 5}
+                  width={70}
+                  height={18}
+                  rx={4}
+                  fill="#ef4444"
+                />
+                <text
+                  x={x + width/2}
+                  y={y + 18}
+                  textAnchor="middle"
+                  fill="#fff"
+                  fontSize={10}
+                >
+                  {`R$ ${Number(value).toLocaleString("pt-BR")}`}
+                </text>
+              </g>
+            )
+          }}
+        />
+      </Bar>
+
+      {/* RESULTADO */}
+      <Bar dataKey="resultado" fill="#3b82f6" name="Resultado">
+        <LabelList
+          dataKey="resultado"
+          position="insideTop"
+          content={(props:any)=>{
+            const { x, y, width, value } = props
+
+            return (
+              <g>
+                <rect
+                  x={x + width/2 - 35}
+                  y={y + 5}
+                  width={70}
+                  height={18}
+                  rx={4}
+                  fill="#3b82f6"
+                />
+                <text
+                  x={x + width/2}
+                  y={y + 18}
+                  textAnchor="middle"
+                  fill="#fff"
+                  fontSize={10}
+                >
+                  {`R$ ${Number(value).toLocaleString("pt-BR")}`}
+                </text>
+              </g>
+            )
+          }}
+        />
+      </Bar>
+
+    </BarChart>
+  </ResponsiveContainer>
 </div>
 
 {/* 2 - EVOLUÇÃO DE ALUNOS */}
@@ -1050,25 +1141,7 @@ return (
 {/* 4 - RESTANTE */}
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
-  {/* EVOLUÇÃO FINANCEIRA */}
-  <div id="grafico-evolucao" className="bg-[#0f1c33] p-6 rounded w-full">
-     <h2 className="mb-4">Evolução Financeira</h2>
-    <ResponsiveContainer width="100%" height={350}>
-      <LineChart data={dadosEvolucao}>
-        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-        <XAxis dataKey="mes" stroke="#94a3b8" />
-        <YAxis stroke="#94a3b8" />
-        <Tooltip />
-        <Legend />
-
-        <Line dataKey="receita" stroke="#22c55e" strokeWidth={3} dot={{ r: 4 }} />
-        <Line dataKey="despesa" stroke="#ef4444" strokeWidth={3} dot={{ r: 4 }} />
-        <Line dataKey="resultado" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* TICKET MEDIO */}
+    {/* TICKET MEDIO */}
   <div id="grafico-ticket" className="bg-[#0f1c33] p-6 rounded w-full">
       <h2 className="mb-4">Ticket Médio</h2>
     <ResponsiveContainer width="100%" height={350}>
