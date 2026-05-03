@@ -907,209 +907,46 @@ return (
 
 </div>
 
+     {/* ================= GRÁFICOS ================= */}
 
-{/* ================= GRÁFICOS ================= */}
-
-{/* 1 - RECEITA vs DESPESA vs RESULTADO */}
+{/* 1 - RECEITAS (FULL WIDTH) */}
 <div className="mt-10">
-  <div className="bg-[#0f1c33] p-6 rounded w-full">
-    <h2 className="mb-4">Receita vs Despesas vs Resultado</h2>
+  <div id="grafico-receita" className="bg-[#0f1c33] p-6 rounded w-full">
+    <h2 className="mb-4">Receitas por Categoria</h2>
 
     <ResponsiveContainer width="100%" height={350}>
-      <LineChart data={dadosEvolucao}>
+      <BarChart data={dadosGrafico}>
         <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
         <XAxis dataKey="mes" stroke="#94a3b8" />
         <YAxis stroke="#94a3b8" />
         <Tooltip />
         <Legend />
 
-        <Line dataKey="receita" stroke="#22c55e" strokeWidth={3} />
-        <Line dataKey="despesa" stroke="#ef4444" strokeWidth={3} />
-        <Line dataKey="resultado" stroke="#3b82f6" strokeWidth={3} />
-      </LineChart>
+        {["cartao","pix","boleto","dinheiro","recorrencia"].map((key, i) => {
+          const colors:any = {
+            cartao:"#3b82f6",
+            pix:"#22c55e",
+            boleto:"#eab308",
+            dinheiro:"#a3a3a3",
+            recorrencia:"#06b6d4"
+          }
+
+          return (
+            <Bar key={key} dataKey={key} fill={colors[key]}>
+              <LabelList
+                dataKey={key}
+                position="top"
+                formatter={(v:any)=> Number(v).toLocaleString("pt-BR")}
+                fill="#fff"
+              />
+            </Bar>
+          )
+        })}
+
+      </BarChart>
     </ResponsiveContainer>
   </div>
 </div>
-
-{/* ================= HEATMAP RECEITA ================= */}
-{(() => {
-
-  const mesesFixos = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
-
-  const dadosMap = Object.fromEntries(
-    dadosGrafico.map((m:any) => [m.mes, m])
-  )
-
-  const maxValor = Math.max(
-    ...mesesFixos.flatMap((mes) => {
-      const m = dadosMap[mes] || {}
-      return [
-        m.recorrencia || 0,
-        m.cartao || 0,
-        m.pix || 0,
-        m.boleto || 0,
-        m.dinheiro || 0
-      ]
-    })
-  )
-
-  function getHeatColor(valor:number) {
-    const intensidade = maxValor > 0 ? valor / maxValor : 0
-
-    if (intensidade > 0.85) return "bg-blue-700"
-    if (intensidade > 0.65) return "bg-blue-600"
-    if (intensidade > 0.45) return "bg-blue-500"
-    if (intensidade > 0.25) return "bg-blue-400"
-    if (intensidade > 0.1) return "bg-blue-300"
-    return "bg-[#1e293b]"
-  }
-
-  return (
-    <div className="mt-10">
-      <div className="bg-[#0f1c33] p-6 rounded-2xl w-full">
-
-        <h2 className="mb-6 text-lg font-semibold">
-          Heatmap de Receita por Origem
-        </h2>
-
-        <div className="grid grid-cols-[120px_repeat(12,1fr)] gap-2 text-xs">
-
-          <div></div>
-          {mesesFixos.map((mes)=>(
-            <div key={mes} className="text-center text-gray-400">{mes}</div>
-          ))}
-
-          {["recorrencia","cartao","pix","boleto","dinheiro"].map((tipo)=>(
-            <>
-              <div className="text-gray-400 flex items-center capitalize">
-                {tipo}
-              </div>
-
-              {mesesFixos.map((mes)=>{
-                const m = dadosMap[mes] || {}
-
-                return (
-                  <div className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m[tipo] || 0)}`}>
-                    {(m[tipo] || 0).toLocaleString("pt-BR")}
-                  </div>
-                )
-              })}
-            </>
-          ))}
-
-          <div className="text-green-400 flex items-center font-bold">
-            TOTAL
-          </div>
-
-          {mesesFixos.map((mes)=>{
-            const m = dadosMap[mes] || {}
-
-            const total =
-              (m.recorrencia || 0) +
-              (m.cartao || 0) +
-              (m.pix || 0) +
-              (m.boleto || 0) +
-              (m.dinheiro || 0)
-
-            return (
-              <div className="h-12 flex items-center justify-center text-green-400 font-bold">
-                {total.toLocaleString("pt-BR")}
-              </div>
-            )
-          })}
-
-        </div>
-
-      </div>
-    </div>
-  )
-})()}
-
-{/* ================= HEATMAP DESPESAS ================= */}
-{(() => {
-
-  const mesesFixos = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
-
-  const dadosMap = Object.fromEntries(
-    dadosDespesas.map((m:any) => [m.mes, m])
-  )
-
-  const maxValor = Math.max(
-    ...mesesFixos.flatMap((mes)=>{
-      const m = dadosMap[mes] || {}
-      return categoriasDespesas.map((cat:any)=> m[cat] || 0)
-    })
-  )
-
-  function getHeatColor(valor:number) {
-    const intensidade = maxValor > 0 ? valor / maxValor : 0
-
-    if (intensidade > 0.85) return "bg-red-700"
-    if (intensidade > 0.65) return "bg-red-600"
-    if (intensidade > 0.45) return "bg-red-500"
-    if (intensidade > 0.25) return "bg-red-400"
-    if (intensidade > 0.1) return "bg-red-300"
-    return "bg-[#1e293b]"
-  }
-
-  return (
-    <div className="mt-10">
-      <div className="bg-[#0f1c33] p-6 rounded-2xl w-full">
-
-        <h2 className="mb-6 text-lg font-semibold text-red-400">
-          Heatmap de Despesas
-        </h2>
-
-        <div className="grid grid-cols-[160px_repeat(12,1fr)] gap-2 text-xs">
-
-          <div></div>
-          {mesesFixos.map((mes)=>(
-            <div key={mes} className="text-center text-gray-400">{mes}</div>
-          ))}
-
-          {categoriasDespesas.map((cat:any)=>(
-            <>
-              <div className="text-gray-400 flex items-center">
-                {cat}
-              </div>
-
-              {mesesFixos.map((mes)=>{
-                const m = dadosMap[mes] || {}
-
-                return (
-                  <div className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m[cat] || 0)}`}>
-                    {(m[cat] || 0).toLocaleString("pt-BR")}
-                  </div>
-                )
-              })}
-            </>
-          ))}
-
-          <div className="text-red-400 flex items-center font-bold">
-            TOTAL
-          </div>
-
-          {mesesFixos.map((mes)=>{
-            const m = dadosMap[mes] || {}
-
-            const total = categoriasDespesas.reduce((acc:any, cat:any)=>{
-              return acc + (m[cat] || 0)
-            }, 0)
-
-            return (
-              <div className="h-12 flex items-center justify-center text-red-400 font-bold">
-                {total.toLocaleString("pt-BR")}
-              </div>
-            )
-          })}
-
-        </div>
-
-      </div>
-    </div>
-  )
-})()}
-
 
 {/* 2 - EVOLUÇÃO DE ALUNOS */}
 <div className="mt-6">
