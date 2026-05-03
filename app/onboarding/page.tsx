@@ -26,14 +26,17 @@ export default function OnboardingPage() {
   }, []);
 
   async function fetchAcademias() {
-    const { data, error } = await supabase
-      .from("academias")
-      .select("id, nome, onboarding_status");
+  const { data, error } = await supabase
+    .from("academias")
+    .select("id, nome, onboarding_status");
 
-    if (!error && data) {
-      setAcademias(data);
-    }
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
+
+  if (!error && data) {
+    setAcademias(data);
   }
+}
 
   async function updateStatus(id: string, status: string) {
     await supabase
