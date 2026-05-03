@@ -110,8 +110,6 @@ const gerarImagens = async () => {
   const [mesSelecionado, setMesSelecionado] = useState("")
   const [anoSelecionado, setAnoSelecionado] = useState("")
 
-  const [loading, setLoading] = useState(true)
-
    const isReceita = (item:any) =>
     String(item.tipo).toLowerCase().includes("receita")
 
@@ -134,30 +132,13 @@ const gerarImagens = async () => {
   }, [])
 
   useEffect(() => {
-  const checkAccess = async () => {
-    const { data } = await supabase.auth.getSession()
-
-    if (!data.session) {
-      router.push("/login")
-      return
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getSession()
+      if (!data.session) router.push("/login")
     }
 
-    const { data: academia } = await supabase
-      .from("academias")
-      .select("onboarding_status")
-      .limit(1)
-      .single()
-
-    if (academia && academia.onboarding_status !== "ativo") {
-      router.push("/onboarding")
-      return
-    }
-
-    setLoading(false)
-  }
-
-  checkAccess()
-}, [router])
+    checkUser()
+  }, [router])
 
   useEffect(() => {
     async function carregarDados() {
@@ -706,15 +687,6 @@ const categoriasDespesas = dadosFiltrados
 ).sort((a:any,b:any)=> a.ordem - b.ordem)
 
   // ================= TELA =================
-
-  if (loading) {
-  return (
-    <div className="p-6 text-center text-white">
-      Verificando acesso...
-    </div>
-  )
-}
-
 return (
   <div
   id="dashboard-pdf"
@@ -1302,7 +1274,7 @@ return (
   </div>
 </div>
 
-{/* 3 - TICKET - MEIDO  + CHURN */}
+{/* 3 - TICKET - MEIDO + CHURN */}
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
  {/* TICKET MEDIO */}
