@@ -939,100 +939,100 @@ return (
       {/* RECEITA */}
       <Bar dataKey="receita" fill="#22c55e" name="Receita">
         <LabelList
-          dataKey="receita"
-          position="insideTop"
-          content={(props:any)=>{
-            const { x, y, width, value } = props
+  dataKey="receita"
+  content={(props:any)=>{
+    const { x, y, width, value } = props
 
-            return (
-              <g>
-                <rect
-                  x={x + width/2 - 35}
-                  y={y + 5}
-                  width={70}
-                  height={18}
-                  rx={4}
-                  fill="#22c55e"
-                />
-                <text
-                  x={x + width/2}
-                  y={y + 18}
-                  textAnchor="middle"
-                  fill="#fff"
-                  fontSize={10}
-                >
-                  {`R$ ${Number(value).toLocaleString("pt-BR")}`}
-                </text>
-              </g>
-            )
-          }}
+    return (
+      <g>
+        <rect
+          x={x + width/2 - 38}
+          y={y + 10}
+          width={76}
+          height={20}
+          rx={6}
+          fill="#22c55e"
         />
+        <text
+          x={x + width/2}
+          y={y + 20}
+          textAnchor="middle"
+          fill="#fff"
+          fontSize={11}
+          fontWeight="600"
+        >
+          {`R$ ${Number(value).toLocaleString("pt-BR")}`}
+        </text>
+      </g>
+    )
+  }}
+/>
       </Bar>
 
       {/* DESPESA */}
       <Bar dataKey="despesa" fill="#ef4444" name="Despesa">
         <LabelList
-          dataKey="despesa"
-          position="insideTop"
-          content={(props:any)=>{
-            const { x, y, width, value } = props
+  dataKey="despesa"
+  content={(props:any)=>{
+    const { x, y, width, value } = props
 
-            return (
-              <g>
-                <rect
-                  x={x + width/2 - 35}
-                  y={y + 5}
-                  width={70}
-                  height={18}
-                  rx={4}
-                  fill="#ef4444"
-                />
-                <text
-                  x={x + width/2}
-                  y={y + 18}
-                  textAnchor="middle"
-                  fill="#fff"
-                  fontSize={10}
-                >
-                  {`R$ ${Number(value).toLocaleString("pt-BR")}`}
-                </text>
-              </g>
-            )
-          }}
+    return (
+      <g>
+        <rect
+          x={x + width/2 - 38}
+          y={y + 10}
+          width={76}
+          height={20}
+          rx={6}
+          fill="#ef4444"
         />
+        <text
+          x={x + width/2}
+          y={y + 20}
+          textAnchor="middle"
+          fill="#fff"
+          fontSize={11}
+          fontWeight="600"
+        >
+          {`R$ ${Number(value).toLocaleString("pt-BR")}`}
+        </text>
+      </g>
+    )
+  }}
+/>
       </Bar>
 
       {/* RESULTADO */}
       <Bar dataKey="resultado" fill="#3b82f6" name="Resultado">
         <LabelList
-          dataKey="resultado"
-          position="insideTop"
-          content={(props:any)=>{
-            const { x, y, width, value } = props
+  dataKey="resultado"
+  content={(props:any)=>{
+    const { x, y, width, value } = props
 
-            return (
-              <g>
-                <rect
-                  x={x + width/2 - 35}
-                  y={y + 5}
-                  width={70}
-                  height={18}
-                  rx={4}
-                  fill="#3b82f6"
-                />
-                <text
-                  x={x + width/2}
-                  y={y + 18}
-                  textAnchor="middle"
-                  fill="#fff"
-                  fontSize={10}
-                >
-                  {`R$ ${Number(value).toLocaleString("pt-BR")}`}
-                </text>
-              </g>
-            )
-          }}
+    return (
+      <g>
+        <rect
+          x={x + width/2 - 38}
+          y={y + 10}
+          width={76}
+          height={20}
+          rx={6}
+          fill="#3b82f6"
         />
+        <text
+          x={x + width/2}
+          y={y + 20}
+          textAnchor="middle"
+          fill="#fff"
+          fontSize={11}
+          fontWeight="600"
+        >
+          {`R$ ${Number(value).toLocaleString("pt-BR")}`}
+        </text>
+      </g>
+    )
+  }}
+/>
       </Bar>
 
     </BarChart>
