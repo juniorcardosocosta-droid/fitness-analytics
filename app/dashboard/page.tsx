@@ -110,6 +110,8 @@ const gerarImagens = async () => {
   const [mesSelecionado, setMesSelecionado] = useState("")
   const [anoSelecionado, setAnoSelecionado] = useState("")
 
+  const [loading, setLoading] = useState(true)
+
    const isReceita = (item:any) =>
     String(item.tipo).toLowerCase().includes("receita")
 
@@ -132,13 +134,30 @@ const gerarImagens = async () => {
   }, [])
 
   useEffect(() => {
-    const checkUser = async () => {
-      const { data } = await supabase.auth.getSession()
-      if (!data.session) router.push("/login")
+  const checkAccess = async () => {
+    const { data } = await supabase.auth.getSession()
+
+    if (!data.session) {
+      router.push("/login")
+      return
     }
 
-    checkUser()
-  }, [router])
+    const { data: academia } = await supabase
+      .from("academias")
+      .select("onboarding_status")
+      .limit(1)
+      .single()
+
+    if (academia && academia.onboarding_status !== "ativo") {
+      router.push("/onboarding")
+      return
+    }
+
+    setLoading(false)
+  }
+
+  checkAccess()
+}, [router])
 
   useEffect(() => {
     async function carregarDados() {
@@ -687,6 +706,15 @@ const categoriasDespesas = dadosFiltrados
 ).sort((a:any,b:any)=> a.ordem - b.ordem)
 
   // ================= TELA =================
+
+  if (loading) {
+  return (
+    <div className="p-6 text-center text-white">
+      Verificando acesso...
+    </div>
+  )
+}
+
 return (
   <div
   id="dashboard-pdf"
