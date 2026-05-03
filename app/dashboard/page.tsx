@@ -937,116 +937,132 @@ return (
       <Legend />
 
       {/* RECEITA */}
-      <Bar dataKey="receita" fill="#22c55e" name="Receita">
-        <LabelList
+<Bar
   dataKey="receita"
-  content={(props:any)=>{
-    const { x, y, width, value } = props
+  fill="#22c55e"
+  name="Receita"
+  radius={[6, 6, 0, 0]}
+  fillOpacity={0.85}
+>
+  <LabelList
+    dataKey="receita"
+    content={(props:any)=>{
+      const { x, y, width, value } = props
+      const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
 
-    const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
+      return (
+        <g>
+          <rect
+            x={x + width / 2 - 45}
+            y={y - 18}
+            width={90}
+            height={24}
+            rx={8}
+            fill="transparent"
+            stroke="#ffffff"
+            strokeWidth={1.2}
+          />
+          <text
+            x={x + width / 2}
+            y={y - 2}
+            textAnchor="middle"
+            fill="#ffffff"
+            fontSize={11}
+            fontWeight="500"
+          >
+            {text}
+          </text>
+        </g>
+      )
+    }}
+  />
+</Bar>
 
-    return (
-      <g>
-        {/* BOX */}
-        <rect
-          x={x + width / 2 - 45}
-          y={y - 18}
-          width={90}
-          height={24}
-          rx={6}
-          fill="#22c55e"
-        />
-
-        {/* TEXTO */}
-        <text
-          x={x + width / 2}
-          y={y - 2}
-          textAnchor="middle"
-          fill="#fff"
-          fontSize={12}
-          fontWeight="bold"
-        >
-          {text}
-        </text>
-      </g>
-    )
-  }}
-/>
-      </Bar>
-
-      {/* DESPESA */}
-      <Bar dataKey="despesa" fill="#ef4444" name="Despesa">
-        <LabelList
+{/* DESPESA */}
+<Bar
   dataKey="despesa"
-  content={(props:any)=>{
-    const { x, y, width, value } = props
+  fill="#ef4444"
+  name="Despesa"
+  radius={[6, 6, 0, 0]}
+  fillOpacity={0.85}
+>
+  <LabelList
+    dataKey="despesa"
+    content={(props:any)=>{
+      const { x, y, width, value } = props
+      const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
 
-    const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
+      return (
+        <g>
+          <rect
+            x={x + width / 2 - 45}
+            y={y - 18}
+            width={90}
+            height={24}
+            rx={8}
+            fill="transparent"
+            stroke="#ffffff"
+            strokeWidth={1.2}
+          />
+          <text
+            x={x + width / 2}
+            y={y - 2}
+            textAnchor="middle"
+            fill="#ffffff"
+            fontSize={11}
+            fontWeight="500"
+          >
+            {text}
+          </text>
+        </g>
+      )
+    }}
+  />
+</Bar>
 
-    return (
-      <g>
-        <rect
-          x={x + width / 2 - 45}
-          y={y - 18}
-          width={90}
-          height={24}
-          rx={6}
-          fill="#ef4444"
-        />
-
-        <text
-          x={x + width / 2}
-          y={y - 2}
-          textAnchor="middle"
-          fill="#fff"
-          fontSize={12}
-          fontWeight="bold"
-        >
-          {text}
-        </text>
-      </g>
-    )
-  }}
-/>
-      </Bar>
-
-      {/* RESULTADO */}
-      <Bar dataKey="resultado" fill="#3b82f6" name="Resultado">
-        <LabelList
+{/* RESULTADO */}
+<Bar
   dataKey="resultado"
-  content={(props:any)=>{
-    const { x, y, width, value } = props
+  fill="#3b82f6"
+  name="Resultado"
+  radius={[6, 6, 0, 0]}
+  fillOpacity={0.85}
+>
+  <LabelList
+    dataKey="resultado"
+    content={(props:any)=>{
+      const { x, y, width, value } = props
+      const negativo = value < 0
 
-    const negativo = value < 0
+      const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
 
-    const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
-
-    return (
-      <g>
-        <rect
-          x={x + width / 2 - 45}
-          y={negativo ? y + 10 : y - 18}
-          width={90}
-          height={24}
-          rx={6}
-          fill="#3b82f6"
-        />
-
-        <text
-          x={x + width / 2}
-          y={negativo ? y + 26 : y - 2}
-          textAnchor="middle"
-          fill="#fff"
-          fontSize={12}
-          fontWeight="bold"
-        >
-          {text}
-        </text>
-      </g>
-    )
-  }}
-/>
-      </Bar>
+      return (
+        <g>
+          <rect
+            x={x + width / 2 - 45}
+            y={negativo ? y + 10 : y - 18}
+            width={90}
+            height={24}
+            rx={8}
+            fill="transparent"
+            stroke="#ffffff"
+            strokeWidth={1.2}
+          />
+          <text
+            x={x + width / 2}
+            y={negativo ? y + 26 : y - 2}
+            textAnchor="middle"
+            fill="#ffffff"
+            fontSize={11}
+            fontWeight="500"
+          >
+            {text}
+          </text>
+        </g>
+      )
+    }}
+  />
+</Bar>
 
     </BarChart>
   </ResponsiveContainer>
