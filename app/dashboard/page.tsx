@@ -1274,43 +1274,23 @@ return (
   </div>
 </div>
 
-{/* 3 - COMPOSIÇÃO + CHURN */}
+{/* 3 - TICKET - MEIDO  + CHURN */}
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
-  {/* COMPOSIÇÃO */}
-  <div id="grafico-composicao" className="bg-[#0f1c33] p-6 rounded w-full">
-    <h2 className="mb-4">Composição da Receita (%)</h2>
-
+ {/* TICKET MEDIO */}
+  <div id="grafico-ticket" className="bg-[#0f1c33] p-6 rounded w-full">
+      <h2 className="mb-4">Ticket Médio</h2>
     <ResponsiveContainer width="100%" height={350}>
-      <ComposedChart data={dadosPercentuais}>
+      <LineChart data={dadosTicket}>
         <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
         <XAxis dataKey="mes" stroke="#94a3b8" />
-        <YAxis domain={[0,100]} stroke="#94a3b8" />
-        <Tooltip formatter={(v:any)=> `${v.toFixed(1)}%`} />
+        <YAxis stroke="#94a3b8" />
+        <Tooltip />
         <Legend />
 
-        {["recorrencia","cartao","pix","boleto","dinheiro"].map((key) => {
-          const colors:any = {
-            recorrencia:"#14b8a6",
-            cartao:"#3b82f6",
-            pix:"#22c55e",
-            boleto:"#eab308",
-            dinheiro:"#a3a3a3"
-          }
-
-          return (
-            <Bar key={key} dataKey={key} stackId="a" fill={colors[key]}>
-              <LabelList
-                dataKey={key}
-                position="center"
-                formatter={(v:any)=> `${v.toFixed(0)}%`}
-                fill="#fff"
-              />
-            </Bar>
-          )
-        })}
-
-      </ComposedChart>
+        <Line dataKey="recorrencia" stroke="#9ca3af" strokeWidth={3} dot={{ r: 4 }} />
+        <Line dataKey="agregador" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} />
+      </LineChart>
     </ResponsiveContainer>
   </div>
 
@@ -1344,22 +1324,7 @@ return (
 {/* 4 - RESTANTE */}
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
-    {/* TICKET MEDIO */}
-  <div id="grafico-ticket" className="bg-[#0f1c33] p-6 rounded w-full">
-      <h2 className="mb-4">Ticket Médio</h2>
-    <ResponsiveContainer width="100%" height={350}>
-      <LineChart data={dadosTicket}>
-        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-        <XAxis dataKey="mes" stroke="#94a3b8" />
-        <YAxis stroke="#94a3b8" />
-        <Tooltip />
-        <Legend />
-
-        <Line dataKey="recorrencia" stroke="#9ca3af" strokeWidth={3} dot={{ r: 4 }} />
-        <Line dataKey="agregador" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
+    
 
   {/* CUSTOS OPERACIONAL*/}
   <div id="grafico-custos" className="bg-[#0f1c33] p-6 rounded w-full">
