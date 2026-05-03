@@ -132,13 +132,28 @@ const gerarImagens = async () => {
   }, [])
 
   useEffect(() => {
-    const checkUser = async () => {
-      const { data } = await supabase.auth.getSession()
-      if (!data.session) router.push("/login")
+  const checkUser = async () => {
+    const { data } = await supabase.auth.getSession()
+
+    if (!data.session) {
+      router.push("/login")
+      return
     }
 
-    checkUser()
-  }, [router])
+    const userId = data.session.user.id
+
+    const { data: perfil } = await supabase
+      .from("perfis")
+      .select("role")
+      .eq("id", userId)
+      .single()
+
+    console.log("USUARIO:", userId)
+    console.log("ROLE:", perfil?.role)
+  }
+
+  checkUser()
+}, [router])
 
   useEffect(() => {
     async function carregarDados() {
