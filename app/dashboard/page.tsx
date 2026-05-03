@@ -498,28 +498,34 @@ const dadosMargem = dadosEvolucao.map((m:any) => ({
 }))
 
 const renderLabel = (props:any) => {
-  const { x, y, width, value } = props
+  const { x, y, width, height, value } = props
 
   const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
 
   const paddingX = 6
   const boxWidth = text.length * 6 + paddingX * 2
 
+  // ✔ POSICIONAMENTO BASEADO NA ALTURA DA BARRA
+  const espacamento = 22
+
+  const posY = y - espacamento  
+
+
   return (
     <g>
       <rect
         x={x + width / 2 - boxWidth / 2}
-        y={y - 14}
+        y={posY}
         width={boxWidth}
         height={18}
         rx={6}
-        fill="transparent"
+        fill="rgba(0,0,0,0.5)"
         stroke="#ffffff"
         strokeWidth={1}
       />
       <text
         x={x + width / 2}
-        y={y - 2}
+        y={posY + 12}
         textAnchor="middle"
         fill="#ffffff"
         fontSize={10}
@@ -947,7 +953,11 @@ return (
   <h2 className="mb-4">Receita vs Despesa vs Resultado</h2>
 
   <ResponsiveContainer width="100%" height={350}>
-    <BarChart data={dadosEvolucao}>
+    <BarChart
+  data={dadosEvolucao}
+  margin={{ top: 50, right: 20, left: 0, bottom: 0 }}
+  barCategoryGap="25%"
+>
       <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
       
       <XAxis dataKey="mes" stroke="#94a3b8" />
