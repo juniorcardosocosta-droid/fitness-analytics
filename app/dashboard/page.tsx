@@ -7,6 +7,7 @@ import { ComposedChart } from "recharts"
 import html2canvas from "html2canvas"
 import jsPDF from "jspdf"
 import React from "react"
+import { LabelList } from "recharts"
 
 import dynamic from "next/dynamic"
 
@@ -917,63 +918,44 @@ return (
     <h2 className="mb-4">Receita vs Despesas vs Resultado</h2>
 
     <ResponsiveContainer width="100%" height={350}>
-      <LineChart data={dadosEvolucao}>
+      <BarChart data={dadosEvolucao}>
         <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
         <XAxis dataKey="mes" stroke="#94a3b8" />
         <YAxis stroke="#94a3b8" />
         <Tooltip />
-        <Legend />
 
-        <Line dataKey="receita" stroke="#22c55e" strokeWidth={3} />
-        <Line dataKey="despesa" stroke="#ef4444" strokeWidth={3} />
-        <Line dataKey="resultado" stroke="#3b82f6" strokeWidth={3} />
-      </LineChart>
+        <Bar dataKey="receita" fill="#22c55e">
+          <LabelList dataKey="receita" position="top" />
+        </Bar>
+
+        <Bar dataKey="despesa" fill="#ef4444">
+          <LabelList dataKey="despesa" position="top" />
+        </Bar>
+
+        <Bar dataKey="resultado" fill="#3b82f6">
+          <LabelList dataKey="resultado" position="top" />
+        </Bar>
+      </BarChart>
     </ResponsiveContainer>
   </div>
 </div>
 
 {/* ================= HEATMAP RECEITA ================= */}
 {(() => {
-
   const mesesFixos = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
 
   const dadosMap = Object.fromEntries(
     dadosGrafico.map((m:any) => [m.mes, m])
   )
 
-  const maxValor = Math.max(
-    ...mesesFixos.flatMap((mes) => {
-      const m = dadosMap[mes] || {}
-      return [
-        m.recorrencia || 0,
-        m.cartao || 0,
-        m.pix || 0,
-        m.boleto || 0,
-        m.dinheiro || 0
-      ]
-    })
-  )
-
-  function getHeatColor(valor:number) {
-    const intensidade = maxValor > 0 ? valor / maxValor : 0
-
-    if (intensidade > 0.85) return "bg-blue-700"
-    if (intensidade > 0.65) return "bg-blue-600"
-    if (intensidade > 0.45) return "bg-blue-500"
-    if (intensidade > 0.25) return "bg-blue-400"
-    if (intensidade > 0.1) return "bg-blue-300"
-    return "bg-[#1e293b]"
-  }
-
   return (
     <div className="mt-10">
       <div className="bg-[#0f1c33] p-6 rounded-2xl w-full">
-
         <h2 className="mb-6 text-lg font-semibold">
-          Heatmap de Receita por Origem
+          Heatmap de Receita
         </h2>
 
-        <div className="grid grid-cols-[120px_repeat(12,1fr)] gap-2 text-xs">
+        <div className="grid grid-cols-[120px_repeat(12,60px)] overflow-x-auto">
 
           <div></div>
           {mesesFixos.map((mes)=>(
@@ -982,29 +964,24 @@ return (
 
           {["recorrencia","cartao","pix","boleto","dinheiro"].map((tipo)=>(
             <div key={tipo}>
-              <div className="text-gray-400 flex items-center capitalize">
-                {tipo}
-              </div>
+              <div className="text-gray-400 capitalize">{tipo}</div>
 
               {mesesFixos.map((mes)=>{
-                const m = dadosMap[mes] || {}
+                const valor = (dadosMap[mes]?.[tipo] || 0)
 
                 return (
-                  <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m[tipo] || 0)}`}>
-                    {(m[tipo] || 0).toLocaleString("pt-BR")}
+                  <div key={mes} className="h-10 rounded bg-[#1e293b] flex items-center justify-center">
+                    {valor.toLocaleString("pt-BR")}
                   </div>
                 )
               })}
             </div>
           ))}
 
-          <div className="text-green-400 flex items-center font-bold">
-            TOTAL
-          </div>
+          <div className="text-green-400 font-bold">TOTAL</div>
 
           {mesesFixos.map((mes)=>{
             const m = dadosMap[mes] || {}
-
             const total =
               (m.recorrencia || 0) +
               (m.cartao || 0) +
@@ -1013,14 +990,12 @@ return (
               (m.dinheiro || 0)
 
             return (
-              <div key={mes} className="h-12 flex items-center justify-center text-green-400 font-bold">
+              <div key={mes} className="h-10 flex items-center justify-center text-green-400 font-bold">
                 {total.toLocaleString("pt-BR")}
               </div>
             )
           })}
-
         </div>
-
       </div>
     </div>
   )
@@ -1028,30 +1003,11 @@ return (
 
 {/* ================= HEATMAP DESPESAS ================= */}
 {(() => {
-
   const mesesFixos = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
 
   const dadosMap = Object.fromEntries(
     dadosDespesas.map((m:any) => [m.mes, m])
   )
-
-  const maxValor = Math.max(
-    ...mesesFixos.flatMap((mes)=>{
-      const m = dadosMap[mes] || {}
-      return categoriasDespesas.map((cat:any)=> m[cat] || 0)
-    })
-  )
-
-  function getHeatColor(valor:number) {
-    const intensidade = maxValor > 0 ? valor / maxValor : 0
-
-    if (intensidade > 0.85) return "bg-red-700"
-    if (intensidade > 0.65) return "bg-red-600"
-    if (intensidade > 0.45) return "bg-red-500"
-    if (intensidade > 0.25) return "bg-red-400"
-    if (intensidade > 0.1) return "bg-red-300"
-    return "bg-[#1e293b]"
-  }
 
   return (
     <div className="mt-10">
@@ -1061,7 +1017,7 @@ return (
           Heatmap de Despesas
         </h2>
 
-        <div className="grid grid-cols-[160px_repeat(12,1fr)] gap-2 text-xs">
+        <div className="grid grid-cols-[160px_repeat(12,60px)] overflow-x-auto">
 
           <div></div>
           {mesesFixos.map((mes)=>(
@@ -1070,25 +1026,21 @@ return (
 
           {categoriasDespesas.map((cat:any)=>(
             <div key={cat}>
-              <div className="text-gray-400 flex items-center">
-                {cat}
-              </div>
+              <div className="text-gray-400">{cat}</div>
 
               {mesesFixos.map((mes)=>{
-                const m = dadosMap[mes] || {}
+                const valor = dadosMap[mes]?.[cat] || 0
 
                 return (
-                  <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m[cat] || 0)}`}>
-                    {(m[cat] || 0).toLocaleString("pt-BR")}
+                  <div key={mes} className="h-10 rounded bg-[#1e293b] flex items-center justify-center">
+                    {valor.toLocaleString("pt-BR")}
                   </div>
                 )
               })}
             </div>
           ))}
 
-          <div className="text-red-400 flex items-center font-bold">
-            TOTAL
-          </div>
+          <div className="text-red-400 font-bold">TOTAL</div>
 
           {mesesFixos.map((mes)=>{
             const m = dadosMap[mes] || {}
@@ -1098,14 +1050,12 @@ return (
             }, 0)
 
             return (
-              <div key={mes} className="h-12 flex items-center justify-center text-red-400 font-bold">
+              <div key={mes} className="h-10 flex items-center justify-center text-red-400 font-bold">
                 {total.toLocaleString("pt-BR")}
               </div>
             )
           })}
-
         </div>
-
       </div>
     </div>
   )
@@ -1113,25 +1063,26 @@ return (
 
 {/* ================= OPERACIONAL ================= */}
 <div className="mt-10 border-t border-gray-700 pt-6">
-  <h2 className="text-gray-300 mb-4">
-    Indicadores Operacionais
-  </h2>
+  <h2 className="text-gray-300 mb-4">Indicadores Operacionais</h2>
 </div>
 
-<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+<div className="flex flex-col gap-6">
 
   {/* CHURN */}
   <div className="bg-[#0f1c33] p-6 rounded w-full">
-    <h2 className="mb-4">Churn Mensal (%)</h2>
+    <h2 className="mb-4">Churn (%)</h2>
 
     <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={dadosChurn}>
+      <BarChart data={dadosChurn}>
         <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
         <XAxis dataKey="mes" stroke="#94a3b8" />
-        <YAxis domain={[0,100]} stroke="#94a3b8" />
-        <Tooltip formatter={(v:any)=> `${v.toFixed(1)}%`} />
-        <Line dataKey="churn" stroke="#ef4444" strokeWidth={3} />
-      </LineChart>
+        <YAxis stroke="#94a3b8" />
+        <Tooltip formatter={(v:any)=>`${v.toFixed(1)}%`} />
+
+        <Bar dataKey="churn" fill="#ef4444">
+          <LabelList formatter={(v:any)=>`${v.toFixed(1)}%`} />
+        </Bar>
+      </BarChart>
     </ResponsiveContainer>
   </div>
 
@@ -1145,7 +1096,10 @@ return (
         <XAxis dataKey="mes" stroke="#94a3b8" />
         <YAxis stroke="#94a3b8" />
         <Tooltip />
-        <Bar dataKey="ativos" fill="#3b82f6" />
+
+        <Bar dataKey="novos" fill="#22c55e" />
+        <Bar dataKey="recorrencia" fill="#3b82f6" />
+        <Bar dataKey="ativos" fill="#facc15" />
       </BarChart>
     </ResponsiveContainer>
   </div>
@@ -1160,14 +1114,17 @@ return (
         <XAxis dataKey="mes" stroke="#94a3b8" />
         <YAxis stroke="#94a3b8" />
         <Tooltip />
-        <Area dataKey="recorrencia" stroke="#22c55e" fill="#22c55e33" />
+
+        <Area dataKey="recorrencia" stroke="#22c55e" fill="#22c55e33">
+          <LabelList dataKey="recorrencia" position="top" />
+        </Area>
       </AreaChart>
     </ResponsiveContainer>
   </div>
 
 </div>
 
-{/* ================= FINANCEIRO AVANÇADO ================= */}
+{/* ================= FINANCEIRO ================= */}
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
   {/* CUSTOS */}
@@ -1180,11 +1137,15 @@ return (
         <XAxis dataKey="mes" stroke="#94a3b8" />
         <YAxis stroke="#94a3b8" />
         <YAxis yAxisId="right" orientation="right" domain={[0,100]} stroke="#3b82f6" />
+
         <Tooltip />
         <Legend />
 
-        <Bar dataKey="despesa" fill="#ef4444" />
-        <Line type="monotone" dataKey="percentualReal" stroke="#3b82f6" yAxisId="right" strokeWidth={3} />
+        <Bar dataKey="despesa" fill="#ef4444">
+          <LabelList dataKey="despesa" position="top" />
+        </Bar>
+
+        <Line type="monotone" dataKey="percentualReal" stroke="#3b82f6" yAxisId="right" />
       </ComposedChart>
     </ResponsiveContainer>
   </div>
@@ -1198,15 +1159,18 @@ return (
         <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
         <XAxis dataKey="mes" stroke="#94a3b8" />
         <YAxis stroke="#94a3b8" />
-        <Tooltip formatter={(v:any)=> `${v.toFixed(1)}%`} />
-        <Line dataKey="margem" stroke="#22c55e" strokeWidth={3} />
+        <Tooltip formatter={(v:any)=>`${v.toFixed(1)}%`} />
+
+        <Line dataKey="margem" stroke="#22c55e">
+          <LabelList formatter={(v:any)=>`${v.toFixed(1)}%`} />
+        </Line>
       </LineChart>
     </ResponsiveContainer>
   </div>
 
-</div>
+</div> 
 
-</div>
+</div> 
 
 )
 }
