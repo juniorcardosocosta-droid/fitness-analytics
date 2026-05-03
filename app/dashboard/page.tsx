@@ -497,6 +497,39 @@ const dadosMargem = dadosEvolucao.map((m:any) => ({
     : 0
 }))
 
+const renderLabel = (props:any) => {
+  const { x, y, width, value } = props
+
+  const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
+
+  const paddingX = 6
+  const boxWidth = text.length * 6 + paddingX * 2
+
+  return (
+    <g>
+      <rect
+        x={x + width / 2 - boxWidth / 2}
+        y={y - 14}
+        width={boxWidth}
+        height={18}
+        rx={6}
+        fill="transparent"
+        stroke="#ffffff"
+        strokeWidth={1}
+      />
+      <text
+        x={x + width / 2}
+        y={y - 2}
+        textAnchor="middle"
+        fill="#ffffff"
+        fontSize={10}
+      >
+        {text}
+      </text>
+    </g>
+  )
+}
+
 // ================= GRÁFICO EVOLUÇAÕ DO TICKET MEDIO EFETIVO =================
 const dadosTicket = Object.values(
   dadosFiltrados.reduce((acc:any, item:any) => {
@@ -944,38 +977,7 @@ return (
   radius={[6, 6, 0, 0]}
   fillOpacity={0.85}
 >
-  <LabelList
-    dataKey="receita"
-    content={(props:any)=>{
-      const { x, y, width, value } = props
-      const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
-
-      return (
-        <g>
-          <rect
-            x={x + width / 2 - 45}
-            y={y - 18}
-            width={90}
-            height={24}
-            rx={8}
-            fill="transparent"
-            stroke="#ffffff"
-            strokeWidth={1.2}
-          />
-          <text
-            x={x + width / 2}
-            y={y - 2}
-            textAnchor="middle"
-            fill="#ffffff"
-            fontSize={11}
-            fontWeight="500"
-          >
-            {text}
-          </text>
-        </g>
-      )
-    }}
-  />
+  <LabelList content={renderLabel} />
 </Bar>
 
 {/* DESPESA */}
@@ -986,38 +988,7 @@ return (
   radius={[6, 6, 0, 0]}
   fillOpacity={0.85}
 >
-  <LabelList
-    dataKey="despesa"
-    content={(props:any)=>{
-      const { x, y, width, value } = props
-      const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
-
-      return (
-        <g>
-          <rect
-            x={x + width / 2 - 45}
-            y={y - 18}
-            width={90}
-            height={24}
-            rx={8}
-            fill="transparent"
-            stroke="#ffffff"
-            strokeWidth={1.2}
-          />
-          <text
-            x={x + width / 2}
-            y={y - 2}
-            textAnchor="middle"
-            fill="#ffffff"
-            fontSize={11}
-            fontWeight="500"
-          >
-            {text}
-          </text>
-        </g>
-      )
-    }}
-  />
+ <LabelList content={renderLabel} />
 </Bar>
 
 {/* RESULTADO */}
@@ -1028,40 +999,7 @@ return (
   radius={[6, 6, 0, 0]}
   fillOpacity={0.85}
 >
-  <LabelList
-    dataKey="resultado"
-    content={(props:any)=>{
-      const { x, y, width, value } = props
-      const negativo = value < 0
-
-      const text = `R$ ${Number(value).toLocaleString("pt-BR")}`
-
-      return (
-        <g>
-          <rect
-            x={x + width / 2 - 45}
-            y={negativo ? y + 10 : y - 18}
-            width={90}
-            height={24}
-            rx={8}
-            fill="transparent"
-            stroke="#ffffff"
-            strokeWidth={1.2}
-          />
-          <text
-            x={x + width / 2}
-            y={negativo ? y + 26 : y - 2}
-            textAnchor="middle"
-            fill="#ffffff"
-            fontSize={11}
-            fontWeight="500"
-          >
-            {text}
-          </text>
-        </g>
-      )
-    }}
-  />
+  <LabelList content={renderLabel} />
 </Bar>
 
     </BarChart>
