@@ -114,7 +114,6 @@ export default function RelatorioPDF({ dados, imagens }: any) {
         <Text style={styles.title}>Evolução de Alunos</Text>
         {imagens.alunos && <Image style={styles.img2} src={imagens.alunos} />}
       </Page>
-
       {/* PÁGINA 2 */}
       <Page style={styles.page}>
         <Text style={styles.title}>Composição da Receita</Text>

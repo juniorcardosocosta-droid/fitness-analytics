@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { ComposedChart } from "recharts"
 import html2canvas from "html2canvas"
 import jsPDF from "jspdf"
+import React from "react"
 
 import dynamic from "next/dynamic"
 
@@ -18,13 +19,14 @@ import {
   Bar,
   LineChart,
   Line,
+  AreaChart,
+  Area,
   Legend,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  CartesianGrid,
-  LabelList
+  CartesianGrid
 } from "recharts"
 
 import {
@@ -90,7 +92,6 @@ const gerarImagens = async () => {
   return {
     receita: await capturarGrafico("grafico-receita"),
     alunos: await capturarGrafico("grafico-alunos"),
-    composicao: await capturarGrafico("grafico-composicao"),
     churn: await capturarGrafico("grafico-churn"),
     evolucao: await capturarGrafico("grafico-evolucao"),
     ticket: await capturarGrafico("grafico-ticket"),
@@ -907,152 +908,14 @@ return (
 
 </div>
 
-     {/* ================= GRÁFICOS ================= */}
 
-{/* 1 - RECEITAS (FULL WIDTH) */}
+{/* ================= GRÁFICOS ================= */}
+
+{/* 1 - RECEITA vs DESPESA vs RESULTADO */}
 <div className="mt-10">
-  <div id="grafico-receita" className="bg-[#0f1c33] p-6 rounded w-full">
-    <h2 className="mb-4">Receitas por Categoria</h2>
+  <div className="bg-[#0f1c33] p-6 rounded w-full">
+    <h2 className="mb-4">Receita vs Despesas vs Resultado</h2>
 
-    <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={dadosGrafico}>
-        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-        <XAxis dataKey="mes" stroke="#94a3b8" />
-        <YAxis stroke="#94a3b8" />
-        <Tooltip />
-        <Legend />
-
-        {["cartao","pix","boleto","dinheiro","recorrencia"].map((key, i) => {
-          const colors:any = {
-            cartao:"#3b82f6",
-            pix:"#22c55e",
-            boleto:"#eab308",
-            dinheiro:"#a3a3a3",
-            recorrencia:"#06b6d4"
-          }
-
-          return (
-            <Bar key={key} dataKey={key} fill={colors[key]}>
-              <LabelList
-                dataKey={key}
-                position="top"
-                formatter={(v:any)=> Number(v).toLocaleString("pt-BR")}
-                fill="#fff"
-              />
-            </Bar>
-          )
-        })}
-
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-</div>
-
-{/* 2 - EVOLUÇÃO DE ALUNOS */}
-<div className="mt-6">
-  <div id="grafico-alunos" className="bg-[#0f1c33] p-6 rounded w-full">
-    <h2 className="mb-4">Evolução de Alunos</h2>
-
-    <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={dadosAlunos}>
-        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-        <XAxis dataKey="mes" stroke="#94a3b8" />
-        <YAxis stroke="#94a3b8" />
-        <Tooltip />
-        <Legend />
-
-        {["ativos","recorrencia","novos"].map((key) => {
-          const colors:any = {
-            ativos:"#22c55e",
-            recorrencia:"#3b82f6",
-            novos:"#a855f7"
-          }
-
-          return (
-            <Bar key={key} dataKey={key} fill={colors[key]}>
-              <LabelList dataKey={key} position="top" fill="#fff" />
-            </Bar>
-          )
-        })}
-
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-</div>
-
-{/* 3 - COMPOSIÇÃO + CHURN */}
-<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-
-  {/* COMPOSIÇÃO */}
-  <div id="grafico-composicao" className="bg-[#0f1c33] p-6 rounded w-full">
-    <h2 className="mb-4">Composição da Receita (%)</h2>
-
-    <ResponsiveContainer width="100%" height={350}>
-      <ComposedChart data={dadosPercentuais}>
-        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-        <XAxis dataKey="mes" stroke="#94a3b8" />
-        <YAxis domain={[0,100]} stroke="#94a3b8" />
-        <Tooltip formatter={(v:any)=> `${v.toFixed(1)}%`} />
-        <Legend />
-
-        {["recorrencia","cartao","pix","boleto","dinheiro"].map((key) => {
-          const colors:any = {
-            recorrencia:"#14b8a6",
-            cartao:"#3b82f6",
-            pix:"#22c55e",
-            boleto:"#eab308",
-            dinheiro:"#a3a3a3"
-          }
-
-          return (
-            <Bar key={key} dataKey={key} stackId="a" fill={colors[key]}>
-              <LabelList
-                dataKey={key}
-                position="center"
-                formatter={(v:any)=> `${v.toFixed(0)}%`}
-                fill="#fff"
-              />
-            </Bar>
-          )
-        })}
-
-      </ComposedChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* CHURN */}
-  <div id="grafico-churn" className="bg-[#0f1c33] p-6 rounded w-full">
-    <h2 className="mb-4">Churn Mensal (%)</h2>
-
-    <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={dadosChurn}>
-        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-        <XAxis dataKey="mes" stroke="#94a3b8" />
-        <YAxis domain={[0,100]} stroke="#94a3b8" />
-        <Tooltip formatter={(v:any)=> `${v.toFixed(1)}%`} />
-        <Legend />
-
-        <Bar dataKey="churn" fill="#ef4444">
-          <LabelList
-            dataKey="churn"
-            position="top"
-            formatter={(v:any)=> `${v.toFixed(1)}%`}
-            fill="#fff"
-          />
-        </Bar>
-
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-
-</div>
-
-{/* 4 - RESTANTE */}
-<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-
-  {/* EVOLUÇÃO FINANCEIRA */}
-  <div id="grafico-evolucao" className="bg-[#0f1c33] p-6 rounded w-full">
-     <h2 className="mb-4">Evolução Financeira</h2>
     <ResponsiveContainer width="100%" height={350}>
       <LineChart data={dadosEvolucao}>
         <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
@@ -1061,108 +924,15 @@ return (
         <Tooltip />
         <Legend />
 
-        <Line dataKey="receita" stroke="#22c55e" strokeWidth={3} dot={{ r: 4 }} />
-        <Line dataKey="despesa" stroke="#ef4444" strokeWidth={3} dot={{ r: 4 }} />
-        <Line dataKey="resultado" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} />
+        <Line dataKey="receita" stroke="#22c55e" strokeWidth={3} />
+        <Line dataKey="despesa" stroke="#ef4444" strokeWidth={3} />
+        <Line dataKey="resultado" stroke="#3b82f6" strokeWidth={3} />
       </LineChart>
     </ResponsiveContainer>
   </div>
-
-  {/* TICKET MEDIO */}
-  <div id="grafico-ticket" className="bg-[#0f1c33] p-6 rounded w-full">
-      <h2 className="mb-4">Ticket Médio</h2>
-    <ResponsiveContainer width="100%" height={350}>
-      <LineChart data={dadosTicket}>
-        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-        <XAxis dataKey="mes" stroke="#94a3b8" />
-        <YAxis stroke="#94a3b8" />
-        <Tooltip />
-        <Legend />
-
-        <Line dataKey="recorrencia" stroke="#9ca3af" strokeWidth={3} dot={{ r: 4 }} />
-        <Line dataKey="agregador" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* CUSTOS OPERACIONAL*/}
-  <div id="grafico-custos" className="bg-[#0f1c33] p-6 rounded w-full">
-      <h2 className="mb-4">Custos Operacionais</h2>
-    <ResponsiveContainer width="100%" height={320}>
-      <ComposedChart data={dadosCustos}>
-        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-        <XAxis dataKey="mes" stroke="#94a3b8" />
-        <YAxis stroke="#94a3b8" />
-        <YAxis yAxisId="right" orientation="right" domain={[0,100]} stroke="#3b82f6" />
-
-        <Tooltip />
-        <Legend />
-
-        <Bar dataKey="despesa" fill="#22c55e">
-          <LabelList
-            dataKey="despesa"
-            position="top"
-            formatter={(v:any)=> `R$ ${v.toLocaleString("pt-BR")}`}
-            fill="#fff"
-          />
-        </Bar>
-
-       <Line
-  type="monotone"
-  dataKey="percentualReal"
-  stroke="#3b82f6"
-  yAxisId="right"
-  strokeWidth={3}
-  dot={{ r: 4 }}
->
-  <LabelList
-    dataKey="percentualReal"
-    position="top"
-    formatter={(v:any)=> `${Number(v).toFixed(0)}%`}
-    fill="#3b82f6"
-  />
-</Line>
-
-      </ComposedChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* MARGEM OPERACIONAL */}
-<div id="grafico-margem" className="bg-[#0f1c33] p-6 rounded w-full">
-  <h2 className="mb-4">Margem Operacional (%)</h2>
-
-  <ResponsiveContainer width="100%" height={300}>
-    <LineChart data={dadosMargem}>
-
-      <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-      <XAxis dataKey="mes" stroke="#94a3b8" />
-      <YAxis stroke="#94a3b8" />
-
-      <Tooltip formatter={(v:any)=> `${v.toFixed(1)}%`} />
-      <Legend />
-
-      <Line
-        type="monotone"
-        dataKey="margem"
-        stroke="#22c55e"
-        strokeWidth={3}
-        dot={{ r: 4 }}
-      >
-        <LabelList
-          dataKey="margem"
-          position="top"
-          formatter={(v:any)=> `${v.toFixed(1)}%`}
-          fill="#fff"
-        />
-      </Line>
-
-    </LineChart>
-  </ResponsiveContainer>
 </div>
 
-</div>
-
-      {/* ================= HEATMAP ================= */}
+{/* ================= HEATMAP RECEITA ================= */}
 {(() => {
 
   const mesesFixos = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
@@ -1197,7 +967,7 @@ return (
 
   return (
     <div className="mt-10">
-      <div id="grafico-heatmap-receita" className="bg-gradient-to-br from-[#0b1220] to-[#0f1c33] p-6 rounded-2xl shadow-lg w-full">
+      <div className="bg-[#0f1c33] p-6 rounded-2xl w-full">
 
         <h2 className="mb-6 text-lg font-semibold">
           Heatmap de Receita por Origem
@@ -1205,90 +975,49 @@ return (
 
         <div className="grid grid-cols-[120px_repeat(12,1fr)] gap-2 text-xs">
 
-          {/* MESES */}
           <div></div>
           {mesesFixos.map((mes)=>(
-            <div key={mes} className="text-center text-gray-400">
-              {mes}
+            <div key={mes} className="text-center text-gray-400">{mes}</div>
+          ))}
+
+          {["recorrencia","cartao","pix","boleto","dinheiro"].map((tipo)=>(
+            <div key={tipo}>
+              <div className="text-gray-400 flex items-center capitalize">
+                {tipo}
+              </div>
+
+              {mesesFixos.map((mes)=>{
+                const m = dadosMap[mes] || {}
+
+                return (
+                  <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m[tipo] || 0)}`}>
+                    {(m[tipo] || 0).toLocaleString("pt-BR")}
+                  </div>
+                )
+              })}
             </div>
           ))}
 
-          {/* RECORRÊNCIA */}
-          <div className="text-gray-400 flex items-center">Recorrência</div>
+          <div className="text-green-400 flex items-center font-bold">
+            TOTAL
+          </div>
+
           {mesesFixos.map((mes)=>{
             const m = dadosMap[mes] || {}
+
+            const total =
+              (m.recorrencia || 0) +
+              (m.cartao || 0) +
+              (m.pix || 0) +
+              (m.boleto || 0) +
+              (m.dinheiro || 0)
+
             return (
-              <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.recorrencia || 0)}`}>
-                {(m.recorrencia || 0).toLocaleString("pt-BR")}
+              <div key={mes} className="h-12 flex items-center justify-center text-green-400 font-bold">
+                {total.toLocaleString("pt-BR")}
               </div>
             )
           })}
-
-          {/* CARTÃO */}
-          <div className="text-gray-400 flex items-center">Cartão</div>
-          {mesesFixos.map((mes)=>{
-            const m = dadosMap[mes] || {}
-            return (
-              <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.cartao || 0)}`}>
-                {(m.cartao || 0).toLocaleString("pt-BR")}
-              </div>
-            )
-          })}
-
-          {/* PIX */}
-          <div className="text-gray-400 flex items-center">PIX</div>
-          {mesesFixos.map((mes)=>{
-            const m = dadosMap[mes] || {}
-            return (
-              <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.pix || 0)}`}>
-                {(m.pix || 0).toLocaleString("pt-BR")}
-              </div>
-            )
-          })}
-
-          {/* BOLETO */}
-          <div className="text-gray-400 flex items-center">Boleto</div>
-          {mesesFixos.map((mes)=>{
-            const m = dadosMap[mes] || {}
-            return (
-              <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.boleto || 0)}`}>
-                {(m.boleto || 0).toLocaleString("pt-BR")}
-              </div>
-            )
-          })}
-
-          {/* DINHEIRO */}
-          <div className="text-gray-400 flex items-center">Dinheiro</div>
-          {mesesFixos.map((mes)=>{
-            const m = dadosMap[mes] || {}
-            return (
-              <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m.dinheiro || 0)}`}>
-                {(m.dinheiro || 0).toLocaleString("pt-BR")}
-              </div>
-            )
-          })}
-
-          {/* TOTAL POR MÊS */}
-<div className="text-green-400 flex items-center font-bold">
-  TOTAL
-</div>
-
-{mesesFixos.map((mes)=>{
-  const m = dadosMap[mes] || {}
-
-  const total =
-    (m.recorrencia || 0) +
-    (m.cartao || 0) +
-    (m.pix || 0) +
-    (m.boleto || 0) +
-    (m.dinheiro || 0)
-
-  return (
-    <div className="h-12 flex items-center justify-center text-green-400 font-bold">
-      {total.toLocaleString("pt-BR")}
-    </div>
-  )
-})}
 
         </div>
 
@@ -1321,29 +1050,26 @@ return (
     if (intensidade > 0.45) return "bg-red-500"
     if (intensidade > 0.25) return "bg-red-400"
     if (intensidade > 0.1) return "bg-red-300"
-
     return "bg-[#1e293b]"
   }
 
   return (
     <div className="mt-10">
-      <div id="grafico-heatmap-despesas" className="bg-[#0f1c33] p-6 rounded-2xl shadow-lg w-full">
+      <div className="bg-[#0f1c33] p-6 rounded-2xl w-full">
 
         <h2 className="mb-6 text-lg font-semibold text-red-400">
-          Heatmap de Despesas por Categoria
+          Heatmap de Despesas
         </h2>
 
         <div className="grid grid-cols-[160px_repeat(12,1fr)] gap-2 text-xs">
 
-          {/* MESES */}
           <div></div>
           {mesesFixos.map((mes)=>(
             <div key={mes} className="text-center text-gray-400">{mes}</div>
           ))}
 
-          {/* LINHAS DINÂMICAS */}
           {categoriasDespesas.map((cat:any)=>(
-            <>
+            <div key={cat}>
               <div className="text-gray-400 flex items-center">
                 {cat}
               </div>
@@ -1352,34 +1078,31 @@ return (
                 const m = dadosMap[mes] || {}
 
                 return (
-                  <div
-                    className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m[cat] || 0)}`}
-                  >
+                  <div key={mes} className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(m[cat] || 0)}`}>
                     {(m[cat] || 0).toLocaleString("pt-BR")}
                   </div>
                 )
               })}
-            </>
+            </div>
           ))}
 
-          {/* TOTAL POR MÊS */}
-<div className="text-red-400 flex items-center font-bold">
-  TOTAL
-</div>
+          <div className="text-red-400 flex items-center font-bold">
+            TOTAL
+          </div>
 
-{mesesFixos.map((mes)=>{
-  const m = dadosMap[mes] || {}
+          {mesesFixos.map((mes)=>{
+            const m = dadosMap[mes] || {}
 
-  const total = categoriasDespesas.reduce((acc:any, cat:any)=>{
-    return acc + (m[cat] || 0)
-  }, 0)
+            const total = categoriasDespesas.reduce((acc:any, cat:any)=>{
+              return acc + (m[cat] || 0)
+            }, 0)
 
-  return (
-    <div className="h-12 flex items-center justify-center text-red-400 font-bold">
-      {total.toLocaleString("pt-BR")}
-    </div>
-  )
-})}
+            return (
+              <div key={mes} className="h-12 flex items-center justify-center text-red-400 font-bold">
+                {total.toLocaleString("pt-BR")}
+              </div>
+            )
+          })}
 
         </div>
 
@@ -1387,6 +1110,103 @@ return (
     </div>
   )
 })()}
-    </div>
-  )
+
+{/* ================= OPERACIONAL ================= */}
+<div className="mt-10 border-t border-gray-700 pt-6">
+  <h2 className="text-gray-300 mb-4">
+    Indicadores Operacionais
+  </h2>
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+
+  {/* CHURN */}
+  <div className="bg-[#0f1c33] p-6 rounded w-full">
+    <h2 className="mb-4">Churn Mensal (%)</h2>
+
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={dadosChurn}>
+        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+        <XAxis dataKey="mes" stroke="#94a3b8" />
+        <YAxis domain={[0,100]} stroke="#94a3b8" />
+        <Tooltip formatter={(v:any)=> `${v.toFixed(1)}%`} />
+        <Line dataKey="churn" stroke="#ef4444" strokeWidth={3} />
+      </LineChart>
+    </ResponsiveContainer>
+  </div>
+
+  {/* ALUNOS */}
+  <div className="bg-[#0f1c33] p-6 rounded w-full">
+    <h2 className="mb-4">Evolução de Alunos</h2>
+
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart data={dadosAlunos}>
+        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+        <XAxis dataKey="mes" stroke="#94a3b8" />
+        <YAxis stroke="#94a3b8" />
+        <Tooltip />
+        <Bar dataKey="ativos" fill="#3b82f6" />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+
+  {/* TICKET */}
+  <div className="bg-[#0f1c33] p-6 rounded w-full">
+    <h2 className="mb-4">Ticket Médio</h2>
+
+    <ResponsiveContainer width="100%" height={300}>
+      <AreaChart data={dadosTicket}>
+        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+        <XAxis dataKey="mes" stroke="#94a3b8" />
+        <YAxis stroke="#94a3b8" />
+        <Tooltip />
+        <Area dataKey="recorrencia" stroke="#22c55e" fill="#22c55e33" />
+      </AreaChart>
+    </ResponsiveContainer>
+  </div>
+
+</div>
+
+{/* ================= FINANCEIRO AVANÇADO ================= */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+
+  {/* CUSTOS */}
+  <div className="bg-[#0f1c33] p-6 rounded w-full">
+    <h2 className="mb-4">Custos Operacionais</h2>
+
+    <ResponsiveContainer width="100%" height={320}>
+      <ComposedChart data={dadosCustos}>
+        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+        <XAxis dataKey="mes" stroke="#94a3b8" />
+        <YAxis stroke="#94a3b8" />
+        <YAxis yAxisId="right" orientation="right" domain={[0,100]} stroke="#3b82f6" />
+        <Tooltip />
+        <Legend />
+
+        <Bar dataKey="despesa" fill="#ef4444" />
+        <Line type="monotone" dataKey="percentualReal" stroke="#3b82f6" yAxisId="right" strokeWidth={3} />
+      </ComposedChart>
+    </ResponsiveContainer>
+  </div>
+
+  {/* MARGEM */}
+  <div className="bg-[#0f1c33] p-6 rounded w-full">
+    <h2 className="mb-4">Margem Operacional (%)</h2>
+
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={dadosMargem}>
+        <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+        <XAxis dataKey="mes" stroke="#94a3b8" />
+        <YAxis stroke="#94a3b8" />
+        <Tooltip formatter={(v:any)=> `${v.toFixed(1)}%`} />
+        <Line dataKey="margem" stroke="#22c55e" strokeWidth={3} />
+      </LineChart>
+    </ResponsiveContainer>
+  </div>
+
+</div>
+
+</div>
+
+)
 }
