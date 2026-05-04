@@ -103,9 +103,12 @@ const gerarImagens = async () => {
 
   const router = useRouter()
 
-  const [dados, setDados] = useState<any[]>([])
+  const [role, setRole] = useState("")
   const [academias, setAcademias] = useState<any[]>([])
   const [academiaId, setAcademiaId] = useState("")
+  const [clienteId, setClienteId] = useState("")
+  const [userId, setUserId] = useState("")
+  const [dados, setDados] = useState<any[]>([])
 
   const [mesSelecionado, setMesSelecionado] = useState("")
   const [anoSelecionado, setAnoSelecionado] = useState("")
@@ -117,40 +120,86 @@ const gerarImagens = async () => {
     String(item.tipo).toLowerCase().includes("despesa")
 
   useEffect(() => {
-    async function loadAcademias() {
+  async function loadAcademias() {
+
+    if (!role || !userId) return
+
+    // 🔴 ADMIN MASTER
+    if (role === "admin_master") {
       const { data } = await supabase.from("academias").select("*")
-
-      if (data) {
-        setAcademias(data)
-        if (data.length === 1) {
-          setAcademiaId(data[0].id)
-        }
-      }
-    }
-
-    loadAcademias()
-  }, [])
-
-  useEffect(() => {
-  const checkUser = async () => {
-    const { data } = await supabase.auth.getSession()
-
-    if (!data.session) {
-      router.push("/login")
+      setAcademias(data || [])
       return
     }
 
-    const userId = data.session.user.id
+    // 🔵 DONO DA REDE
+    if (role === "admin_rede") {
+      const { data } = await supabase
+        .from("academias")
+        .select("*")
+        .eq("cliente_id", clienteId)
 
-    const { data: perfil } = await supabase
-      .from("perfis")
-      .select("role")
-      .eq("id", userId)
-      .single()
+      setAcademias(data || [])
+      return
+    }
 
-    console.log("USUARIO:", userId)
-    console.log("ROLE:", perfil?.role)
+    // 🟢 USUARIO (FRANQUEADO)
+    if (role === "usuario") {
+      const { data: vinculos } = await supabase
+        .from("perfis_academias")
+        .select("academia_id")
+        .eq("perfil_id", userId)
+
+      const ids = vinculos?.map(v => v.academia_id) || []
+
+      const { data } = await supabase
+        .from("academias")
+        .select("*")
+        .in("id", ids)
+
+      setAcademias(data || [])
+
+      if (ids.length === 1) {
+        setAcademiaId(ids[0])
+      }
+    }
   }
+
+  loadAcademias()
+}, [role, userId])
+
+  useEffect(() => {
+  const checkUser = async () => {
+  const { data } = await supabase.auth.getSession()
+
+  if (!data.session) {
+    router.push("/login")
+    return
+  }
+
+  const uid = data.session.user.id
+  setUserId(uid)
+
+  const { data: perfil } = await supabase
+    .from("perfis")
+    .select("role, cliente_id")
+    .eq("id", uid)
+    .single()
+
+  setRole(perfil?.role || "")
+  setClienteId(perfil?.cliente_id || "")
+
+  // 🔥 pega academias vinculadas ao usuário
+  const { data: vinculos } = await supabase
+    .from("perfis_academias")
+    .select("academia_id")
+    .eq("perfil_id", uid)
+
+  const ids = vinculos?.map(v => v.academia_id) || []
+
+  if (ids.length === 1) {
+    setAcademiaId(ids[0])
+  }
+}
 
   checkUser()
 }, [router])
@@ -159,9 +208,24 @@ const gerarImagens = async () => {
     async function carregarDados() {
       let query = supabase.from("lancamentos").select("*")
 
-      if (academiaId) {
-        query = query.eq("academia_id", academiaId)
-      }
+      if (role === "usuario" && academiaId) {
+  query = query.eq("academia_id", academiaId)
+}
+
+if (role === "admin_rede") {
+  const { data: academias } = await supabase
+    .from("academias")
+    .select("id")
+    .eq("cliente_id", clienteId)
+
+  const ids = academias?.map(a => a.id) || []
+
+  query = query.in("academia_id", ids)
+}
+
+if (role === "admin_master" && academiaId) {
+  query = query.eq("academia_id", academiaId)
+}
 
       const { data, error } = await query
 
