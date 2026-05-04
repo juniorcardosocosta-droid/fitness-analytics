@@ -119,7 +119,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function loadAcademias() {
-      if (!role || !userId) return;
+      if (!userId) return;
+      if (!role) return;
 
       // 🔴 ADMIN MASTER
       if (role === "admin_master") {
@@ -163,7 +164,7 @@ export default function Dashboard() {
     }
 
     loadAcademias();
-  }, [role, userId]);
+  }, [role, userId, clienteId]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -185,6 +186,8 @@ export default function Dashboard() {
 
       setRole(perfil?.role || "");
       setClienteId(perfil?.cliente_id || "");
+
+      await new Promise((r) => setTimeout(r, 100));
 
       // 🔥 pega academias vinculadas ao usuário
       const { data: vinculos } = await supabase
