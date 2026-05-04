@@ -147,6 +147,8 @@ export default function Dashboard() {
           .select("academia_id")
           .eq("perfil_id", userId);
 
+        console.log("VINCULOS:", vinculos);
+
         const ids = vinculos?.map((v) => v.academia_id) || [];
 
         const { data } = await supabase
