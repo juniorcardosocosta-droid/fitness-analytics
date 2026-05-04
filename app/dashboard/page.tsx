@@ -205,40 +205,56 @@ const gerarImagens = async () => {
 }, [router])
 
   useEffect(() => {
-    async function carregarDados() {
-      let query = supabase.from("lancamentos").select("*")
+  async function carregarDados() {
 
-      if (role === "usuario" && academiaId) {
-  query = query.eq("academia_id", academiaId)
-}
+    // 🔒 NÃO EXECUTA SEM CONTEXTO
+    if (!role) return
 
-if (role === "admin_rede") {
-  const { data: academias } = await supabase
-    .from("academias")
-    .select("id")
-    .eq("cliente_id", clienteId)
+    // 🔒 USUÁRIO PRECISA TER ACADEMIA
+    if (role === "usuario" && !academiaId) return
 
-  const ids = academias?.map(a => a.id) || []
+    let query = supabase.from("lancamentos").select("*")
 
-  query = query.in("academia_id", ids)
-}
-
-if (role === "admin_master" && academiaId) {
-  query = query.eq("academia_id", academiaId)
-}
-
-      const { data, error } = await query
-
-      if (error) {
-        console.error(error)
-        return
-      }
-
-      setDados(data || [])
+    // 🟢 USUARIO
+    if (role === "usuario") {
+      query = query.eq("academia_id", academiaId)
     }
 
-    carregarDados()
-  }, [academiaId])
+    // 🔵 ADMIN REDE
+    if (role === "admin_rede") {
+      const { data: academias } = await supabase
+        .from("academias")
+        .select("id")
+        .eq("cliente_id", clienteId)
+
+      const ids = academias?.map(a => a.id) || []
+
+      if (academiaId) {
+        query = query.eq("academia_id", academiaId)
+      } else {
+        query = query.in("academia_id", ids)
+      }
+    }
+
+    // 🔴 ADMIN MASTER
+    if (role === "admin_master") {
+      if (academiaId) {
+        query = query.eq("academia_id", academiaId)
+      }
+    }
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error(error)
+      return
+    }
+
+    setDados(data || [])
+  }
+
+  carregarDados()
+}, [academiaId, role, clienteId])
 
   // ================= FILTRO =================
   const dadosFiltrados = dados.filter((item: any) => {
