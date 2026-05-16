@@ -84,8 +84,7 @@ export function importarEvo(
         const formaPagamento =
           normalizarFormaPagamento(item["Informações"]);
 
-        const status =
-          String(item["Status"] || "").toLowerCase();
+        const status = "pago";
 
         return {
 

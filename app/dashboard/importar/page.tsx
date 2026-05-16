@@ -67,7 +67,10 @@ export default function Importar() {
       const ano = dataRef.getFullYear();
 
       const inicioMes = `${ano}-${String(mes).padStart(2, "0")}-01`;
-      const fimMes = `${ano}-${String(mes).padStart(2, "0")}-31`;
+
+      const ultimoDiaMes = new Date(ano, mes, 0).getDate();
+
+      const fimMes = `${ano}-${String(mes).padStart(2, "0")}-${String(ultimoDiaMes).padStart(2, "0")}`;
 
       const { data: existentes } = await supabase
         .from("lancamentos")
