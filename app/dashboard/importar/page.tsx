@@ -1,158 +1,167 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Papa from "papaparse"
-import * as XLSX from "xlsx"
-import { supabase } from "../../../lib/supabaseClient"
-import { importarTecnofit } from "../../../lib/importadores/tecnofit"
+import { useState, useEffect } from "react";
+import Papa from "papaparse";
+import * as XLSX from "xlsx";
+import { supabase } from "../../../lib/supabaseClient";
+import { importarTecnofit } from "../../../lib/importadores/tecnofit";
+import { importarEvo } from "../../../lib/importadores/evo";
 
 export default function Importar() {
-  const [loading, setLoading] = useState(false)
-  const [academias, setAcademias] = useState<any[]>([])
-  const [academiaId, setAcademiaId] = useState<string>("")
+  const [loading, setLoading] = useState(false);
+  const [academias, setAcademias] = useState<any[]>([]);
+  const [academiaId, setAcademiaId] = useState<string>("");
+  const [erp, setErp] = useState("tecnofit");
 
   useEffect(() => {
     async function loadAcademias() {
-      const { data } = await supabase.from("academias").select("*")
+      const { data } = await supabase.from("academias").select("*");
 
       if (data) {
-        setAcademias(data)
+        setAcademias(data);
         if (data.length === 1) {
-          setAcademiaId(data[0].id)
+          setAcademiaId(data[0].id);
         }
       }
     }
 
-    loadAcademias()
-  }, [])
+    loadAcademias();
+  }, []);
 
   const parseNumero = (v: any): number => {
-    if (!v) return 0
+    if (!v) return 0;
 
-    if (typeof v === "number") return v
+    if (typeof v === "number") return v;
 
     return Number(
       String(v)
         .replace(/R\$\s?/g, "")
         .replace(/\./g, "")
         .replace(",", ".")
-        .trim()
-    )
-  }
+        .trim(),
+    );
+  };
 
   async function processarDados(dados: any[], tipo: "receita" | "despesa") {
+    let dadosConvertidos: any[] = [];
 
-   const dadosConvertidos = importarTecnofit(
-  dados,
-  tipo,
-  academiaId
-)
-    console.log("✅ TOTAL REGISTROS:", dadosConvertidos.length)
+    if (erp === "tecnofit") {
+      dadosConvertidos = importarTecnofit(dados, tipo, academiaId);
+    } else if (erp === "evo") {
+      dadosConvertidos = importarEvo(dados, tipo, academiaId);
+    }
+
+    console.log("✅ TOTAL REGISTROS:", dadosConvertidos.length);
 
     if (dadosConvertidos.length === 0) {
-      alert("Nenhum dado válido encontrado")
-      return
+      alert("Nenhum dado válido encontrado");
+      return;
     }
 
     // ================= ALERTA DE MÊS JÁ IMPORTADO =================
-const primeiraData = dadosConvertidos[0]?.data
+    const primeiraData = dadosConvertidos[0]?.data;
 
-if (primeiraData) {
+    if (primeiraData) {
+      const dataRef = new Date(primeiraData);
+      const mes = dataRef.getMonth() + 1;
+      const ano = dataRef.getFullYear();
 
-  const dataRef = new Date(primeiraData)
-  const mes = dataRef.getMonth() + 1
-  const ano = dataRef.getFullYear()
+      const inicioMes = `${ano}-${String(mes).padStart(2, "0")}-01`;
+      const fimMes = `${ano}-${String(mes).padStart(2, "0")}-31`;
 
-  const inicioMes = `${ano}-${String(mes).padStart(2, "0")}-01`
-  const fimMes = `${ano}-${String(mes).padStart(2, "0")}-31`
+      const { data: existentes } = await supabase
+        .from("lancamentos")
+        .select("id")
+        .eq("academia_id", academiaId)
+        .eq("tipo", tipo)
+        .gte("data", inicioMes)
+        .lte("data", fimMes)
+        .limit(1);
 
-  const { data: existentes } = await supabase
-    .from("lancamentos")
-    .select("id")
-    .eq("academia_id", academiaId)
-    .eq("tipo", tipo)
-    .gte("data", inicioMes)
-    .lte("data", fimMes)
-    .limit(1)
+      if (existentes && existentes.length > 0) {
+        const confirmar = confirm(
+          `Já existem dados para ${mes}/${ano}. Deseja reimportar?`,
+        );
 
-  if (existentes && existentes.length > 0) {
-
-    const confirmar = confirm(
-      `Já existem dados para ${mes}/${ano}. Deseja reimportar?`
-    )
-
-    if (!confirmar) {
-      alert("Importação cancelada")
-      return
+        if (!confirmar) {
+          alert("Importação cancelada");
+          return;
+        }
+      }
     }
-  }
-}
 
     // 🔥 UPSERT (NÃO DUPLICA)
     const { error } = await supabase
       .from("lancamentos")
       .upsert(dadosConvertidos, {
-        onConflict: "academia_id,import_id"
-    })
+        onConflict: "academia_id,import_id",
+      });
 
     if (error) {
-      console.error(error)
-      alert("Erro ao importar")
+      console.error(error);
+      alert("Erro ao importar");
     } else {
-      alert("Importação concluída sem duplicidade!")
+      alert("Importação concluída sem duplicidade!");
     }
   }
 
   async function handleFile(file: File, tipo: "receita" | "despesa") {
-
     if (!academiaId) {
-      alert("Selecione uma academia")
-      return
+      alert("Selecione uma academia");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
-    const nome = file.name.toLowerCase()
+    const nome = file.name.toLowerCase();
 
     if (nome.endsWith(".csv")) {
       Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
         complete: async (results) => {
-          await processarDados(results.data, tipo)
-          setLoading(false)
-        }
-      })
+          await processarDados(results.data, tipo);
+          setLoading(false);
+        },
+      });
     } else {
-      const reader = new FileReader()
+      const reader = new FileReader();
 
       reader.onload = async (e) => {
+        const data = new Uint8Array(e.target?.result as ArrayBuffer);
 
-        const data = new Uint8Array(e.target?.result as ArrayBuffer)
-
-        const workbook = XLSX.read(data, { type: "array" })
-        const sheet = workbook.Sheets[workbook.SheetNames[0]]
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
         const jsonData = XLSX.utils.sheet_to_json(sheet, {
-          range: 1
-        })
+          range: 1,
+        });
 
-        console.log("TOTAL LINHAS EXCEL:", jsonData.length)
-        console.log("PRIMEIRA LINHA EXCEL:", jsonData[0])
-        console.log("TODAS AS CHAVES:", Object.keys(jsonData[0] || {}))
+        console.log("TOTAL LINHAS EXCEL:", jsonData.length);
+        console.log("PRIMEIRA LINHA EXCEL:", jsonData[0]);
+        console.log("TODAS AS CHAVES:", Object.keys(jsonData[0] || {}));
 
-        await processarDados(jsonData, tipo)
+        await processarDados(jsonData, tipo);
 
-        setLoading(false)
-      }
+        setLoading(false);
+      };
 
-      reader.readAsArrayBuffer(file)
+      reader.readAsArrayBuffer(file);
     }
   }
 
   return (
     <div className="p-10 text-white">
       <h1 className="text-3xl mb-6">Importar Dados</h1>
+
+      <select
+        value={erp}
+        onChange={(e) => setErp(e.target.value)}
+        className="bg-[#0f1c33] border border-gray-700 px-4 py-2 rounded mb-6 mr-4"
+      >
+        <option value="tecnofit">Tecnofit</option>
+        <option value="evo">EVO</option>
+      </select>
 
       <select
         value={academiaId}
@@ -174,7 +183,7 @@ if (primeiraData) {
           accept=".csv, .xlsx"
           onChange={(e) => {
             if (e.target.files?.[0]) {
-              handleFile(e.target.files[0], "receita")
+              handleFile(e.target.files[0], "receita");
             }
           }}
           className="bg-white text-black p-2 rounded"
@@ -188,7 +197,7 @@ if (primeiraData) {
           accept=".csv, .xlsx"
           onChange={(e) => {
             if (e.target.files?.[0]) {
-              handleFile(e.target.files[0], "despesa")
+              handleFile(e.target.files[0], "despesa");
             }
           }}
           className="bg-white text-black p-2 rounded"
@@ -197,5 +206,5 @@ if (primeiraData) {
 
       {loading && <p className="mt-4">Importando...</p>}
     </div>
-  )
+  );
 }
