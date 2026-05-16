@@ -57,69 +57,16 @@ function normalizarFormaPagamento(info: string) {
   return "outros";
 }
 
-export function importarEvo(
+export async function importarEvo(
   dados: any[],
   tipo: "receita" | "despesa",
   academiaId: string,
 ) {
   const resultado = dados.map(async (item: any) => {
-      // ================= RECEITA =================
+    // ================= RECEITA =================
 
-      if (tipo === "receita") {
-        const data = parseData(item["Data de recebimento"]);
-
-        if (!data) return null;
-
-        const valor = parseNumero(item["Valor baixa"]);
-
-        if (!valor) return null;
-
-        const valorBruto = parseNumero(item["Valor"]);
-
-        const descricao = item["Nome"] || item["Descrição"] || "Receita EVO";
-
-        const categoria = item["Centro de receita"] || "receita";
-
-        const formaPagamento = normalizarFormaPagamento(item["Informações"]);
-
-        const status = "pago";
-
-        const importId = await gerarHash(JSON.stringify(item));
-
-        return {
-          academia_id: academiaId,
-
-          data,
-
-          tipo: "receita",
-
-          descricao,
-
-          categoria,
-
-          valor,
-
-          valor_bruto: valorBruto,
-
-          taxa: valorBruto - valor,
-
-          origem: "evo",
-
-          sistema_origem: "evo",
-
-          forma_pagamento: formaPagamento,
-
-          descricao_original: item["Descrição"] || "",
-
-          status,
-
-          import_id: importId,
-        };
-      }
-
-      // ================= DESPESA =================
-
-      const data = parseData(item["Pagamento"]);
+    if (tipo === "receita") {
+      const data = parseData(item["Data de recebimento"]);
 
       if (!data) return null;
 
@@ -129,12 +76,13 @@ export function importarEvo(
 
       const valorBruto = parseNumero(item["Valor"]);
 
-      const descricao =
-        item["Descrição"] || item["Favorecido"] || "Despesa EVO";
+      const descricao = item["Nome"] || item["Descrição"] || "Receita EVO";
 
-      const categoria = item["Centro de custo"] || "despesa";
+      const categoria = item["Centro de receita"] || "receita";
 
-      const status = String(item["Status"] || "").toLowerCase();
+      const formaPagamento = normalizarFormaPagamento(item["Informações"]);
+
+      const status = "pago";
 
       const importId = await gerarHash(JSON.stringify(item));
 
@@ -143,7 +91,7 @@ export function importarEvo(
 
         data,
 
-        tipo: "despesa",
+        tipo: "receita",
 
         descricao,
 
@@ -153,13 +101,13 @@ export function importarEvo(
 
         valor_bruto: valorBruto,
 
-        taxa: 0,
+        taxa: valorBruto - valor,
 
         origem: "evo",
 
         sistema_origem: "evo",
 
-        forma_pagamento: "despesa",
+        forma_pagamento: formaPagamento,
 
         descricao_original: item["Descrição"] || "",
 
@@ -167,6 +115,59 @@ export function importarEvo(
 
         import_id: importId,
       };
-    });
-    return Promise.all(resultado);
+    }
+
+    // ================= DESPESA =================
+
+    const data = parseData(item["Pagamento"]);
+
+    if (!data) return null;
+
+    const valor = parseNumero(item["Valor baixa"]);
+
+    if (!valor) return null;
+
+    const valorBruto = parseNumero(item["Valor"]);
+
+    const descricao = item["Descrição"] || item["Favorecido"] || "Despesa EVO";
+
+    const categoria = item["Centro de custo"] || "despesa";
+
+    const status = String(item["Status"] || "").toLowerCase();
+
+    const importId = await gerarHash(JSON.stringify(item));
+
+    return {
+      academia_id: academiaId,
+
+      data,
+
+      tipo: "despesa",
+
+      descricao,
+
+      categoria,
+
+      valor,
+
+      valor_bruto: valorBruto,
+
+      taxa: 0,
+
+      origem: "evo",
+
+      sistema_origem: "evo",
+
+      forma_pagamento: "despesa",
+
+      descricao_original: item["Descrição"] || "",
+
+      status,
+
+      import_id: importId,
+    };
+  });
+  const dadosFiltrados = (await Promise.all(resultado)).filter(Boolean);
+
+  return dadosFiltrados;
 }
