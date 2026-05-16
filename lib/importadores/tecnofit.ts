@@ -126,11 +126,22 @@ export function importarTecnofit(
 
       const status_cliente = String(status_original).toLowerCase();
 
-      // 🔥 DATA OFICIAL = RECEBIMENTO
-      const data =
-        tipo === "receita"
-          ? parseData(item["Data Recebimento"])
-          : parseData(item["Data Pagamento"]);
+      // 🔥 REGIME CAIXA OFICIAL DO GYM
+
+      let data = null;
+
+      if (tipo === "receita") {
+        // 🔥 RECEITA = DINHEIRO CREDITADO
+        data = parseData(item["Data Crédito"]);
+      } else {
+        // 🔥 DESPESA = DINHEIRO PAGO
+
+        if (!item["Data Pagamento"]) {
+          return null;
+        }
+
+        data = parseData(item["Data Pagamento"]);
+      }
 
       if (!data) return null;
 
