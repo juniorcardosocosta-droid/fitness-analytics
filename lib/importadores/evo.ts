@@ -1,7 +1,17 @@
 import * as XLSX from "xlsx";
 
-function parseNumero(v: any) {
+async function gerarHash(texto: string) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(texto);
 
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function parseNumero(v: any) {
   if (v === null || v === undefined || v === "") {
     return 0;
   }
@@ -11,17 +21,15 @@ function parseNumero(v: any) {
       .replace(/R\$\s?/g, "")
       .replace(/\./g, "")
       .replace(",", ".")
-      .trim()
+      .trim(),
   );
 }
 
 function parseData(valor: any) {
-
   if (!valor) return null;
 
   // 🔥 Excel number
   if (typeof valor === "number") {
-
     const excelDate = XLSX.SSF.parse_date_code(valor);
 
     if (!excelDate) return null;
@@ -38,7 +46,6 @@ function parseData(valor: any) {
 }
 
 function normalizarFormaPagamento(info: string) {
-
   const texto = String(info || "").toLowerCase();
 
   if (texto.includes("visa")) return "visa";
@@ -53,16 +60,12 @@ function normalizarFormaPagamento(info: string) {
 export function importarEvo(
   dados: any[],
   tipo: "receita" | "despesa",
-  academiaId: string
+  academiaId: string,
 ) {
-
-  return dados
-    .map((item: any) => {
-
+  const resultado = dados.map(async (item: any) => {
       // ================= RECEITA =================
 
       if (tipo === "receita") {
-
         const data = parseData(item["Data de recebimento"]);
 
         if (!data) return null;
@@ -73,21 +76,17 @@ export function importarEvo(
 
         const valorBruto = parseNumero(item["Valor"]);
 
-        const descricao =
-          item["Nome"] ||
-          item["Descrição"] ||
-          "Receita EVO";
+        const descricao = item["Nome"] || item["Descrição"] || "Receita EVO";
 
-        const categoria =
-          item["Centro de receita"] || "receita";
+        const categoria = item["Centro de receita"] || "receita";
 
-        const formaPagamento =
-          normalizarFormaPagamento(item["Informações"]);
+        const formaPagamento = normalizarFormaPagamento(item["Informações"]);
 
         const status = "pago";
 
-        return {
+        const importId = await gerarHash(JSON.stringify(item));
 
+        return {
           academia_id: academiaId,
 
           data,
@@ -110,12 +109,11 @@ export function importarEvo(
 
           forma_pagamento: formaPagamento,
 
-          descricao_original:
-            item["Descrição"] || "",
+          descricao_original: item["Descrição"] || "",
 
           status,
 
-          import_id: `evo_receita_${academiaId}_${item["Id"]}_${data}_${valor}`
+          import_id: importId,
         };
       }
 
@@ -132,18 +130,15 @@ export function importarEvo(
       const valorBruto = parseNumero(item["Valor"]);
 
       const descricao =
-        item["Descrição"] ||
-        item["Favorecido"] ||
-        "Despesa EVO";
+        item["Descrição"] || item["Favorecido"] || "Despesa EVO";
 
-      const categoria =
-        item["Centro de custo"] || "despesa";
+      const categoria = item["Centro de custo"] || "despesa";
 
-      const status =
-        String(item["Status"] || "").toLowerCase();
+      const status = String(item["Status"] || "").toLowerCase();
+
+      const importId = await gerarHash(JSON.stringify(item));
 
       return {
-
         academia_id: academiaId,
 
         data,
@@ -166,13 +161,12 @@ export function importarEvo(
 
         forma_pagamento: "despesa",
 
-        descricao_original:
-          item["Descrição"] || "",
+        descricao_original: item["Descrição"] || "",
 
         status,
 
-        import_id: `evo_despesa_${academiaId}_${descricao}_${data}_${valor}`
+        import_id: importId,
       };
-    })
-    .filter(Boolean);
+    });
+    return Promise.all(resultado);
 }

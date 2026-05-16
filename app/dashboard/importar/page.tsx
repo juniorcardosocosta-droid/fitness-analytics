@@ -48,7 +48,7 @@ export default function Importar() {
     if (erp === "tecnofit") {
       dadosConvertidos = importarTecnofit(dados, tipo, academiaId);
     } else if (erp === "evo") {
-      dadosConvertidos = importarEvo(dados, tipo, academiaId);
+      dadosConvertidos = await importarEvo(dados, tipo, academiaId);
     }
 
     console.log("✅ TOTAL REGISTROS:", dadosConvertidos.length);
@@ -131,21 +131,21 @@ export default function Importar() {
       const reader = new FileReader();
 
       reader.onload = async (e) => {
-  const data = new Uint8Array(e.target?.result as ArrayBuffer);
+        const data = new Uint8Array(e.target?.result as ArrayBuffer);
 
-  const workbook = XLSX.read(data, { type: "array" });
-  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
-  const jsonData = XLSX.utils.sheet_to_json(sheet);
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
 
-  console.log("TOTAL LINHAS EXCEL:", jsonData.length);
-  console.log("PRIMEIRA LINHA EXCEL:", jsonData[0]);
-  console.log("TODAS AS CHAVES:", Object.keys(jsonData[0] || {}));
+        console.log("TOTAL LINHAS EXCEL:", jsonData.length);
+        console.log("PRIMEIRA LINHA EXCEL:", jsonData[0]);
+        console.log("TODAS AS CHAVES:", Object.keys(jsonData[0] || {}));
 
-  await processarDados(jsonData, tipo);
+        await processarDados(jsonData, tipo);
 
-  setLoading(false);
-};
+        setLoading(false);
+      };
 
       reader.readAsArrayBuffer(file);
     }
