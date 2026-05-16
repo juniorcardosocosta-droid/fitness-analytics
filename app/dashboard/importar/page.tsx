@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Papa from "papaparse"
 import * as XLSX from "xlsx"
 import { supabase } from "../../../lib/supabaseClient"
+import { importarTecnofit } from "../../../lib/importadores/tecnofit"
 
 export default function Importar() {
   const [loading, setLoading] = useState(false)
@@ -41,126 +42,11 @@ export default function Importar() {
 
   async function processarDados(dados: any[], tipo: "receita" | "despesa") {
 
-    const dadosConvertidos = dados
-      .map((item: any, index: number) => {
-
-        // ================= STATUS (COLUNA A) =================
-        const statusTexto = String(item.A || "").toLowerCase()
-        const status =
-          statusTexto.includes("vencida") ? "pendente" : "pago"
-
-        // ================= DESCRIÇÃO =================
-        const descricao =
-          item["Descrição"] ||
-          item["Cliente"] ||
-          item["Fornecedor"] ||
-          ""
-        // ================= STATUS DO CLIENTE =================
-        const status_cliente =
-          tipo === "receita"
-            ? item["Status do cliente"] || ""
-            : ""
-
-
-        // ================= VALOR =================
-        const valor =
-          tipo === "receita"
-            ? parseNumero(item["Valor Líquido"])
-            : parseNumero(item["Valor Pago"] || item["Valor"])
-
-        if (!valor) {
-          console.log("LINHA DESCARTADA (SEM VALOR):", item)
-          return null
-        }
-
-        // ================= VALORES EXTRA =================
-        const valorBruto =
-          tipo === "receita"
-            ? parseNumero(item["Valor Bruto"])
-            : 0
-
-        const taxa =
-          tipo === "receita"
-            ? parseNumero(item["Valor Taxa"])
-            : 0
-
-        // ================= DATA =================
-        const dataBruta =
-          tipo === "receita"
-            ? item["Data Crédito"]
-            : item["Data Pagamento"]
-
-        let data = null
-
-        if (dataBruta) {
-
-        // 🔥 se vier como número do Excel
-        if (typeof dataBruta === "number") {
-          const excelDate = XLSX.SSF.parse_date_code(dataBruta)
-
-          if (excelDate) {
-            data = `${excelDate.y}-${String(excelDate.m).padStart(2,"0")}-${String(excelDate.d).padStart(2,"0")}`
-          }
-        }
-
-        // 🔥 se vier como string
-        else {
-          const partes = String(dataBruta).split("/")
-
-          if (partes.length === 3) {
-            let dia = partes[0]
-            let mes = partes[1]
-            const ano = partes[2]
-
-            // 🔥 detecta formato invertido (MM/DD)
-            if (Number(dia) <= 12 && Number(mes) <= 12) {
-              // ambíguo → assume padrão brasileiro (não mexe)
-           } else if (Number(dia) <= 12) {
-             // provavelmente MM/DD → inverter
-             dia = partes[1]
-             mes = partes[0]
-           }
-
-           data = `${ano}-${mes.padStart(2,"0")}-${dia.padStart(2,"0")}`
-        }
-     }
-  }
-
-  if (!data) {
-    console.log("ERRO DATA:", item)
-    return null
-  }
-
-        // ================= ORIGEM =================
-        const origem =
-          item["Forma"] || (tipo === "despesa" ? "despesa" : "")
-
-        // ================= CATEGORIA =================
-        const categoria =
-          tipo === "despesa"
-            ? item["Categoria"] || "outros"
-            : "receita"
-
-         // ================= IMPORT_ID (🔥 CHAVE DO SISTEMA) =================
-         const import_id = JSON.stringify(item)
-
-        return {
-          data,
-          descricao,
-          tipo,
-          categoria,
-          valor,
-          valor_bruto: valorBruto,
-          taxa,
-          origem,
-          status,
-          status_cliente,
-          import_id,
-          academia_id: academiaId,
-        }
-      })
-      .filter(Boolean)
-
+   const dadosConvertidos = importarTecnofit(
+  dados,
+  tipo,
+  academiaId
+)
     console.log("✅ TOTAL REGISTROS:", dadosConvertidos.length)
 
     if (dadosConvertidos.length === 0) {
