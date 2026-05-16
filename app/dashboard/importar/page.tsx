@@ -70,6 +70,7 @@ if (primeiraData) {
     .from("lancamentos")
     .select("id")
     .eq("academia_id", academiaId)
+    .eq("tipo", tipo)
     .gte("data", inicioMes)
     .lte("data", fimMes)
     .limit(1)
