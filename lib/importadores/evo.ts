@@ -115,7 +115,7 @@ export function importarEvo(
 
           status,
 
-          import_id: JSON.stringify(item)
+          import_id: `evo_receita_${academiaId}_${item["Id"]}_${data}_${valor}`
         };
       }
 
@@ -171,7 +171,7 @@ export function importarEvo(
 
         status,
 
-        import_id: JSON.stringify(item)
+        import_id: `evo_despesa_${academiaId}_${descricao}_${data}_${valor}`
       };
     })
     .filter(Boolean);
