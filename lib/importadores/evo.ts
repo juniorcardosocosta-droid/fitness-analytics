@@ -63,7 +63,7 @@ export function importarEvo(
 
       if (tipo === "receita") {
 
-        const data = parseData(item["Data recebimento"]);
+        const data = parseData(item["Data de recebimento"]);
 
         if (!data) return null;
 
