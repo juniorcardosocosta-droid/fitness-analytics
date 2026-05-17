@@ -295,9 +295,17 @@ export default function Dashboard() {
   const ticketAluno = alunosAtivos > 0 ? receita / alunosAtivos : 0;
 
   // ================= ALUNOS =================
-  const alunos = dadosFiltrados.filter(
-    (i: any) => isReceita(i) && i.status_cliente,
-  );
+  const alunos = dadosFiltrados.filter((i: any) => {
+    if (!isReceita(i)) return false;
+
+    // 🔥 EVO = cada receita conta como aluno
+    if (i.sistema_origem === "evo") {
+      return true;
+    }
+
+    // 🔥 Tecnofit mantém lógica antiga
+    return i.status_cliente;
+  });
 
   // normaliza o texto (evita erro)
   const getStatus = (i: any) =>
