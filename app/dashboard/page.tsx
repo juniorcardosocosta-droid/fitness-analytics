@@ -1046,7 +1046,10 @@ export default function Dashboard() {
           <div>
             <p className="text-gray-400 text-sm">Total de Alunos</p>
             <h2 className="text-lg font-bold text-white">
-              {dadosFiltrados.some((i: any) => i.sistema_origem === "evo")
+              {dadosFiltrados.some(
+                (i: any) =>
+                  i.sistema_origem === "evo" || i.sistema_origem === "ultra",
+              )
                 ? alunos.length
                 : ativos + cancelados + bloqueados}
             </h2>
