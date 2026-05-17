@@ -104,8 +104,6 @@ export function importarUltra(
 
           sistema_origem: "ultra",
 
-          aluno_id_externo: item["Cod Aluno"] || "",
-
           status_cliente: "ativo",
 
           import_id: `ultra_${academiaId}_${tipo}_${index}`,
