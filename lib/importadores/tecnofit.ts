@@ -102,7 +102,7 @@ export function importarTecnofit(
   academiaId: string,
 ) {
   return dados
-    .map((item) => {
+    .map((item, index) => {
       const valor =
         tipo === "receita"
           ? parseNumero(item["Valor Líquido"])
@@ -187,7 +187,7 @@ export function importarTecnofit(
         tipo_plano: plano.tipo_plano,
         frequencia_plano: plano.frequencia_plano,
 
-        import_id: JSON.stringify(item),
+        import_id: `tecnofit_${academiaId}_${tipo}_${index}`,
       };
     })
     .filter(Boolean);
