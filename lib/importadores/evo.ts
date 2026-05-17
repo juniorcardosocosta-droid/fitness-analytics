@@ -140,7 +140,7 @@ export async function importarEvo(
 
     const status = String(item["Status"] || "").toLowerCase();
 
-    const importId = await gerarHash(JSON.stringify(item));
+    const importId = `evo_${academiaId}_${tipo}_${index}`;
 
     return {
       academia_id: academiaId,
