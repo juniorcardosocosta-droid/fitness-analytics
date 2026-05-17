@@ -6,6 +6,7 @@ import * as XLSX from "xlsx";
 import { supabase } from "../../../lib/supabaseClient";
 import { importarTecnofit } from "../../../lib/importadores/tecnofit";
 import { importarEvo } from "../../../lib/importadores/evo";
+import { importarUltra } from "../../../lib/importadores/ultra";
 
 export default function Importar() {
   const [loading, setLoading] = useState(false);
@@ -49,6 +50,8 @@ export default function Importar() {
       dadosConvertidos = importarTecnofit(dados, tipo, academiaId);
     } else if (erp === "evo") {
       dadosConvertidos = await importarEvo(dados, tipo, academiaId);
+    } else if (erp === "ultra") {
+      dadosConvertidos = importarUltra(dados, tipo, academiaId);
     }
 
     console.log("✅ TOTAL REGISTROS:", dadosConvertidos.length);
@@ -164,6 +167,7 @@ export default function Importar() {
       >
         <option value="tecnofit">Tecnofit</option>
         <option value="evo">EVO</option>
+        <option value="ultra">Rede Ultra</option>
       </select>
 
       <select
