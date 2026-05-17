@@ -62,7 +62,7 @@ export async function importarEvo(
   tipo: "receita" | "despesa",
   academiaId: string,
 ) {
-  const resultado = dados.map(async (item: any) => {
+  const resultado = dados.map(async (item: any, index: number) => {
     // ================= RECEITA =================
 
     if (tipo === "receita") {
@@ -84,7 +84,7 @@ export async function importarEvo(
 
       const status = "pago";
 
-      const importId = await gerarHash(JSON.stringify(item));
+      const importId = `evo_${academiaId}_${tipo}_${index}`;
 
       return {
         academia_id: academiaId,
