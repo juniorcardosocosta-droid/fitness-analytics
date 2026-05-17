@@ -1038,7 +1038,9 @@ export default function Dashboard() {
           <div>
             <p className="text-gray-400 text-sm">Total de Alunos</p>
             <h2 className="text-lg font-bold text-white">
-              {ativos + cancelados + bloqueados}
+              {dadosFiltrados.some((i: any) => i.sistema_origem === "evo")
+                ? alunos.length
+                : ativos + cancelados + bloqueados}
             </h2>
           </div>
         </div>
