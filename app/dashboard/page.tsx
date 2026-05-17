@@ -301,12 +301,17 @@ export default function Dashboard() {
   const alunos = dadosFiltrados.filter((i: any) => {
     if (!isReceita(i)) return false;
 
-    // 🔥 EVO = cada receita conta como aluno
+    // EVO
     if (i.sistema_origem === "evo") {
       return true;
     }
 
-    // 🔥 Tecnofit mantém lógica antiga
+    // ULTRA
+    if (i.sistema_origem === "ultra") {
+      return true;
+    }
+
+    // TECNOFIT
     return i.status_cliente;
   });
 
