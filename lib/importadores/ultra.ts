@@ -57,11 +57,17 @@ export function importarUltra(
       if (tipo === "receita") {
         const data = parseData(item["Baixa"]);
 
-        if (!data) return null;
+        if (!data) {
+          console.log("❌ ULTRA SEM DATA:", item);
+          return null;
+        }
 
         const valor = parseNumero(item["Valor Real"]);
 
-        if (!valor) return null;
+        if (!valor) {
+          console.log("❌ ULTRA SEM VALOR:", item);
+          return null;
+        }
 
         const valorBruto = parseNumero(item["Valor"]);
 
@@ -72,9 +78,7 @@ export function importarUltra(
           "Receita Ultra";
 
         const categoria =
-          item["Conta Contábil"] ||
-          item["Grupo Contábil"] ||
-          "receita";
+          item["Conta Contábil"] || item["Grupo Contábil"] || "receita";
 
         const formaPagamento = normalizarFormaPagamento(
           item["Tipo"],
