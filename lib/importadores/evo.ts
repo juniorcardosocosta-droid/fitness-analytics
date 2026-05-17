@@ -16,6 +16,11 @@ function parseNumero(v: any) {
     return 0;
   }
 
+  // 🔥 Se já vier número do Excel
+  if (typeof v === "number") {
+    return v;
+  }
+
   return Number(
     String(v)
       .replace(/R\$\s?/g, "")
