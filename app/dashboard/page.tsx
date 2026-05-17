@@ -245,7 +245,7 @@ export default function Dashboard() {
         }
       }
 
-      const { data, error } = await query;
+      const { data, error } = await query.range(0, 10000);
 
       if (error) {
         console.error(error);
