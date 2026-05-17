@@ -55,7 +55,10 @@ export function importarUltra(
     .map((item: any, index: number) => {
       // 🔥 RECEITA
       if (tipo === "receita") {
-        const data = parseData(item["Baixa"]);
+        const data =
+          parseData(item["Baixa"]) ||
+          parseData(item["Vencimento"]) ||
+          parseData(item["Competência"]);
 
         if (!data) {
           console.log("❌ ULTRA SEM DATA:", item);
