@@ -215,7 +215,7 @@ export default function Dashboard() {
       // 🔒 USUÁRIO PRECISA TER ACADEMIA
       if (role === "usuario" && !academiaId) return;
 
-      let query = supabase.from("lancamentos").select("*");
+      let query = supabase.from("lancamentos").select("*", { count: "exact" });
 
       // 🟢 USUARIO
       if (role === "usuario") {
@@ -245,7 +245,10 @@ export default function Dashboard() {
         }
       }
 
-      const { data, error } = await query.range(0, 10000);
+      const { data, error, count } = await query.range(0, 10000);
+
+      console.log("TOTAL DASHBOARD:", count);
+      console.log("TOTAL DATA:", data?.length);
 
       if (error) {
         console.error(error);
