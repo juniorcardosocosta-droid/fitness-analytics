@@ -33,7 +33,9 @@ function parseData(valor: any) {
 
   if (partes.length !== 3) return null;
 
-  return `${partes[2]}-${partes[1].padStart(2, "0")}-${partes[0].padStart(2, "0")}`;
+  const ano = partes[2].length === 2 ? `20${partes[2]}` : partes[2];
+
+  return `${ano}-${partes[1].padStart(2, "0")}-${partes[0].padStart(2, "0")}`;
 }
 
 function normalizarFormaPagamento(texto: string) {
@@ -101,7 +103,6 @@ export function importarPacto(
           sistema_origem: "pacto",
 
           status_cliente: statusCliente,
-
 
           import_id: `pacto_${academiaId}_${tipo}_${index}`,
         };
