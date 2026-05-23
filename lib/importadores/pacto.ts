@@ -108,6 +108,63 @@ export function importarPacto(
         };
       }
 
+      // 🔥 DESPESA
+      if (tipo === "despesa") {
+        const situacao = String(item["Situação"] || "").toLowerCase();
+
+        // apenas pagos
+        if (!situacao.includes("pago")) {
+          return null;
+        }
+
+        const valor = parseNumero(item["Valor"]);
+
+        if (!valor || valor <= 0) {
+          return null;
+        }
+
+        const data =
+          parseData(item["Data Pagamento"]) ||
+          parseData(item["Data Competência"]);
+
+        if (!data) {
+          console.log("❌ PACTO DESPESA SEM DATA:", item);
+          return null;
+        }
+
+        const descricao = [item["Favorecido"], item["Descrição"]]
+          .filter(Boolean)
+          .join(" - ");
+
+        const categoria = item["Categoria"] || "despesa";
+
+        return {
+          academia_id: academiaId,
+
+          tipo: "despesa",
+
+          data,
+
+          valor,
+          valor_bruto: valor,
+
+          taxa: 0,
+
+          descricao,
+          descricao_original: descricao,
+
+          categoria,
+
+          forma_pagamento: normalizarFormaPagamento(item["Forma Pagamento"]),
+
+          status: "pago",
+
+          sistema_origem: "pacto",
+
+          import_id: `pacto_${academiaId}_${tipo}_${index}`,
+        };
+      }
+
       return null;
     })
     .filter(Boolean);
