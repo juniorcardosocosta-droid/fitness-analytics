@@ -187,7 +187,7 @@ export default function Importar() {
         <p>Importar RECEITAS</p>
         <input
           type="file"
-          accept=".csv, .xlsx"
+          accept=".csv, .xlsx, .xls"
           onChange={(e) => {
             if (e.target.files?.[0]) {
               handleFile(e.target.files[0], "receita");
@@ -201,7 +201,7 @@ export default function Importar() {
         <p>Importar DESPESAS</p>
         <input
           type="file"
-          accept=".csv, .xlsx"
+          accept=".csv, .xlsx, .xls"
           onChange={(e) => {
             if (e.target.files?.[0]) {
               handleFile(e.target.files[0], "despesa");
