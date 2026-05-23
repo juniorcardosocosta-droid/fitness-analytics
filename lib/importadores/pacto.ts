@@ -27,7 +27,9 @@ function parseData(valor: any) {
   }
 
   // DD/MM/YYYY
-  const partes = String(valor).split("/");
+  const texto = String(valor).split(" ")[0];
+
+  const partes = texto.split("/");
 
   if (partes.length !== 3) return null;
 
@@ -62,26 +64,18 @@ export function importarPacto(
         }
 
         const data =
-          parseData(item["Dt.Pagamento"]) ||
-          parseData(item["Dt.Vencimento"]);
+          parseData(item["Dt.Pagamento"]) || parseData(item["Dt.Vencimento"]);
 
         if (!data) {
           console.log("❌ PACTO SEM DATA:", item);
           return null;
         }
 
-        const descricao =
-          item["Nome"] ||
-          item["Plano"] ||
-          "Receita Pacto";
+        const descricao = item["Nome"] || item["Plano"] || "Receita Pacto";
 
-        const categoria =
-          item["Plano"] ||
-          item["Modalidades"] ||
-          "receita";
+        const categoria = item["Plano"] || item["Modalidades"] || "receita";
 
-        const statusCliente =
-          item["Situação"] || "ativo";
+        const statusCliente = item["Situação"] || "ativo";
 
         return {
           academia_id: academiaId,
@@ -100,9 +94,7 @@ export function importarPacto(
 
           categoria,
 
-          forma_pagamento: normalizarFormaPagamento(
-            item["Forma"],
-          ),
+          forma_pagamento: normalizarFormaPagamento(item["Forma"]),
 
           status: "pago",
 
@@ -110,10 +102,6 @@ export function importarPacto(
 
           status_cliente: statusCliente,
 
-          aluno_id_externo:
-            item["Matrícula"] ||
-            item["Cod.Parcela"] ||
-            null,
 
           import_id: `pacto_${academiaId}_${tipo}_${index}`,
         };
