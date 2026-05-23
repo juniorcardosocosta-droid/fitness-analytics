@@ -117,6 +117,60 @@ export function importarUltra(
         };
       }
 
+      // 🔥 DESPESA
+      if (tipo === "despesa") {
+        const valor = parseNumero(item["Valor Baixa"]);
+
+        // ignora zerados / em aberto
+        if (!valor || valor <= 0) {
+          return null;
+        }
+
+        const data =
+          parseData(item["Data Baixa"]) ||
+          parseData(item["Vencimento"]) ||
+          parseData(item["Competência"]) ||
+          parseData(item["Lançamento"]);
+
+        if (!data) {
+          console.log("❌ ULTRA DESPESA SEM DATA:", item);
+          return null;
+        }
+
+        const descricao = [item["Fornecedor"], item["Descrição"]]
+          .filter(Boolean)
+          .join(" - ");
+
+        const categoria =
+          item["Conta Contábil"] || item["Grupo Contábil"] || "despesa";
+
+        return {
+          academia_id: academiaId,
+
+          tipo: "despesa",
+
+          data,
+
+          valor,
+          valor_bruto: valor,
+
+          taxa: 0,
+
+          descricao,
+          descricao_original: descricao,
+
+          categoria,
+
+          forma_pagamento: "outros",
+
+          status: "pago",
+
+          sistema_origem: "ultra",
+
+          import_id: `ultra_${academiaId}_${tipo}_${index}`,
+        };
+      }
+
       return null;
     })
     .filter(Boolean);
