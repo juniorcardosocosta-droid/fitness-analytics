@@ -140,7 +140,12 @@ export default function Importar() {
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
         const jsonData = XLSX.utils.sheet_to_json(sheet, {
-          range: erp === "tecnofit" ? 1 : 0,
+          range:
+            erp === "tecnofit"
+              ? 1
+              : erp === "ultra" && tipo === "despesa"
+                ? 1
+                : 0,
         });
 
         console.log("TOTAL LINHAS EXCEL:", jsonData.length);
