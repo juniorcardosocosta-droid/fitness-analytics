@@ -110,13 +110,6 @@ export function importarPacto(
 
       // 🔥 DESPESA
       if (tipo === "despesa") {
-        const situacao = String(item["Situação"] || "").toLowerCase();
-
-        // apenas pagos
-        if (!situacao.includes("pago")) {
-          return null;
-        }
-
         const valor = parseNumero(item["Valor"]);
 
         if (!valor || valor <= 0) {
@@ -124,8 +117,9 @@ export function importarPacto(
         }
 
         const data =
-          parseData(item["Data Pagamento"]) ||
-          parseData(item["Data Competência"]);
+          parseData(item["Data de Quitação"]) ||
+          parseData(item["Dt. Competência"]) ||
+          parseData(item["Data Vencimento"]);
 
         if (!data) {
           console.log("❌ PACTO DESPESA SEM DATA:", item);
@@ -136,7 +130,7 @@ export function importarPacto(
           .filter(Boolean)
           .join(" - ");
 
-        const categoria = item["Categoria"] || "despesa";
+        const categoria = item["Plano de Contas"] || "despesa";
 
         return {
           academia_id: academiaId,
@@ -155,7 +149,7 @@ export function importarPacto(
 
           categoria,
 
-          forma_pagamento: normalizarFormaPagamento(item["Forma Pagamento"]),
+          forma_pagamento: normalizarFormaPagamento(item["Conta Destino"]),
 
           status: "pago",
 
