@@ -675,29 +675,7 @@ export default function Dashboard() {
     };
   });
 
-  // ================= GRÁFICO DE ALUNOS =================
-  const dadosAlunos = alunosMensal
-    .map((item: any) => ({
-      mes: meses[Number(item.mes) - 1],
-      ordem: Number(item.mes),
-      ativos: Number(item.ativos || 0),
-      recorrencia: Number(item.recorrencia || 0),
-      novos: Number(item.novos || 0),
-    }))
-    .sort((a: any, b: any) => a.ordem - b.ordem);
-
-  // ================= GRÁFICO DE CHURN =================
-  const dadosChurn = churnMensal
-    .map((item: any) => ({
-      mes: meses[Number(item.mes) - 1],
-      ordem: Number(item.mes),
-      ativos: Number(item.ativos || 0),
-      cancelados: Number(item.cancelados || 0),
-      churn: Number(item.churn || 0),
-    }))
-    .sort((a: any, b: any) => a.ordem - b.ordem);
-
-  // ================= GRÁFICO EVOLUÇÃO FINANCEIRA =================
+  // ================= MESES =================
   const meses = [
     "jan",
     "fev",
@@ -712,6 +690,32 @@ export default function Dashboard() {
     "nov",
     "dez",
   ];
+
+  // ================= GRÁFICO DE ALUNOS =================
+  const dadosAlunos = alunosMensal
+    .map((item: any) => ({
+      mes: meses[Number(item.mes) - 1],
+      ordem: Number(item.mes),
+      ativos: Number(item.ativos || 0),
+      recorrencia: Number(item.recorrencia || 0),
+      novos: Number(item.novos || 0),
+    }))
+    .sort((a: any, b: any) => a.ordem - b.ordem);
+
+  
+
+  // ================= GRÁFICO DE CHURN =================
+  const dadosChurn = churnMensal
+    .map((item: any) => ({
+      mes: meses[Number(item.mes) - 1],
+      ordem: Number(item.mes),
+      ativos: Number(item.ativos || 0),
+      cancelados: Number(item.cancelados || 0),
+      churn: Number(item.churn || 0),
+    }))
+    .sort((a: any, b: any) => a.ordem - b.ordem);
+
+  // ================= GRÁFICO EVOLUÇÃO FINANCEIRA =================
 
   const dadosEvolucao = financeiroFiltrado
     .map((item: any) => ({
