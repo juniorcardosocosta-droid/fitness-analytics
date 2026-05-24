@@ -727,7 +727,10 @@ export default function Dashboard() {
     .map((item: any) => ({
       mes: meses[Number(item.mes) - 1],
       ordem: Number(item.mes),
-      margem: Number(item.margem || 0),
+      margem:
+        Number(item.receita || 0) > 0
+          ? (Number(item.resultado || 0) / Number(item.receita || 0)) * 100
+          : 0,
     }))
     .sort((a: any, b: any) => a.ordem - b.ordem);
 
