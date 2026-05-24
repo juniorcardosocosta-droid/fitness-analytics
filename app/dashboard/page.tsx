@@ -108,6 +108,10 @@ export default function Dashboard() {
   const [userId, setUserId] = useState("");
   const [dados, setDados] = useState<any[]>([]);
   const [financeiroMensal, setFinanceiroMensal] = useState<any[]>([]);
+  const [churnMensal, setChurnMensal] = useState<any[]>([]);
+  const [alunosMensal, setAlunosMensal] = useState<any[]>([]);
+  const [ticketMensal, setTicketMensal] = useState<any[]>([]);
+  const [custosMensal, setCustosMensal] = useState<any[]>([]);
 
   const [mesSelecionado, setMesSelecionado] = useState("");
   const [anoSelecionado, setAnoSelecionado] = useState("");
@@ -292,6 +296,146 @@ export default function Dashboard() {
       console.log("FINANCEIRO VIEW:", financeiroData);
 
       setFinanceiroMensal(financeiroData || []);
+
+      let queryChurn = supabase.from("vw_churn_mensal").select("*");
+
+      if (role === "usuario") {
+        queryChurn = queryChurn.eq("academia_id", academiaId);
+      }
+
+      // 🔵 ADMIN REDE
+      if (role === "admin_rede") {
+        const { data: academias } = await supabase
+          .from("academias")
+          .select("id")
+          .eq("cliente_id", clienteId);
+
+        const ids = academias?.map((a) => a.id) || [];
+
+        if (academiaId) {
+          queryChurn = queryChurn.eq("academia_id", academiaId);
+        } else {
+          queryChurn = queryChurn.in("academia_id", ids);
+        }
+      }
+
+      // 🔴 ADMIN MASTER
+      if (role === "admin_master") {
+        if (academiaId) {
+          queryChurn = queryChurn.eq("academia_id", academiaId);
+        }
+      }
+
+      const { data: churnData } = await queryChurn;
+
+      console.log("CHURN VIEW:", churnData);
+
+      setChurnMensal(churnData || []);
+
+      let queryAlunos = supabase.from("vw_alunos_mensal").select("*");
+
+      if (role === "usuario") {
+        queryAlunos = queryAlunos.eq("academia_id", academiaId);
+      }
+
+      // 🔵 ADMIN REDE
+      if (role === "admin_rede") {
+        const { data: academias } = await supabase
+          .from("academias")
+          .select("id")
+          .eq("cliente_id", clienteId);
+
+        const ids = academias?.map((a) => a.id) || [];
+
+        if (academiaId) {
+          queryAlunos = queryAlunos.eq("academia_id", academiaId);
+        } else {
+          queryAlunos = queryAlunos.in("academia_id", ids);
+        }
+      }
+
+      // 🔴 ADMIN MASTER
+      if (role === "admin_master") {
+        if (academiaId) {
+          queryAlunos = queryAlunos.eq("academia_id", academiaId);
+        }
+      }
+
+      const { data: alunosData } = await queryAlunos;
+
+      console.log("ALUNOS VIEW:", alunosData);
+
+      setAlunosMensal(alunosData || []);
+
+      let queryTicket = supabase.from("vw_ticket_medio_mensal").select("*");
+
+      if (role === "usuario") {
+        queryTicket = queryTicket.eq("academia_id", academiaId);
+      }
+
+      // 🔵 ADMIN REDE
+      if (role === "admin_rede") {
+        const { data: academias } = await supabase
+          .from("academias")
+          .select("id")
+          .eq("cliente_id", clienteId);
+
+        const ids = academias?.map((a) => a.id) || [];
+
+        if (academiaId) {
+          queryTicket = queryTicket.eq("academia_id", academiaId);
+        } else {
+          queryTicket = queryTicket.in("academia_id", ids);
+        }
+      }
+
+      // 🔴 ADMIN MASTER
+      if (role === "admin_master") {
+        if (academiaId) {
+          queryTicket = queryTicket.eq("academia_id", academiaId);
+        }
+      }
+
+      const { data: ticketData } = await queryTicket;
+
+      console.log("TICKET VIEW:", ticketData);
+
+      setTicketMensal(ticketData || []);
+
+      let queryCustos = supabase.from("vw_custos_operacionais").select("*");
+
+      if (role === "usuario") {
+        queryCustos = queryCustos.eq("academia_id", academiaId);
+      }
+
+      // 🔵 ADMIN REDE
+      if (role === "admin_rede") {
+        const { data: academias } = await supabase
+          .from("academias")
+          .select("id")
+          .eq("cliente_id", clienteId);
+
+        const ids = academias?.map((a) => a.id) || [];
+
+        if (academiaId) {
+          queryCustos = queryCustos.eq("academia_id", academiaId);
+        } else {
+          queryCustos = queryCustos.in("academia_id", ids);
+        }
+      }
+
+      // 🔴 ADMIN MASTER
+      if (role === "admin_master") {
+        if (academiaId) {
+          queryCustos = queryCustos.eq("academia_id", academiaId);
+        }
+      }
+
+      const { data: custosData } = await queryCustos;
+
+      console.log("CUSTOS VIEW:", custosData);
+
+      setCustosMensal(custosData || []);
     }
 
     carregarDados();
@@ -313,14 +457,38 @@ export default function Dashboard() {
   });
 
   // ================= INDICADORES =================
-  const receitas = dadosFiltrados.filter((i: any) => isReceita(i));
-  const despesasLista = dadosFiltrados.filter((i: any) => isDespesa(i));
+  const financeiroFiltrado = financeiroMensal.filter((item: any) => {
+    if (mesSelecionado && Number(item.mes) !== Number(mesSelecionado)) {
+      return false;
+    }
 
-  const receita = receitas.reduce((t, i) => t + Number(i.valor || 0), 0);
-  const despesa = despesasLista.reduce((t, i) => t + Number(i.valor || 0), 0);
-  const resultado = receita - despesa;
+    if (anoSelecionado && Number(item.ano) !== Number(anoSelecionado)) {
+      return false;
+    }
+
+    return true;
+  });
+
+  const receita = financeiroFiltrado.reduce(
+    (total: number, item: any) => total + Number(item.receita || 0),
+    0,
+  );
+
+  const despesa = financeiroFiltrado.reduce(
+    (total: number, item: any) => total + Number(item.despesa || 0),
+    0,
+  );
+
+  const resultado = financeiroFiltrado.reduce(
+    (total: number, item: any) => total + Number(item.resultado || 0),
+    0,
+  );
 
   // ================= TICKET FINANCEIRO =================
+  const receitas = dadosFiltrados.filter((i: any) => isReceita(i));
+
+  const despesasLista = dadosFiltrados.filter((i: any) => isDespesa(i));
+
   const totalContratos = receitas.length;
 
   const ticketFinanceiro = totalContratos > 0 ? receita / totalContratos : 0;
@@ -508,168 +676,60 @@ export default function Dashboard() {
   });
 
   // ================= GRÁFICO DE ALUNOS =================
-  const dadosAlunos = Object.values(
-    dadosFiltrados.reduce((acc: any, item: any) => {
-      if (!item.data) return acc;
-
-      const [ano, mes] = item.data.split("-");
-      const mesNumero = Number(mes) - 1;
-
-      const meses = [
-        "jan",
-        "fev",
-        "mar",
-        "abr",
-        "mai",
-        "jun",
-        "jul",
-        "ago",
-        "set",
-        "out",
-        "nov",
-        "dez",
-      ];
-      const mesNome = meses[mesNumero];
-
-      if (!acc[mesNumero]) {
-        acc[mesNumero] = {
-          mes: mesNome,
-          ordem: mesNumero,
-          ativos: 0,
-          recorrencia: 0,
-          novos: 0,
-        };
-      }
-
-      if (isReceita(item)) {
-        const status = String(item.status_cliente || "").toLowerCase();
-
-        acc[mesNumero].ativos++;
-
-        if (status.includes("ativo")) {
-          acc[mesNumero].recorrencia++;
-        }
-
-        if (status.includes("novo")) {
-          acc[mesNumero].novos++;
-        }
-      }
-
-      return acc;
-    }, {}),
-  ).sort((a: any, b: any) => a.ordem - b.ordem);
-
-  // ================= GRÁFICO DE CHURN =================
-  const dadosChurn = Object.values(
-    dadosFiltrados.reduce((acc: any, item: any) => {
-      if (!item.data) return acc;
-
-      const [ano, mes] = item.data.split("-");
-      const mesNumero = Number(mes) - 1;
-
-      const meses = [
-        "jan",
-        "fev",
-        "mar",
-        "abr",
-        "mai",
-        "jun",
-        "jul",
-        "ago",
-        "set",
-        "out",
-        "nov",
-        "dez",
-      ];
-      const mesNome = meses[mesNumero];
-
-      if (!acc[mesNumero]) {
-        acc[mesNumero] = {
-          mes: mesNome,
-          ordem: mesNumero,
-          ativos: 0,
-          cancelados: 0,
-        };
-      }
-
-      if (isReceita(item)) {
-        const status = String(item.status_cliente || "").toLowerCase();
-
-        if (status.includes("ativo")) {
-          acc[mesNumero].ativos++;
-        }
-
-        if (status.includes("cancel")) {
-          acc[mesNumero].cancelados++;
-        }
-      }
-
-      return acc;
-    }, {}),
-  )
-    .map((m: any) => {
-      const total = m.ativos + m.cancelados;
-
-      return {
-        ...m,
-        churn: total > 0 ? (m.cancelados / total) * 100 : 0,
-      };
-    })
+  const dadosAlunos = alunosMensal
+    .map((item: any) => ({
+      mes: meses[Number(item.mes) - 1],
+      ordem: Number(item.mes),
+      ativos: Number(item.ativos || 0),
+      recorrencia: Number(item.recorrencia || 0),
+      novos: Number(item.novos || 0),
+    }))
     .sort((a: any, b: any) => a.ordem - b.ordem);
 
-  // ================= GRÁFICO EVOLUÇAÕ FINANCEIRA =================
-  const dadosEvolucao = Object.values(
-    dadosFiltrados.reduce((acc: any, item: any) => {
-      if (!item.data) return acc;
+  // ================= GRÁFICO DE CHURN =================
+  const dadosChurn = churnMensal
+    .map((item: any) => ({
+      mes: meses[Number(item.mes) - 1],
+      ordem: Number(item.mes),
+      ativos: Number(item.ativos || 0),
+      cancelados: Number(item.cancelados || 0),
+      churn: Number(item.churn || 0),
+    }))
+    .sort((a: any, b: any) => a.ordem - b.ordem);
 
-      const [ano, mes] = item.data.split("-");
-      const mesNumero = Number(mes) - 1;
+  // ================= GRÁFICO EVOLUÇÃO FINANCEIRA =================
+  const meses = [
+    "jan",
+    "fev",
+    "mar",
+    "abr",
+    "mai",
+    "jun",
+    "jul",
+    "ago",
+    "set",
+    "out",
+    "nov",
+    "dez",
+  ];
 
-      const meses = [
-        "jan",
-        "fev",
-        "mar",
-        "abr",
-        "mai",
-        "jun",
-        "jul",
-        "ago",
-        "set",
-        "out",
-        "nov",
-        "dez",
-      ];
-      const mesNome = meses[mesNumero];
+  const dadosEvolucao = financeiroFiltrado
+    .map((item: any) => ({
+      mes: meses[Number(item.mes) - 1],
+      ordem: Number(item.mes),
+      receita: Number(item.receita || 0),
+      despesa: Number(item.despesa || 0),
+      resultado: Number(item.resultado || 0),
+    }))
+    .sort((a: any, b: any) => a.ordem - b.ordem);
 
-      if (!acc[mesNumero]) {
-        acc[mesNumero] = {
-          mes: mesNome,
-          ordem: mesNumero,
-          receita: 0,
-          despesa: 0,
-          resultado: 0,
-        };
-      }
-
-      if (isReceita(item)) {
-        acc[mesNumero].receita += Number(item.valor || 0);
-      }
-
-      if (isDespesa(item)) {
-        acc[mesNumero].despesa += Number(item.valor || 0);
-      }
-
-      acc[mesNumero].resultado =
-        acc[mesNumero].receita - acc[mesNumero].despesa;
-
-      return acc;
-    }, {}),
-  ).sort((a: any, b: any) => a.ordem - b.ordem);
-
-  const dadosMargem = dadosEvolucao.map((m: any) => ({
-    mes: m.mes,
-    margem: m.receita > 0 ? (m.resultado / m.receita) * 100 : 0,
-  }));
+  const dadosMargem = financeiroFiltrado
+    .map((item: any) => ({
+      mes: meses[Number(item.mes) - 1],
+      ordem: Number(item.mes),
+      margem: Number(item.margem || 0),
+    }))
+    .sort((a: any, b: any) => a.ordem - b.ordem);
 
   const renderLabel = (props: any) => {
     const { x, y, width, height, value } = props;
@@ -710,132 +770,25 @@ export default function Dashboard() {
   };
 
   // ================= GRÁFICO EVOLUÇAÕ DO TICKET MEDIO EFETIVO =================
-  const dadosTicket = Object.values(
-    dadosFiltrados.reduce((acc: any, item: any) => {
-      if (!item.data) return acc;
-
-      const [ano, mes] = item.data.split("-");
-      const mesNumero = Number(mes) - 1;
-
-      const meses = [
-        "jan",
-        "fev",
-        "mar",
-        "abr",
-        "mai",
-        "jun",
-        "jul",
-        "ago",
-        "set",
-        "out",
-        "nov",
-        "dez",
-      ];
-      const mesNome = meses[mesNumero];
-
-      if (!acc[mesNumero]) {
-        acc[mesNumero] = {
-          mes: mesNome,
-          ordem: mesNumero,
-          recorrencia: 0,
-          agregador: 0,
-          countRec: 0,
-          countAgr: 0,
-        };
-      }
-
-      const texto = String(item.origem || "").toLowerCase();
-      const valor = Number(item.valor || 0);
-
-      // agregador
-      if (
-        texto.includes("cart") ||
-        texto.includes("credito") ||
-        texto.includes("debito")
-      ) {
-        acc[mesNumero].agregador += valor;
-        acc[mesNumero].countAgr += 1;
-      }
-
-      // outros (pix/dinheiro) → você pode ignorar no ticket médio ou incluir
-      else if (texto.includes("pix") || texto.includes("dinheiro")) {
-        // opcional: pode tratar como agregador se quiser
-      }
-
-      // recorrência (todo resto)
-      else {
-        acc[mesNumero].recorrencia += valor;
-        acc[mesNumero].countRec += 1;
-      }
-
-      return acc;
-    }, {}),
-  )
-    .map((m: any) => ({
-      ...m,
-      recorrencia: m.countRec > 0 ? m.recorrencia / m.countRec : 0,
-      agregador: m.countAgr > 0 ? m.agregador / m.countAgr : 0,
+  const dadosTicket = ticketMensal
+    .map((item: any) => ({
+      mes: meses[Number(item.mes) - 1],
+      ordem: Number(item.mes),
+      recorrencia: Number(item.recorrencia || 0),
+      agregador: Number(item.agregador || 0),
     }))
     .sort((a: any, b: any) => a.ordem - b.ordem);
 
   // ================= GRÁFICO EVOLUÇAÕ DOS CUSTOS OPERACIONAIS TOTAIS =================
-  const dadosCustos = Object.values(
-    dadosFiltrados.reduce((acc: any, item: any) => {
-      if (!item.data) return acc;
-
-      const [ano, mes] = item.data.split("-");
-      const mesNumero = Number(mes) - 1;
-
-      const meses = [
-        "jan",
-        "fev",
-        "mar",
-        "abr",
-        "mai",
-        "jun",
-        "jul",
-        "ago",
-        "set",
-        "out",
-        "nov",
-        "dez",
-      ];
-      const mesNome = meses[mesNumero];
-
-      if (!acc[mesNumero]) {
-        acc[mesNumero] = {
-          mes: mesNome,
-          ordem: mesNumero,
-          receita: 0,
-          despesa: 0,
-        };
-      }
-
-      const valor = Number(item.valor || 0);
-
-      if (isReceita(item)) {
-        acc[mesNumero].receita += valor;
-      }
-
-      if (isDespesa(item)) {
-        acc[mesNumero].despesa += valor;
-      }
-
-      return acc;
-    }, {}),
-  )
-    .map((m: any) => {
-      const percentualReal = m.receita > 0 ? (m.despesa / m.receita) * 100 : 0;
-
-      return {
-        mes: m.mes,
-        ordem: m.ordem, // 👉 SÓ ISSO QUE FALTAVA
-        receita: m.receita,
-        despesa: m.despesa,
-        percentual: m.despesa,
-        percentualReal,
-      };
-    })
+  const dadosCustos = custosMensal
+    .map((item: any) => ({
+      mes: meses[Number(item.mes) - 1],
+      ordem: Number(item.mes),
+      receita: Number(item.receita || 0),
+      despesa: Number(item.despesa || 0),
+      percentual: Number(item.percentual || 0),
+      percentualReal: Number(item.percentual || 0),
+    }))
     .sort((a: any, b: any) => a.ordem - b.ordem);
 
   const categoriasDespesas = dadosFiltrados
@@ -850,20 +803,6 @@ export default function Dashboard() {
       const [ano, mes] = item.data.split("-");
       const mesNumero = Number(mes) - 1;
 
-      const meses = [
-        "jan",
-        "fev",
-        "mar",
-        "abr",
-        "mai",
-        "jun",
-        "jul",
-        "ago",
-        "set",
-        "out",
-        "nov",
-        "dez",
-      ];
       const mesNome = meses[mesNumero];
 
       if (!acc[mesNumero]) {
@@ -878,9 +817,8 @@ export default function Dashboard() {
       }
 
       const categoria = item.categoria || "Outros";
-      const valor = Number(item.valor || 0);
 
-      acc[mesNumero][categoria] += valor;
+      acc[mesNumero][categoria] += Number(item.valor || 0);
 
       return acc;
     }, {}),
@@ -1429,7 +1367,7 @@ export default function Dashboard() {
           <div className="mt-10">
             <div
               id="grafico-heatmap-despesas"
-              className="bg-[#0f1c33] p-6 rounded-2xl shadow-lg w-full"
+              className="bg-[#0f1c33] p-6 rounded-2xl shadow-lg w-full max-h-[700px] overflow-y-auto"
             >
               <h2 className="mb-6 text-lg font-semibold text-red-400">
                 Heatmap de Despesas por Categoria
