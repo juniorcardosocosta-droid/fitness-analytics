@@ -107,6 +107,7 @@ export default function Dashboard() {
   const [clienteId, setClienteId] = useState("");
   const [userId, setUserId] = useState("");
   const [dados, setDados] = useState<any[]>([]);
+  const [financeiroMensal, setFinanceiroMensal] = useState<any[]>([]);
 
   const [mesSelecionado, setMesSelecionado] = useState("");
   const [anoSelecionado, setAnoSelecionado] = useState("");
@@ -256,6 +257,41 @@ export default function Dashboard() {
       }
 
       setDados(data || []);
+
+      let queryFinanceiro = supabase.from("vw_financeiro_mensal").select("*");
+
+      if (role === "usuario") {
+        queryFinanceiro = queryFinanceiro.eq("academia_id", academiaId);
+      }
+
+      // 🔵 ADMIN REDE
+      if (role === "admin_rede") {
+        const { data: academias } = await supabase
+          .from("academias")
+          .select("id")
+          .eq("cliente_id", clienteId);
+
+        const ids = academias?.map((a) => a.id) || [];
+
+        if (academiaId) {
+          queryFinanceiro = queryFinanceiro.eq("academia_id", academiaId);
+        } else {
+          queryFinanceiro = queryFinanceiro.in("academia_id", ids);
+        }
+      }
+
+      // 🔴 ADMIN MASTER
+      if (role === "admin_master") {
+        if (academiaId) {
+          queryFinanceiro = queryFinanceiro.eq("academia_id", academiaId);
+        }
+      }
+
+      const { data: financeiroData } = await queryFinanceiro;
+
+      console.log("FINANCEIRO VIEW:", financeiroData);
+
+      setFinanceiroMensal(financeiroData || []);
     }
 
     carregarDados();
