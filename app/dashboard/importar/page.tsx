@@ -8,6 +8,7 @@ import { importarTecnofit } from "../../../lib/importadores/tecnofit";
 import { importarEvo } from "../../../lib/importadores/evo";
 import { importarUltra } from "../../../lib/importadores/ultra";
 import { importarPacto } from "../../../lib/importadores/pacto";
+import { importarComercialTecnofit } from "../../../lib/importadores/comercialTecnofit";
 
 export default function Importar() {
   const [loading, setLoading] = useState(false);
@@ -44,17 +45,26 @@ export default function Importar() {
     );
   };
 
-  async function processarDados(dados: any[], tipo: "receita" | "despesa") {
+  async function processarDados(
+    dados: any[],
+    tipo: "receita" | "despesa" | "comercial",
+  ) {
     let dadosConvertidos: any[] = [];
 
     if (erp === "tecnofit") {
-      dadosConvertidos = importarTecnofit(dados, tipo, academiaId);
-    } else if (erp === "evo") {
-      dadosConvertidos = await importarEvo(dados, tipo, academiaId);
-    } else if (erp === "ultra") {
-      dadosConvertidos = importarUltra(dados, tipo, academiaId);
-    } else if (erp === "pacto") {
-      dadosConvertidos = importarPacto(dados, tipo, academiaId);
+      if (tipo === "comercial") {
+        dadosConvertidos = importarComercialTecnofit(dados, academiaId);
+      } else {
+        dadosConvertidos = importarTecnofit(dados, tipo, academiaId);
+      }
+    } else if (tipo !== "comercial") {
+      if (erp === "evo") {
+        dadosConvertidos = await importarEvo(dados, tipo, academiaId);
+      } else if (erp === "ultra") {
+        dadosConvertidos = importarUltra(dados, tipo, academiaId);
+      } else if (erp === "pacto") {
+        dadosConvertidos = importarPacto(dados, tipo, academiaId);
+      }
     }
 
     console.log("✅ TOTAL REGISTROS:", dadosConvertidos.length);
@@ -101,7 +111,7 @@ export default function Importar() {
 
     // 🔥 UPSERT (NÃO DUPLICA)
     const { error } = await supabase
-      .from("lancamentos")
+      .from(tipo === "comercial" ? "fato_comercial" : "lancamentos")
       .upsert(dadosConvertidos, {
         onConflict: "academia_id,import_id",
       });
@@ -114,7 +124,10 @@ export default function Importar() {
     }
   }
 
-  async function handleFile(file: File, tipo: "receita" | "despesa") {
+  async function handleFile(
+    file: File,
+    tipo: "receita" | "despesa" | "comercial",
+  ) {
     if (!academiaId) {
       alert("Selecione uma academia");
       return;
@@ -214,6 +227,21 @@ export default function Importar() {
           onChange={(e) => {
             if (e.target.files?.[0]) {
               handleFile(e.target.files[0], "despesa");
+            }
+          }}
+          className="bg-white text-black p-2 rounded"
+        />
+      </div>
+
+      <div className="mt-6">
+        <p>Importar COMERCIAL</p>
+
+        <input
+          type="file"
+          accept=".csv, .xlsx, .xls"
+          onChange={(e) => {
+            if (e.target.files?.[0]) {
+              handleFile(e.target.files[0], "comercial");
             }
           }}
           className="bg-white text-black p-2 rounded"
