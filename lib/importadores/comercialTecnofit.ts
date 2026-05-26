@@ -122,15 +122,15 @@ export function importarComercialTecnofit(
           plano.tipo_plano,
 
         valor:
-          parseNumero(item["Valor"]),
+          parseNumero(item["Valor Venda"]),
 
         desconto:
-          parseNumero(item["Desconto"]),
+          parseNumero(item["Desconto Venda"]),
 
         valor_final: valorFinal,
 
         valor_quitado:
-          parseNumero(item["Valor Quitado"]),
+          parseNumero(item["Valor Quitado/Recibo"]),
 
         vendedor:
           item["Vendedor"] || null,
