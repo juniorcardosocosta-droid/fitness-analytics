@@ -25,6 +25,11 @@ function parseNumero(v: any): number {
 function parseData(dataBruta: any): string | null {
   if (!dataBruta) return null;
 
+  // 🔥 DATA JS
+  if (dataBruta instanceof Date) {
+    return dataBruta.toISOString().split("T")[0];
+  }
+
   // 🔥 DATA SERIAL EXCEL
   if (typeof dataBruta === "number") {
     const excelDate = XLSX.SSF.parse_date_code(dataBruta);
@@ -87,6 +92,8 @@ export function importarComercialTecnofit(dados: any[], academiaId: string) {
     .map((item) => {
       const valorFinal = parseNumero(item["Valor Final"]);
 
+      if (valorFinal <= 0) return null;
+
       console.log("🔥 VALOR FINAL:", item["Valor Final"], valorFinal);
 
       if (
@@ -103,7 +110,7 @@ export function importarComercialTecnofit(dados: any[], academiaId: string) {
 
       const plano = extrairPlano(item["Itens"] || "");
 
-      const dataVenda = parseData(item["Data Venda"]);
+      const dataVenda = parseData(item["Data"]);
 
       if (!dataVenda) return null;
 
