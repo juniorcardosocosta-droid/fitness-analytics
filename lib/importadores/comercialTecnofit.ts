@@ -1,17 +1,25 @@
 import * as XLSX from "xlsx";
 
 function parseNumero(v: any): number {
-  if (!v) return 0;
+  if (v === null || v === undefined || v === "") {
+    return 0;
+  }
 
-  if (typeof v === "number") return v;
+  // 🔥 número puro Excel
+  if (typeof v === "number") {
+    return v;
+  }
 
-  return Number(
+  const numero = Number(
     String(v)
       .replace(/R\$\s?/g, "")
       .replace(/\./g, "")
       .replace(",", ".")
+      .replace("-", "0")
       .trim(),
   );
+
+  return isNaN(numero) ? 0 : numero;
 }
 
 function parseData(dataBruta: any): string | null {
@@ -79,7 +87,15 @@ export function importarComercialTecnofit(dados: any[], academiaId: string) {
     .map((item) => {
       const valorFinal = parseNumero(item["Valor Final"]);
 
-      if (!valorFinal) return null;
+      console.log("🔥 VALOR FINAL:", item["Valor Final"], valorFinal);
+
+      if (
+        valorFinal === null ||
+        valorFinal === undefined ||
+        isNaN(valorFinal)
+      ) {
+        return null;
+      }
 
       const tipoVenda = String(item["Tipo de Venda"] || "");
 
