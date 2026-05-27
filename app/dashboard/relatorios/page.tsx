@@ -1,106 +1,127 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabaseClient"
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Relatorios() {
+  const [academias, setAcademias] = useState<any[]>([]);
+  const [academiaId, setAcademiaId] = useState<string>("todas");
 
-  const [academias, setAcademias] = useState<any[]>([])
-  const [academiaId, setAcademiaId] = useState<string>("todas")
+  const [mes, setMes] = useState<number>(new Date().getMonth() + 1);
+  const [ano, setAno] = useState<number>(new Date().getFullYear());
 
-  const [mes, setMes] = useState<number>(new Date().getMonth() + 1)
-  const [ano, setAno] = useState<number>(new Date().getFullYear())
+  const [receitaBruta, setReceitaBruta] = useState(0);
+  const [despesas, setDespesas] = useState(0);
 
-  const [receitaBruta, setReceitaBruta] = useState(0)
-  const [despesas, setDespesas] = useState(0)
+  const [ranking, setRanking] = useState<any[]>([]);
+  const [insights, setInsights] = useState<any[]>([]);
 
   // CARREGAR ACADEMIAS
   useEffect(() => {
-    carregarAcademias()
-  }, [])
+    carregarAcademias();
+  }, []);
 
   async function carregarAcademias() {
-    const { data } = await supabase.from("academias").select("*")
-    if (data) setAcademias(data)
+    const { data } = await supabase.from("academias").select("*");
+    if (data) setAcademias(data);
   }
 
   // BUSCAR DADOS
   useEffect(() => {
-    buscarDados()
-  }, [academiaId, mes, ano])
+    buscarDados();
+  }, [academiaId, mes, ano]);
 
   async function buscarDados() {
-
-    let query = supabase.from("lancamentos").select("*")
+    let query = supabase.from("lancamentos").select("*");
 
     // FILTRO ACADEMIA
     if (academiaId !== "todas") {
-      query = query.eq("academia_id", academiaId)
+      query = query.eq("academia_id", academiaId);
     }
 
-    const { data, error } = await query
+    const { data, error } = await query;
 
     if (error) {
-      console.log(error)
-      return
+      console.log(error);
+      return;
     }
 
-    let receita = 0
-    let despesa = 0
+    let receita = 0;
+    let despesa = 0;
 
     data.forEach((item: any) => {
-
-      const dataLancamento = new Date(item.data)
-      const mesLanc = dataLancamento.getMonth() + 1
-      const anoLanc = dataLancamento.getFullYear()
+      const dataLancamento = new Date(item.data);
+      const mesLanc = dataLancamento.getMonth() + 1;
+      const anoLanc = dataLancamento.getFullYear();
 
       // FILTRO MÊS/ANO
-      if (mesLanc !== mes || anoLanc !== ano) return
+      if (mesLanc !== mes || anoLanc !== ano) return;
 
-      const valor = Number(item.valor)
+      const valor = Number(item.valor);
 
       if (item.tipo === "receita") {
-        receita += valor
+        receita += valor;
       }
 
       if (item.tipo === "despesa") {
-        despesa += valor
+        despesa += valor;
       }
 
-    })
+    });
 
-    setReceitaBruta(receita)
-    setDespesas(despesa)
+    // ================= RANKING =================
+
+const { data: rankingData } = await supabase
+  .from("vw_ranking_unidades")
+  .select("*")
+  .order("receita", { ascending: false });
+
+if (rankingData) {
+  setRanking(rankingData);
+}
+
+// ================= INSIGHTS =================
+
+let queryInsights = supabase
+  .from("vw_insights_financeiros")
+  .select("*");
+
+if (academiaId !== "todas") {
+  queryInsights = queryInsights.eq("academia_id", academiaId);
+}
+
+const { data: insightsData } = await queryInsights;
+
+if (insightsData) {
+  setInsights(insightsData);
+}
+
+    setReceitaBruta(receita);
+    setDespesas(despesa);
   }
 
   // CALCULOS DRE
-  const deducoes = 0
-  const receitaLiquida = receitaBruta - deducoes
-  const custos = despesas
-  const lucroBruto = receitaLiquida - custos
-  const ebitda = lucroBruto
-  const impostos = 0
-  const despesasFinanceiras = 0
-  const lucroLiquido = ebitda - impostos - despesasFinanceiras
+  const deducoes = 0;
+  const receitaLiquida = receitaBruta - deducoes;
+  const custos = despesas;
+  const lucroBruto = receitaLiquida - custos;
+  const ebitda = lucroBruto;
+  const impostos = 0;
+  const despesasFinanceiras = 0;
+  const lucroLiquido = ebitda - impostos - despesasFinanceiras;
 
-  const margemEbitda = receitaLiquida > 0
-    ? ((ebitda / receitaLiquida) * 100).toFixed(1)
-    : 0
+  const margemEbitda =
+    receitaLiquida > 0 ? ((ebitda / receitaLiquida) * 100).toFixed(1) : 0;
 
-  const margemLiquida = receitaLiquida > 0
-    ? ((lucroLiquido / receitaLiquida) * 100).toFixed(1)
-    : 0
+  const margemLiquida =
+    receitaLiquida > 0 ? ((lucroLiquido / receitaLiquida) * 100).toFixed(1) : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#050b18] to-[#0a162b] text-white p-10">
-
-      <h1 className="text-4xl font-bold mb-8">
-        Relatórios Financeiros
-      </h1>
+      <h1 className="text-4xl font-bold mb-8">Relatórios Financeiros</h1>
 
       {/* FILTROS */}
       <div className="flex gap-4 mb-10 flex-wrap">
-
         <select
           value={academiaId}
           onChange={(e) => setAcademiaId(e.target.value)}
@@ -119,8 +140,10 @@ export default function Relatorios() {
           onChange={(e) => setMes(Number(e.target.value))}
           className="bg-[#0f1c33] px-4 py-2 rounded-lg"
         >
-          {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => (
-            <option key={m} value={m}>{m}</option>
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => (
+            <option key={m} value={m}>
+              {m}
+            </option>
           ))}
         </select>
 
@@ -129,36 +152,46 @@ export default function Relatorios() {
           onChange={(e) => setAno(Number(e.target.value))}
           className="bg-[#0f1c33] px-4 py-2 rounded-lg"
         >
-          {[2024, 2025, 2026].map(a => (
-            <option key={a} value={a}>{a}</option>
+          {[2024, 2025, 2026].map((a) => (
+            <option key={a} value={a}>
+              {a}
+            </option>
           ))}
         </select>
-
       </div>
 
       {/* CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-
-        <Card title="Receita Líquida" value={receitaLiquida} color="text-green-400" />
+        <Card
+          title="Receita Líquida"
+          value={receitaLiquida}
+          color="text-green-400"
+        />
         <Card title="Custos" value={custos} color="text-yellow-400" />
         <Card title="EBITDA" value={ebitda} color="text-purple-400" />
-        <Card title="Lucro Líquido" value={lucroLiquido} color="text-cyan-400" />
-
+        <Card
+          title="Lucro Líquido"
+          value={lucroLiquido}
+          color="text-cyan-400"
+        />
       </div>
 
       {/* DRE */}
       <div className="bg-[#0f1c33] rounded-xl p-8 mb-10">
-
         <h2 className="text-2xl font-semibold mb-6">
           DRE - Demonstrativo de Resultado
         </h2>
 
         <p>Receita Bruta: R$ {receitaBruta.toLocaleString()}</p>
         <p>Deduções: R$ {deducoes}</p>
-        <p className="text-green-400">Receita Líquida: R$ {receitaLiquida.toLocaleString()}</p>
+        <p className="text-green-400">
+          Receita Líquida: R$ {receitaLiquida.toLocaleString()}
+        </p>
 
         <p>Custos: R$ {custos.toLocaleString()}</p>
-        <p className="text-green-400">Lucro Bruto: R$ {lucroBruto.toLocaleString()}</p>
+        <p className="text-green-400">
+          Lucro Bruto: R$ {lucroBruto.toLocaleString()}
+        </p>
 
         <p className="text-purple-400">EBITDA: R$ {ebitda.toLocaleString()}</p>
 
@@ -168,20 +201,65 @@ export default function Relatorios() {
         <p className="text-cyan-400 text-xl font-bold">
           Lucro Líquido: R$ {lucroLiquido.toLocaleString()}
         </p>
-
       </div>
 
-      {/* INSIGHTS */}
-      <div className="bg-[#0f1c33] rounded-xl p-6">
+      {/* ================= INSIGHTS ================= */}
 
-        <p>Margem EBITDA: {margemEbitda}%</p>
-        <p>Margem Líquida: {margemLiquida}%</p>
+<div className="bg-[#0f1c33] rounded-xl p-6">
 
-      </div>
+  <h2 className="text-2xl font-semibold mb-6">
+    Insights Inteligentes
+  </h2>
 
+  <div className="space-y-4">
+
+    <div className="bg-[#162544] rounded-xl p-4">
+      <p className="text-green-400 font-semibold">
+        Margem EBITDA
+      </p>
+
+      <p className="text-white">
+        {margemEbitda}%
+      </p>
     </div>
-  )
+
+    <div className="bg-[#162544] rounded-xl p-4">
+      <p className="text-cyan-400 font-semibold">
+        Margem Líquida
+      </p>
+
+      <p className="text-white">
+        {margemLiquida}%
+      </p>
+    </div>
+
+    {insights.map((item, index) => (
+
+      <div
+        key={index}
+        className="bg-[#162544] rounded-xl p-4"
+      >
+
+        <p className="text-yellow-300">
+          {item.insight_resultado}
+        </p>
+
+        <p className="text-gray-300 mt-2">
+          {item.insight_margem}
+        </p>
+
+      </div>
+
+    ))}
+
+   </div>
+
+</div>
+
+</div>
+  );
 }
+
 
 function Card({ title, value, color }: any) {
   return (
@@ -191,5 +269,5 @@ function Card({ title, value, color }: any) {
         R$ {value.toLocaleString()}
       </h2>
     </div>
-  )
+  );
 }
