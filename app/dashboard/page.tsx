@@ -33,6 +33,7 @@ import {
   BarChart3,
   Users,
   AlertTriangle,
+  Gauge,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -543,6 +544,11 @@ export default function Dashboard() {
   const churn =
     ativos + cancelados > 0 ? (cancelados / (ativos + cancelados)) * 100 : 0;
 
+  const healthScore = Math.max(
+    0,
+    Math.min(100, 100 - churn * 1.2 + ativos * 0.15 - cancelados * 0.4),
+  );
+
   // ================= PERÍODO ANTERIOR =================
   const dadosMesAnterior = dados.filter((item: any) => {
     if (!item.data) return false;
@@ -701,8 +707,6 @@ export default function Dashboard() {
       novos: Number(item.novos || 0),
     }))
     .sort((a: any, b: any) => a.ordem - b.ordem);
-
-  
 
   // ================= GRÁFICO DE CHURN =================
   const dadosChurn = churnMensal
@@ -1003,19 +1007,46 @@ export default function Dashboard() {
 
       {/* ================= KPIs DE ALUNOS ================= */}
       <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-10">
-        {/* Ticket por Aluno Ativos */}
-        <div className="bg-[#0f1c33] p-4 rounded-2xl border border-white/5 flex items-center gap-3">
-          <div className="bg-indigo-500/20 p-2 rounded-xl">
-            <Users className="text-indigo-400 w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-gray-400 text-sm">Ticket por Alunos Ativos</p>
-            <h2 className="text-lg font-bold text-indigo-300">
-              R${" "}
-              {ticketAluno.toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
-              })}
-            </h2>
+        {/* HEALTH SCORE */}
+        <div className="bg-[#0f1c33] p-4 rounded-2xl border border-cyan-500/10 flex items-center justify-between relative overflow-hidden">
+          {/* Glow */}
+          <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 blur-3xl"></div>
+
+          <div className="flex items-center gap-3 z-10">
+            {/* Ícone */}
+            <div className="bg-cyan-500/10 p-2 rounded-xl border border-cyan-400/20">
+              <Gauge className="text-cyan-400 w-5 h-5" />
+            </div>
+
+            {/* Texto */}
+            <div>
+              <p className="text-gray-400 text-sm">⚡ Health Score</p>
+
+              <h2 className="text-2xl font-bold text-cyan-300">
+                {healthScore.toFixed(0)}%
+              </h2>
+
+              <p
+                className={`text-xs mt-1 font-medium
+        ${
+          healthScore >= 80
+            ? "text-green-400"
+            : healthScore >= 60
+              ? "text-cyan-400"
+              : healthScore >= 40
+                ? "text-yellow-400"
+                : "text-red-400"
+        }`}
+              >
+                {healthScore >= 80
+                  ? "Excelente"
+                  : healthScore >= 60
+                    ? "Saudável"
+                    : healthScore >= 40
+                      ? "Atenção"
+                      : "Crítico"}
+              </p>
+            </div>
           </div>
         </div>
 
