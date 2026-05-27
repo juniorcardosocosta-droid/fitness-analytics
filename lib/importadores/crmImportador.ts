@@ -20,10 +20,10 @@ export async function normalizarCRM(file: File) {
         });
 
         // PEGAR CABEÇALHOS REAIS
-        const headers: any = rows[0];
+        const headers: any = rows[1];
 
         // PEGAR DADOS
-        const dados = rows.slice(1);
+        const dados = rows.slice(2);
 
         // TRANSFORMAR EM OBJETO
         const json = dados.map((row: any) => {
