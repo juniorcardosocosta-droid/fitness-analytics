@@ -10,83 +10,127 @@ export async function normalizarCRM(file: File) {
 
       try {
 
-        const data = new Uint8Array(
-          e.target.result
-        );
+        const data =
+          new Uint8Array(
+            e.target.result
+          );
 
-        const workbook = XLSX.read(data, {
-          type: "array"
-        });
+        const workbook =
+          XLSX.read(data, {
+            type: "array"
+          });
 
         const sheet =
           workbook.Sheets[
             workbook.SheetNames[0]
           ];
 
-        const json: any[] =
-          XLSX.utils.sheet_to_json(sheet);
+        // LER PLANILHA COMO ARRAY
+        const rows =
+          XLSX.utils.sheet_to_json(sheet, {
+            header: 1
+          });
 
-        const registros = json.map((row: any) => {
+        // PEGAR CABEÇALHOS REAIS
+        const headers: any =
+          rows[0];
 
-          const lista =
-            String(row["LISTA"] || "")
-              .trim()
-              .toUpperCase();
+        // PEGAR DADOS
+        const dados =
+          rows.slice(1);
 
-          let etapa = "CONTATO";
+        // TRANSFORMAR EM OBJETO
+        const json =
+          dados.map((row: any) => {
 
-          if (
-            lista.includes(
-              "AULA EXPERIMENTAL AGENDADA"
-            )
-          ) {
-            etapa = "AGENDADO";
-          }
+            const obj: any = {};
 
-          if (
-            lista.includes(
-              "RETORNO FECHAMENTO"
-            )
-          ) {
-            etapa = "AULA_EXPERIMENTAL";
-          }
+            headers.forEach(
+              (header: any, index: number) => {
 
-          if (
-            lista.includes(
-              "VENDA FECHADA"
-            )
-          ) {
-            etapa = "FECHADO";
-          }
+                obj[String(header).trim()] =
+                  row[index];
 
-          return {
+              }
+            );
 
-            nome:
-              row["NOME"] || "",
+            return obj;
 
-            telefone:
-              row["TELEFONE"] || "",
+          });
 
-            email:
-              row["EMAIL"] || "",
+        const registros =
+          json.map((row: any) => {
 
-            vendedor:
-              row["CONSULTOR"] || "",
+            const lista =
+              String(
+                row["LISTA"] || ""
+              )
+                .trim()
+                .toUpperCase();
 
-            lista,
+            let etapa = "CONTATO";
 
-            etapa,
+            if (
+              lista.includes(
+                "AULA EXPERIMENTAL AGENDADA"
+              )
+            ) {
 
-            data_cadastro:
-              row["DATA"] || null
+              etapa = "AGENDADO";
 
-          };
+            }
 
-        });
+            else if (
+              lista.includes(
+                "RETORNO FECHAMENTO"
+              )
+            ) {
+
+              etapa =
+                "AULA_EXPERIMENTAL";
+
+            }
+
+            else if (
+              lista.includes(
+                "VENDA FECHADA"
+              )
+            ) {
+
+              etapa = "FECHADO";
+
+            }
+
+            return {
+
+              nome:
+                row["CLIENTE"] || "",
+
+              telefone:
+                row["TELEFONE CLIENTE"] || "",
+
+              email:
+                row["E-MAIL"] || "",
+
+              vendedor:
+                row["CONSULTOR"] || "",
+
+              lista,
+
+              etapa,
+
+              data_cadastro:
+                row["CADASTRO"] || null
+
+            };
+
+          });
 
         resolve(registros);
 
-      } catch (error) {
+      }
+
+      catch (error) {
 
         reject(error);
 

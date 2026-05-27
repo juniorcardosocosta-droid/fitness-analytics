@@ -36,7 +36,7 @@ export default function CRMPage() {
 
   useEffect(() => {
     carregarFunilCRM();
-  }, [academiaId]);
+ }, [academiaId, mesSelecionado]);
 
   async function carregarAcademias() {
     const { data, error } = await supabase
