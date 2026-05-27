@@ -781,13 +781,25 @@ export default function Dashboard() {
   };
 
   // ================= GRÁFICO EVOLUÇAÕ DO TICKET MEDIO EFETIVO =================
-  const dadosTicket = ticketMensal
-    .map((item: any) => ({
-      mes: meses[Number(item.mes) - 1],
-      ordem: Number(item.mes),
-      recorrencia: Number(item.recorrencia || 0),
-      agregador: Number(item.agregador || 0),
-    }))
+  const dadosTicket = financeiroMensal
+    .map((item: any) => {
+      const receitaMes = Number(item.receita || 0);
+
+      const alunosMes = alunosMensal.find(
+        (a: any) =>
+          Number(a.mes) === Number(item.mes) &&
+          Number(a.ano) === Number(item.ano),
+      );
+
+      const ativosMes = Number(alunosMes?.ativos || 0);
+
+      return {
+        mes: meses[Number(item.mes) - 1],
+        ordem: Number(item.mes),
+
+        ticket: ativosMes > 0 ? receitaMes / ativosMes : 0,
+      };
+    })
     .sort((a: any, b: any) => a.ordem - b.ordem);
 
   // ================= GRÁFICO EVOLUÇAÕ DOS CUSTOS OPERACIONAIS TOTAIS =================
@@ -1503,25 +1515,60 @@ export default function Dashboard() {
         <div id="grafico-ticket" className="bg-[#0f1c33] p-6 rounded w-full">
           <h2 className="mb-4">Ticket Médio</h2>
           <ResponsiveContainer width="100%" height={350}>
-            <LineChart data={dadosTicket}>
-              <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
-              <XAxis dataKey="mes" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip />
-              <Legend />
+            <LineChart
+              data={dadosTicket}
+              margin={{
+                top: 20,
+                right: 30,
+                left: 10,
+                bottom: 0,
+              }}
+            >
+              <CartesianGrid stroke="#1e335a" strokeDasharray="3 3" />
+
+              <XAxis dataKey="mes" stroke="#6b87b3" />
+
+              <YAxis stroke="#6b87b3" tickFormatter={(v) => `R$ ${v}`} />
+
+              <Tooltip
+                formatter={(v: any) => [
+                  `R$ ${Number(v).toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                  })}`,
+                  "Ticket Médio",
+                ]}
+                contentStyle={{
+                  backgroundColor: "#0f172a",
+                  border: "1px solid #06b6d4",
+                  borderRadius: "12px",
+                  color: "#fff",
+                }}
+              />
 
               <Line
-                dataKey="recorrencia"
-                stroke="#9ca3af"
-                strokeWidth={3}
-                dot={{ r: 4 }}
-              />
-              <Line
-                dataKey="agregador"
-                stroke="#3b82f6"
-                strokeWidth={3}
-                dot={{ r: 4 }}
-              />
+                type="monotone"
+                dataKey="ticket"
+                stroke="#06b6d4"
+                strokeWidth={4}
+                dot={{
+                  r: 5,
+                  fill: "#06b6d4",
+                }}
+                activeDot={{
+                  r: 8,
+                }}
+              >
+                <LabelList
+                  dataKey="ticket"
+                  position="top"
+                  formatter={(v: any) =>
+                    `R$ ${Number(v).toLocaleString("pt-BR", {
+                      maximumFractionDigits: 0,
+                    })}`
+                  }
+                  fill="#67e8f9"
+                />
+              </Line>
             </LineChart>
           </ResponsiveContainer>
         </div>
