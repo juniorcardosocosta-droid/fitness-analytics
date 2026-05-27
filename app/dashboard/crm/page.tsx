@@ -65,17 +65,9 @@ export default function CRMPage() {
 
     if (mesSelecionado && data) {
       data = data.filter((item: any) => {
-        const dataTexto = String(item.data_cadastro || "");
+        const dataCRM = new Date(item.data_cadastro);
 
-        const dataSemHora = dataTexto.split(" ")[0];
-
-        const partes = dataSemHora.split("/");
-
-        if (partes.length !== 3) {
-          return false;
-        }
-
-        const mesCRM = Number(partes[1]);
+        const mesCRM = dataCRM.getMonth() + 1;
 
         return mesCRM === Number(mesSelecionado);
       });
