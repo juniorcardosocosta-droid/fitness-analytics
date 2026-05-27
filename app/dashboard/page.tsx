@@ -791,13 +791,14 @@ export default function Dashboard() {
           Number(a.ano) === Number(item.ano),
       );
 
-      const ativosMes = Number(alunosMes?.ativos || 0);
+      const totalMes = Number(alunosMes?.total || 0);
 
       return {
         mes: meses[Number(item.mes) - 1],
         ordem: Number(item.mes),
 
-        ticket: ativosMes > 0 ? receitaMes / ativosMes : 0,
+        ticket: totalMes > 0
+  ? receitaMes / totalMes : 0,
       };
     })
     .sort((a: any, b: any) => a.ordem - b.ordem);
