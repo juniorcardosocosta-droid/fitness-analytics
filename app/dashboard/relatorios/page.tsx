@@ -13,6 +13,8 @@ export default function Relatorios() {
   const [receitaBruta, setReceitaBruta] = useState(0);
   const [despesas, setDespesas] = useState(0);
 
+  const [ranking, setRanking] = useState<any[]>([]);
+
   // CARREGAR ACADEMIAS
   useEffect(() => {
     carregarAcademias();
@@ -208,6 +210,55 @@ export default function Relatorios() {
           <p className="text-cyan-400 text-xl font-bold">
             Lucro Líquido: R$ {lucroLiquido.toLocaleString("pt-BR")}
           </p>
+        </div>
+      </div>
+
+      {/* RANKING DE UNIDADES */}
+
+      <div className="bg-[#0f1c33] rounded-xl p-8 mb-10">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-semibold">Ranking de Unidades</h2>
+
+            <p className="text-gray-400 mt-1">
+              Performance financeira das academias
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {ranking.map((item: any, index: number) => (
+            <div
+              key={item.id}
+              className="bg-[#162544] rounded-xl p-5 flex items-center justify-between"
+            >
+              <div className="flex items-center gap-5">
+                <div className="w-12 h-12 rounded-full bg-[#0f1c33] flex items-center justify-center text-xl font-bold text-cyan-400">
+                  #{index + 1}
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold">{item.nome}</h3>
+
+                  <p className="text-gray-400 text-sm mt-1">
+                    Ticket Médio: R${" "}
+                    {Number(item.ticket_medio || 0).toLocaleString("pt-BR")}
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-right">
+                <p className="text-green-400 text-xl font-bold">
+                  R$ {Number(item.receita || 0).toLocaleString("pt-BR")}
+                </p>
+
+                <p className="text-gray-400 text-sm mt-1">
+                  Resultado: R${" "}
+                  {Number(item.resultado || 0).toLocaleString("pt-BR")}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
