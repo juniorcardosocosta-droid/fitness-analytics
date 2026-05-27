@@ -13,10 +13,30 @@ export default function CRMPage() {
 
   const [academiaId, setAcademiaId] = useState("");
 
+  const [mesSelecionado, setMesSelecionado] = useState("");
+
+  const [contatoInicial, setContatoInicial] = useState(0);
+
+  const [agendados, setAgendados] = useState(0);
+
+  const [aulaExperimental, setAulaExperimental] = useState(0);
+
+  const [fechados, setFechados] = useState(0);
+
+  const [pctAgendados, setPctAgendados] = useState(0);
+
+  const [pctAula, setPctAula] = useState(0);
+
+  const [pctFechados, setPctFechados] = useState(0);
+
   // CARREGAR ACADEMIAS
   useEffect(() => {
     carregarAcademias();
   }, []);
+
+  useEffect(() => {
+    carregarFunilCRM();
+  }, [academiaId]);
 
   async function carregarAcademias() {
     const { data, error } = await supabase
@@ -32,6 +52,68 @@ export default function CRMPage() {
     if (data) {
       setAcademias(data);
     }
+  }
+
+  async function carregarFunilCRM() {
+    let query = supabase.from("fato_crm").select("*");
+
+    if (academiaId) {
+      query = query.eq("academia_id", academiaId);
+    }
+
+    let { data, error } = await query;
+
+    if (mesSelecionado && data) {
+      data = data.filter((item: any) => {
+        const dataCRM = new Date(item.data_cadastro);
+
+        return dataCRM.getMonth() + 1 === Number(mesSelecionado);
+      });
+    }
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    if (!data) return;
+
+    const totalContato = data.length;
+
+    const totalAgendado = data.filter(
+      (item: any) => item.status === "AGENDADO",
+    ).length;
+
+    const totalAula = data.filter(
+      (item: any) => item.status === "AULA_EXPERIMENTAL",
+    ).length;
+
+    const totalFechado = data.filter(
+      (item: any) => item.status === "FECHADO",
+    ).length;
+
+    setContatoInicial(totalContato);
+
+    setAgendados(totalAgendado);
+
+    setAulaExperimental(totalAula);
+
+    setFechados(totalFechado);
+
+    const percentualAgendados =
+      totalContato > 0 ? Math.round((totalAgendado / totalContato) * 100) : 0;
+
+    const percentualAula =
+      totalAgendado > 0 ? Math.round((totalAula / totalAgendado) * 100) : 0;
+
+    const percentualFechados =
+      totalAula > 0 ? Math.round((totalFechado / totalAula) * 100) : 0;
+
+    setPctAgendados(percentualAgendados);
+
+    setPctAula(percentualAula);
+
+    setPctFechados(percentualFechados);
   }
 
   // IMPORTAR CRM
@@ -90,6 +172,8 @@ export default function CRMPage() {
       }
 
       alert("CRM importado com sucesso!");
+
+      carregarFunilCRM();
     } catch (error) {
       console.log(error);
 
@@ -117,32 +201,36 @@ export default function CRMPage() {
         <div className="flex flex-col md:flex-row gap-4">
           {/* FILTRO MÊS */}
 
-          <select className="bg-[#0f1c33] border border-white/10 px-5 py-3 rounded-xl min-w-[220px]">
-            <option>Todos os meses</option>
+          <select
+            value={mesSelecionado}
+            onChange={(e) => setMesSelecionado(e.target.value)}
+            className="bg-[#0f1c33] border border-white/10 px-5 py-3 rounded-xl min-w-[220px]"
+          >
+            <option value="">Todos os meses</option>
 
-            <option>Janeiro</option>
+            <option value="1">Janeiro</option>
 
-            <option>Fevereiro</option>
+            <option value="2">Fevereiro</option>
 
-            <option>Março</option>
+            <option value="3">Março</option>
 
-            <option>Abril</option>
+            <option value="4">Abril</option>
 
-            <option>Maio</option>
+            <option value="5">Maio</option>
 
-            <option>Junho</option>
+            <option value="6">Junho</option>
 
-            <option>Julho</option>
+            <option value="7">Julho</option>
 
-            <option>Agosto</option>
+            <option value="8">Agosto</option>
 
-            <option>Setembro</option>
+            <option value="9">Setembro</option>
 
-            <option>Outubro</option>
+            <option value="10">Outubro</option>
 
-            <option>Novembro</option>
+            <option value="11">Novembro</option>
 
-            <option>Dezembro</option>
+            <option value="12">Dezembro</option>
           </select>
 
           {/* FILTRO ACADEMIA */}
@@ -191,7 +279,7 @@ export default function CRMPage() {
           <div className="w-[90%] bg-cyan-500/30 border border-cyan-400 rounded-t-full py-8 text-center mb-2">
             <p className="text-gray-300 text-sm">Contato Inicial</p>
 
-            <h3 className="text-5xl font-bold mt-2">2076</h3>
+            <h3 className="text-5xl font-bold mt-2">{contatoInicial}</h3>
           </div>
 
           {/* AGENDADOS */}
@@ -199,9 +287,9 @@ export default function CRMPage() {
           <div className="w-[70%] bg-cyan-500/20 border border-cyan-400 py-8 text-center mb-2">
             <p className="text-gray-300 text-sm">Agendados</p>
 
-            <h3 className="text-4xl font-bold mt-2">567</h3>
+            <h3 className="text-4xl font-bold mt-2">{agendados}</h3>
 
-            <p className="text-pink-400 mt-3 font-semibold">27%</p>
+            <p className="text-pink-400 mt-3 font-semibold">{pctAgendados}%</p>
           </div>
 
           {/* AULA */}
@@ -209,9 +297,9 @@ export default function CRMPage() {
           <div className="w-[50%] bg-cyan-500/10 border border-cyan-400 py-8 text-center mb-2">
             <p className="text-gray-300 text-sm">Aula Experimental</p>
 
-            <h3 className="text-3xl font-bold mt-2">392</h3>
+            <h3 className="text-3xl font-bold mt-2">{aulaExperimental}</h3>
 
-            <p className="text-pink-400 mt-3 font-semibold">69%</p>
+            <p className="text-pink-400 mt-3 font-semibold">{pctAula}%</p>
           </div>
 
           {/* FECHADOS */}
@@ -219,9 +307,9 @@ export default function CRMPage() {
           <div className="w-[30%] bg-cyan-500/5 border border-cyan-400 rounded-b-full py-8 text-center">
             <p className="text-gray-300 text-sm">Fechados</p>
 
-            <h3 className="text-2xl font-bold mt-2">225</h3>
+            <h3 className="text-2xl font-bold mt-2">{fechados}</h3>
 
-            <p className="text-pink-400 mt-3 font-semibold">57%</p>
+            <p className="text-pink-400 mt-3 font-semibold">{pctFechados}%</p>
           </div>
         </div>
 
