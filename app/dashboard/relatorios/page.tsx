@@ -71,6 +71,15 @@ export default function Relatorios() {
       }
     });
 
+    const { data: rankingData } = await supabase
+      .from("vw_ranking_unidades")
+      .select("*")
+      .order("receita", { ascending: false });
+
+    if (rankingData) {
+      setRanking(rankingData);
+    }
+
     setReceitaBruta(receita);
     setDespesas(despesa);
   }
