@@ -206,7 +206,6 @@ export default function CRMPage() {
   return (
     <div className="min-h-screen bg-[#050b18] text-white p-10">
       {/* HEADER */}
-
       <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 mb-10">
         <div>
           <h1 className="text-4xl font-bold">CRM Analytics</h1>
@@ -217,10 +216,8 @@ export default function CRMPage() {
         </div>
 
         {/* FILTROS */}
-
         <div className="flex flex-col md:flex-row gap-4">
           {/* FILTRO MÊS */}
-
           <select
             value={mesSelecionado}
             onChange={(e) => setMesSelecionado(e.target.value)}
@@ -229,32 +226,20 @@ export default function CRMPage() {
             <option value="">Todos os meses</option>
 
             <option value="1">Janeiro</option>
-
             <option value="2">Fevereiro</option>
-
             <option value="3">Março</option>
-
             <option value="4">Abril</option>
-
             <option value="5">Maio</option>
-
             <option value="6">Junho</option>
-
             <option value="7">Julho</option>
-
             <option value="8">Agosto</option>
-
             <option value="9">Setembro</option>
-
             <option value="10">Outubro</option>
-
             <option value="11">Novembro</option>
-
             <option value="12">Dezembro</option>
           </select>
 
           {/* FILTRO ACADEMIA */}
-
           <select
             value={academiaId}
             onChange={(e) => setAcademiaId(e.target.value)}
@@ -270,7 +255,6 @@ export default function CRMPage() {
           </select>
 
           {/* IMPORTAR */}
-
           <label className="bg-cyan-500 hover:bg-cyan-400 transition-all text-black font-semibold px-6 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-3">
             <span>⬆</span>
             Importar CRM
@@ -285,61 +269,204 @@ export default function CRMPage() {
       </div>
 
       {/* FUNIL */}
-
-      <div className="bg-[#0f1c33] rounded-2xl p-10">
+      <div className="bg-gradient-to-br from-[#13203a] to-[#0b1426] rounded-3xl p-10 border border-cyan-500/20 shadow-2xl">
+        {/* TITULO */}
         <div className="mb-10">
-          <h2 className="text-3xl font-bold">Funil Comercial</h2>
+          <h2 className="text-4xl font-bold text-white">Funil Comercial</h2>
 
           <p className="text-gray-400 mt-2">Conversão entre etapas do CRM</p>
         </div>
 
-        <div className="flex flex-col items-center">
-          {/* TOPO */}
+        {/* GRID */}
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-10 items-center">
+          {/* KPIS */}
+          <div className="space-y-6">
+            <div className="bg-[#162544] rounded-2xl p-6 border border-cyan-500/10">
+              <p className="text-gray-400 text-sm">Conversão Total</p>
 
-          <div className="w-[90%] bg-cyan-500/30 border border-cyan-400 rounded-t-full py-8 text-center mb-2">
-            <p className="text-gray-300 text-sm">Contato Inicial</p>
+              <h3 className="text-5xl font-bold text-white mt-2">
+                {pctFechados}%
+              </h3>
+            </div>
 
-            <h3 className="text-5xl font-bold mt-2">{contatoInicial}</h3>
+            <div className="bg-[#162544] rounded-2xl p-6 border border-pink-500/10">
+              <p className="text-gray-400 text-sm">Leads Perdidos</p>
+
+              <h3 className="text-5xl font-bold text-pink-400 mt-2">
+                {contatoInicial - fechados}
+              </h3>
+            </div>
+
+            <div className="bg-[#162544] rounded-2xl p-6 border border-cyan-500/10">
+              <p className="text-gray-400 text-sm">Fechamentos</p>
+
+              <h3 className="text-5xl font-bold text-cyan-400 mt-2">
+                {fechados}
+              </h3>
+            </div>
           </div>
 
-          {/* AGENDADOS */}
+          {/* FUNIL CENTRAL */}
+          <div className="xl:col-span-2 flex flex-col items-center justify-center">
+            {/* CONTATO */}
+            <div
+              className="
+  w-full
+  max-w-[760px]
+  h-[140px]
+  clip-top
+  bg-gradient-to-r
+  from-cyan-500
+  to-cyan-400
+  shadow-[0_0_60px_rgba(0,255,255,0.15)]
+  border border-cyan-200
+  flex flex-col
+  items-center
+  justify-center
+  transition-all
+  duration-300
+  hover:scale-[1.02]
+"
+            >
+              <p className="text-sm text-cyan-100">Contato Inicial</p>
 
-          <div className="w-[70%] bg-cyan-500/20 border border-cyan-400 py-8 text-center mb-2">
-            <p className="text-gray-300 text-sm">Agendados</p>
+              <h2 className="text-6xl font-bold text-white">
+                {contatoInicial}
+              </h2>
+            </div>
 
-            <h3 className="text-4xl font-bold mt-2">{agendados}</h3>
+            {/* AGENDADOS */}
+            <div
+              className="
+  w-[82%]
+  h-[125px]
+  clip-middle
+  bg-gradient-to-r
+  from-[#0f5f85]
+  to-[#1393c7]
+  border border-cyan-200
+  shadow-[0_0_50px_rgba(0,255,255,0.10)]
+  flex flex-col
+  items-center
+  justify-center
+  transition-all
+  duration-300
+  hover:scale-[1.02]
+"
+            >
+              <p className="text-sm text-cyan-100">Agendados</p>
 
-            <p className="text-pink-400 mt-3 font-semibold">{pctAgendados}%</p>
+              <h2 className="text-5xl font-bold text-white">{agendados}</h2>
+            </div>
+
+            {/* AULA */}
+            <div
+              className="
+  w-[60%]
+  h-[115px]
+  clip-middle
+  bg-gradient-to-r
+  from-[#12395c]
+  to-[#166b9a]
+  border border-cyan-200
+  shadow-[0_0_40px_rgba(0,255,255,0.08)]
+  flex flex-col
+  items-center
+  justify-center
+  transition-all
+  duration-300
+  hover:scale-[1.02]
+"
+            >
+              <p className="text-sm text-cyan-100">Aula Experimental</p>
+
+              <h2 className="text-5xl font-bold text-white">
+                {aulaExperimental}
+              </h2>
+            </div>
+
+            {/* FECHADOS */}
+            <div
+              className="
+  w-[42%]
+  h-[135px]
+  clip-bottom
+  bg-gradient-to-r
+  from-[#081728]
+  to-[#10466d]
+  border border-cyan-200
+  shadow-[0_0_30px_rgba(0,255,255,0.08)]
+  flex flex-col
+  items-center
+  justify-center
+  transition-all
+  duration-300
+  hover:scale-[1.02]
+"
+            >
+              <p className="text-sm text-cyan-100">Fechados</p>
+
+              <h2 className="text-5xl font-bold text-white">{fechados}</h2>
+            </div>
           </div>
 
-          {/* AULA */}
+          {/* CONVERSÕES */}
+          <div className="space-y-8">
+            {/* AGENDADOS */}
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-300">Conversão Agendados</span>
 
-          <div className="w-[50%] bg-cyan-500/10 border border-cyan-400 py-8 text-center mb-2">
-            <p className="text-gray-300 text-sm">Aula Experimental</p>
+                <span className="text-pink-400 font-bold">{pctAgendados}%</span>
+              </div>
 
-            <h3 className="text-3xl font-bold mt-2">{aulaExperimental}</h3>
+              <div className="w-full bg-[#162544] rounded-full h-4 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-pink-500 to-cyan-400 h-4 rounded-full"
+                  style={{
+                    width: `${pctAgendados}%`,
+                  }}
+                ></div>
+              </div>
+            </div>
 
-            <p className="text-pink-400 mt-3 font-semibold">{pctAula}%</p>
-          </div>
+            {/* AULA */}
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-300">Conversão Aula</span>
 
-          {/* FECHADOS */}
+                <span className="text-pink-400 font-bold">{pctAula}%</span>
+              </div>
 
-          <div className="w-[30%] bg-cyan-500/5 border border-cyan-400 rounded-b-full py-8 text-center">
-            <p className="text-gray-300 text-sm">Fechados</p>
+              <div className="w-full bg-[#162544] rounded-full h-4 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-pink-500 to-cyan-400 h-4 rounded-full"
+                  style={{
+                    width: `${pctAula}%`,
+                  }}
+                ></div>
+              </div>
+            </div>
 
-            <h3 className="text-2xl font-bold mt-2">{fechados}</h3>
+            {/* FECHADOS */}
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-300">Conversão Fechados</span>
 
-            <p className="text-pink-400 mt-3 font-semibold">{pctFechados}%</p>
+                <span className="text-pink-400 font-bold">{pctFechados}%</span>
+              </div>
+
+              <div className="w-full bg-[#162544] rounded-full h-4 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-pink-500 to-cyan-400 h-4 rounded-full"
+                  style={{
+                    width: `${pctFechados}%`,
+                  }}
+                ></div>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* LOADING */}
-
-        {loading && (
-          <div className="mt-6">
-            <p className="text-cyan-400">Importando CRM...</p>
-          </div>
-        )}
       </div>
     </div>
   );
