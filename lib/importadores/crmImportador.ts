@@ -66,7 +66,27 @@ export async function normalizarCRM(file: File) {
 
             etapa,
 
-            data_cadastro: row["CADASTRO"] || null,
+            data_cadastro: (() => {
+              const dataTexto = String(row["CADASTRO"] || "");
+
+              const [dataParte, horaParte] = dataTexto.split(" ");
+
+              if (!dataParte) return null;
+
+              const partes = dataParte.split("/");
+
+              if (partes.length !== 3) {
+                return null;
+              }
+
+              const dia = partes[0];
+
+              const mes = partes[1];
+
+              const ano = partes[2];
+
+              return `${ano}-${mes}-${dia}`;
+            })(),
           };
         });
 
