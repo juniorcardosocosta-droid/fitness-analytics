@@ -36,7 +36,7 @@ export default function CRMPage() {
 
   useEffect(() => {
     carregarFunilCRM();
- }, [academiaId, mesSelecionado]);
+  }, [academiaId, mesSelecionado]);
 
   async function carregarAcademias() {
     const { data, error } = await supabase
@@ -136,6 +136,9 @@ export default function CRMPage() {
       const registros: any = await normalizarCRM(file);
 
       console.log("CRM NORMALIZADO:", registros);
+
+      // APAGAR CRM ANTIGO
+      await supabase.from("fato_crm").delete().eq("academia_id", academiaId);
 
       // PAYLOAD
       const payload = registros.map((item: any) => ({
