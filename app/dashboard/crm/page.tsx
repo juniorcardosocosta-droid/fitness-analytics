@@ -171,7 +171,7 @@ export default function CRMPage() {
         vendedor: item.vendedor,
       }));
 
-      console.log("PAYLOAD CRM:", payload);
+      console.log("PRIMEIRO PAYLOAD:", payload[0]);
 
       // INSERT
       const { error } = await supabase.from("fato_crm").insert(payload);
@@ -185,6 +185,13 @@ export default function CRMPage() {
       }
 
       alert("CRM importado com sucesso!");
+
+      const { data: crmDebug } = await supabase
+        .from("fato_crm")
+        .select("*")
+        .limit(5);
+
+      console.log("CRM SALVO:", crmDebug);
 
       carregarFunilCRM();
     } catch (error) {
