@@ -263,10 +263,10 @@ export default function Dashboard() {
 
       setDados(data || []);
 
-      let queryFinanceiro = supabase.from("vw_financeiro_mensal").select("*");
+      let queryDashboard = supabase.from("vw_dashboard_mensal").select("*");
 
       if (role === "usuario") {
-        queryFinanceiro = queryFinanceiro.eq("academia_id", academiaId);
+        queryDashboard = queryDashboard.eq("academia_id", academiaId);
       }
 
       // 🔵 ADMIN REDE
@@ -279,24 +279,24 @@ export default function Dashboard() {
         const ids = academias?.map((a) => a.id) || [];
 
         if (academiaId) {
-          queryFinanceiro = queryFinanceiro.eq("academia_id", academiaId);
+          queryDashboard = queryDashboard.eq("academia_id", academiaId);
         } else {
-          queryFinanceiro = queryFinanceiro.in("academia_id", ids);
+          queryDashboard = queryDashboard.in("academia_id", ids);
         }
       }
 
       // 🔴 ADMIN MASTER
       if (role === "admin_master") {
         if (academiaId) {
-          queryFinanceiro = queryFinanceiro.eq("academia_id", academiaId);
+          queryDashboard = queryDashboard.eq("academia_id", academiaId);
         }
       }
 
-      const { data: financeiroData } = await queryFinanceiro;
+      const { data: dashboardData } = await queryDashboard;
 
-      console.log("FINANCEIRO VIEW:", financeiroData);
+      console.log("DASHBOARD VIEW:", dashboardData);
 
-      setFinanceiroMensal(financeiroData || []);
+      setFinanceiroMensal(dashboardData || []);
 
       let queryChurn = supabase.from("vw_churn_mensal").select("*");
 
@@ -644,7 +644,7 @@ export default function Dashboard() {
           };
         }
 
-        const texto = String(item.origem || "").toLowerCase();
+        const texto = String(item.forma_pagamento || "").toLowerCase();
         const valor = Number(item.valor || 0);
 
         if (
@@ -797,8 +797,7 @@ export default function Dashboard() {
         mes: meses[Number(item.mes) - 1],
         ordem: Number(item.mes),
 
-        ticket: totalMes > 0
-  ? receitaMes / totalMes : 0,
+        ticket: totalMes > 0 ? receitaMes / totalMes : 0,
       };
     })
     .sort((a: any, b: any) => a.ordem - b.ordem);
