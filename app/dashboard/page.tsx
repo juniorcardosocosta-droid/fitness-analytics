@@ -650,7 +650,10 @@ export default function Dashboard() {
         if (
           texto.includes("cart") ||
           texto.includes("credito") ||
-          texto.includes("debito")
+          texto.includes("debito") ||
+          texto.includes("visa") ||
+          texto.includes("master") ||
+           texto.includes("elo")
         ) {
           acc[mesNumero].cartao += valor;
         } else if (texto.includes("pix")) {
