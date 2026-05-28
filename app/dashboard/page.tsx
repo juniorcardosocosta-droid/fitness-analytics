@@ -653,7 +653,7 @@ export default function Dashboard() {
           texto.includes("debito") ||
           texto.includes("visa") ||
           texto.includes("master") ||
-           texto.includes("elo")
+          texto.includes("elo")
         ) {
           acc[mesNumero].cartao += valor;
         } else if (texto.includes("pix")) {
@@ -784,25 +784,12 @@ export default function Dashboard() {
   };
 
   // ================= GRÁFICO EVOLUÇAÕ DO TICKET MEDIO EFETIVO =================
-  const dadosTicket = financeiroMensal
-    .map((item: any) => {
-      const receitaMes = Number(item.receita || 0);
-
-      const alunosMes = alunosMensal.find(
-        (a: any) =>
-          Number(a.mes) === Number(item.mes) &&
-          Number(a.ano) === Number(item.ano),
-      );
-
-      const totalMes = Number(alunosMes?.total || 0);
-
-      return {
-        mes: meses[Number(item.mes) - 1],
-        ordem: Number(item.mes),
-
-        ticket: totalMes > 0 ? receitaMes / totalMes : 0,
-      };
-    })
+  const dadosTicket = ticketMensal
+    .map((item: any) => ({
+      mes: meses[Number(item.mes) - 1],
+      ordem: Number(item.mes),
+      ticket: Number(item.ticket || 0),
+    }))
     .sort((a: any, b: any) => a.ordem - b.ordem);
 
   // ================= GRÁFICO EVOLUÇAÕ DOS CUSTOS OPERACIONAIS TOTAIS =================
