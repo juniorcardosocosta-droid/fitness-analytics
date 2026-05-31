@@ -123,16 +123,28 @@ export default function Academias() {
 
   }
 
-  async function inativarAcademia(id:string) {
+  async function inativarAcademia(id: string) {
 
-    await supabase
-      .from("academias")
-      .update({ ativo:false })
-      .eq("id", id)
+  const confirmar = window.confirm(
+    "Tem certeza que deseja desativar esta academia?"
+  );
 
-    carregarAcademias()
+  if (!confirmar) return;
 
+  const { error } = await supabase
+    .from("academias")
+    .update({ ativo: false })
+    .eq("id", id);
+
+  if (error) {
+    alert("Erro ao desativar academia.");
+    return;
   }
+
+  alert("Academia desativada com sucesso!");
+
+  carregarAcademias();
+}
 
   return (
 
@@ -257,8 +269,16 @@ export default function Academias() {
                 <td>{a.responsavel}</td>
                 <td>{a.telefone}</td>
                 <td>
-                  {a.ativo ? "Ativo" : "Inativo"}
-                </td>
+  <span
+    className={`px-2 py-1 rounded text-xs font-medium ${
+      a.ativo
+        ? "bg-green-500/20 text-green-400"
+        : "bg-red-500/20 text-red-400"
+    }`}
+  >
+    {a.ativo ? "Ativa" : "Desativada"}
+  </span>
+</td>
 
                 <td className="space-x-3">
 
