@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
-  Plug,
   Building,
   Users,
   LogOut,
@@ -60,11 +59,7 @@ export default function DashboardLayout({
       path: "/dashboard/importar",
       icon: FileText,
     },
-    {
-      name: "Integrações",
-      path: "/dashboard/integracoes",
-      icon: Plug,
-    },
+
     {
       name: "CRM",
       path: "/dashboard/crm",
