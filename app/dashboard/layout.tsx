@@ -106,10 +106,13 @@ export default function DashboardLayout({
         </nav>
 
         <div className="mt-10 pt-6 border-t border-white/10 space-y-2">
-          <button className="w-full flex items-center gap-3 p-3 rounded-lg text-gray-400 hover:bg-white/5 hover:text-white transition">
+          <Link
+            href="/dashboard/perfil"
+            className="w-full flex items-center gap-3 p-3 rounded-lg text-gray-400 hover:bg-white/5 hover:text-white transition"
+          >
             <Settings size={18} />
             Meu Perfil
-          </button>
+          </Link>
 
           <button
             onClick={handleLogout}
