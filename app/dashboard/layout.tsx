@@ -1,14 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Plug, Building, Users } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  LayoutDashboard,
+  FileText,
+  Plug,
+  Building,
+  Users,
+  LogOut,
+  Settings,
+} from "lucide-react";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const { createClient } = await import("@supabase/supabase-js");
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+
+    await supabase.auth.signOut();
+
+    router.push("/login");
+  };
+
   const pathname = usePathname();
 
   const menu = [
@@ -81,6 +104,21 @@ export default function DashboardLayout({
             );
           })}
         </nav>
+
+        <div className="mt-10 pt-6 border-t border-white/10 space-y-2">
+          <button className="w-full flex items-center gap-3 p-3 rounded-lg text-gray-400 hover:bg-white/5 hover:text-white transition">
+            <Settings size={18} />
+            Meu Perfil
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 p-3 rounded-lg text-red-400 hover:bg-red-500/10 transition"
+          >
+            <LogOut size={18} />
+            Sair
+          </button>
+        </div>
       </aside>
 
       {/* CONTEÚDO */}
