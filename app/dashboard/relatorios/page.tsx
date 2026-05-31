@@ -115,7 +115,7 @@ export default function Relatorios() {
     const { data: rankingData } = await supabase
       .from("vw_ranking_unidades")
       .select("*")
-      .order("receita", { ascending: false });
+      .order("resultado", { ascending: false });
 
     if (rankingData) {
       setRanking(rankingData);
@@ -328,44 +328,69 @@ export default function Relatorios() {
       <div className="bg-[#0f1c33] rounded-xl p-8 mb-10">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-semibold">Ranking de Unidades</h2>
+            <h2 className="text-2xl font-semibold">
+              🏆 Performance Financeira das Unidades
+            </h2>
 
             <p className="text-gray-400 mt-1">
-              Performance financeira das academias
+              Top 10 unidades com melhor resultado financeiro no período
+              selecionado
             </p>
           </div>
         </div>
 
         <div className="space-y-4">
-          {ranking.map((item: any, index: number) => (
+          {ranking.slice(0, 10).map((item: any, index: number) => (
             <div
               key={item.id}
               className="bg-[#162544] rounded-xl p-5 flex items-center justify-between"
             >
               <div className="flex items-center gap-5">
                 <div className="w-12 h-12 rounded-full bg-[#0f1c33] flex items-center justify-center text-xl font-bold text-cyan-400">
-                  #{index + 1}
+                  {index === 0
+                    ? "🥇"
+                    : index === 1
+                      ? "🥈"
+                      : index === 2
+                        ? "🥉"
+                        : `#${index + 1}`}
                 </div>
 
                 <div>
                   <h3 className="text-lg font-semibold">{item.nome}</h3>
-
-                  <p className="text-gray-400 text-sm mt-1">
-                    Ticket Médio: R${" "}
-                    {Number(item.ticket_medio || 0).toLocaleString("pt-BR")}
-                  </p>
                 </div>
               </div>
 
-              <div className="text-right">
-                <p className="text-green-400 text-xl font-bold">
-                  R$ {Number(item.receita || 0).toLocaleString("pt-BR")}
-                </p>
+              <div className="grid grid-cols-3 gap-10 text-center">
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">Receita</p>
 
-                <p className="text-gray-400 text-sm mt-1">
-                  Resultado: R${" "}
-                  {Number(item.resultado || 0).toLocaleString("pt-BR")}
-                </p>
+                  <p className="text-green-400 font-bold">
+                    R$ {Number(item.receita || 0).toLocaleString("pt-BR")}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">Despesas</p>
+
+                  <p className="text-red-400 font-bold">
+                    R$ {Number(item.despesa || 0).toLocaleString("pt-BR")}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">Resultado</p>
+
+                  <p
+                    className={`font-bold ${
+                      Number(item.resultado) >= 0
+                        ? "text-cyan-400"
+                        : "text-red-400"
+                    }`}
+                  >
+                    R$ {Number(item.resultado || 0).toLocaleString("pt-BR")}
+                  </p>
+                </div>
               </div>
             </div>
           ))}
@@ -391,7 +416,7 @@ export default function Relatorios() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-[#0f1c33] rounded-xl p-4">
-              <p className="text-sm text-gray-400 mb-2">Margem EBITDA</p>
+              <p className="text-sm text-gray-400 mb-2">Margem Operacional</p>
 
               <p className="text-2xl font-bold text-green-400">
                 {margemOperacional}%
