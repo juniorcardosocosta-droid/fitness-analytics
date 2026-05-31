@@ -7,7 +7,7 @@ export default function Relatorios() {
   const [academias, setAcademias] = useState<any[]>([]);
   const [academiaId, setAcademiaId] = useState<string>("todas");
 
-  const [mes, setMes] = useState<number>(new Date().getMonth() + 1);
+  const [mes, setMes] = useState<string>("todos");
   const [ano, setAno] = useState<number>(new Date().getFullYear());
 
   const [receitaBruta, setReceitaBruta] = useState(0);
@@ -58,7 +58,9 @@ export default function Relatorios() {
       const anoLanc = dataLancamento.getFullYear();
 
       // FILTRO MÊS/ANO
-      if (mesLanc !== mes || anoLanc !== ano) return;
+      if (anoLanc !== ano) return;
+
+      if (mes !== "todos" && mesLanc !== Number(mes)) return;
 
       const valor = Number(item.valor);
 
@@ -129,7 +131,7 @@ export default function Relatorios() {
 
         <select
           value={mes}
-          onChange={(e) => setMes(Number(e.target.value))}
+          onChange={(e) => setMes(e.target.value)}
           className="bg-[#0f1c33] px-4 py-2 rounded-lg"
         >
           {[
