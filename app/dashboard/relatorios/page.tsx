@@ -134,6 +134,8 @@ export default function Relatorios() {
           onChange={(e) => setMes(e.target.value)}
           className="bg-[#0f1c33] px-4 py-2 rounded-lg"
         >
+          <option value="todos">Todos os meses</option>
+
           {[
             "Janeiro",
             "Fevereiro",
