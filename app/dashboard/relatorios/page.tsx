@@ -13,6 +13,13 @@ export default function Relatorios() {
   const [receitaBruta, setReceitaBruta] = useState(0);
   const [despesas, setDespesas] = useState(0);
 
+  const [tributos, setTributos] = useState(0);
+  const [pessoal, setPessoal] = useState(0);
+  const [infraestrutura, setInfraestrutura] = useState(0);
+  const [administrativo, setAdministrativo] = useState(0);
+  const [marketing, setMarketing] = useState(0);
+  const [financeiro, setFinanceiro] = useState(0);
+
   const [ranking, setRanking] = useState<any[]>([]);
 
   // CARREGAR ACADEMIAS
@@ -50,6 +57,12 @@ export default function Relatorios() {
 
     let receita = 0;
     let despesa = 0;
+    let totalTributos = 0;
+    let totalPessoal = 0;
+    let totalInfraestrutura = 0;
+    let totalAdministrativo = 0;
+    let totalMarketing = 0;
+    let totalFinanceiro = 0;
 
     data.forEach((item: any) => {
       const dataLancamento = new Date(item.data);
@@ -70,6 +83,32 @@ export default function Relatorios() {
 
       if (item.tipo === "despesa") {
         despesa += valor;
+
+        switch (item.categoria) {
+          case "TRIBUTOS":
+            totalTributos += valor;
+            break;
+
+          case "FOLHA DE PAGAMENTO":
+            totalPessoal += valor;
+            break;
+
+          case "IMÓVEL (OCUPAÇÃO E INFRAESTRUTURA)":
+            totalInfraestrutura += valor;
+            break;
+
+          case "ADMINISTRATIVO":
+            totalAdministrativo += valor;
+            break;
+
+          case "MARKETING/ IMPULSIONAMENTO":
+            totalMarketing += valor;
+            break;
+
+          case "EMPRÉSTIMO":
+            totalFinanceiro += valor;
+            break;
+        }
       }
     });
 
@@ -84,27 +123,28 @@ export default function Relatorios() {
 
     setReceitaBruta(receita);
     setDespesas(despesa);
+    setTributos(totalTributos);
+    setPessoal(totalPessoal);
+    setInfraestrutura(totalInfraestrutura);
+    setAdministrativo(totalAdministrativo);
+    setMarketing(totalMarketing);
+    setFinanceiro(totalFinanceiro);
   }
 
   // CALCULOS DRE
-  const deducoes = 0;
+  const receitaLiquida = receitaBruta - tributos;
 
-  const receitaLiquida = receitaBruta - deducoes;
+  const custosOperacionais =
+    pessoal + infraestrutura + administrativo + marketing;
 
-  const custos = despesas;
+  const resultadoOperacional = receitaLiquida - custosOperacionais;
 
-  const lucroBruto = receitaLiquida - custos;
+  const lucroLiquido = resultadoOperacional - financeiro;
 
-  const ebitda = lucroBruto;
-
-  const impostos = 0;
-
-  const despesasFinanceiras = 0;
-
-  const lucroLiquido = ebitda - impostos - despesasFinanceiras;
-
-  const margemEbitda =
-    receitaLiquida > 0 ? ((ebitda / receitaLiquida) * 100).toFixed(1) : 0;
+  const margemOperacional =
+    receitaLiquida > 0
+      ? ((resultadoOperacional / receitaLiquida) * 100).toFixed(1)
+      : 0;
 
   const margemLiquida =
     receitaLiquida > 0 ? ((lucroLiquido / receitaLiquida) * 100).toFixed(1) : 0;
@@ -177,9 +217,17 @@ export default function Relatorios() {
           color="text-green-400"
         />
 
-        <Card title="Custos" value={custos} color="text-yellow-400" />
+        <Card
+          title="Custos Operacionais"
+          value={custosOperacionais}
+          color="text-yellow-400"
+        />
 
-        <Card title="EBITDA" value={ebitda} color="text-purple-400" />
+        <Card
+          title="Margem Operacional"
+          value={margemOperacional}
+          color="text-purple-400"
+        />
 
         <Card
           title="Lucro Líquido"
@@ -194,34 +242,83 @@ export default function Relatorios() {
           DRE - Demonstrativo de Resultado
         </h2>
 
-        <div className="space-y-3 text-gray-300">
-          <p>Receita Bruta: R$ {receitaBruta.toLocaleString("pt-BR")}</p>
-
-          <p>Deduções: R$ {deducoes.toLocaleString("pt-BR")}</p>
-
-          <p className="text-green-400">
-            Receita Líquida: R$ {receitaLiquida.toLocaleString("pt-BR")}
+        <div className="space-y-5 text-gray-300">
+          <p>
+            Receita Bruta:
+            <span className="float-right">
+              R$ {receitaBruta.toLocaleString("pt-BR")}
+            </span>
           </p>
 
-          <p>Custos: R$ {custos.toLocaleString("pt-BR")}</p>
-
-          <p className="text-green-400">
-            Lucro Bruto: R$ {lucroBruto.toLocaleString("pt-BR")}
+          <p className="text-red-400">
+            (-) Tributos
+            <span className="float-right">
+              R$ {tributos.toLocaleString("pt-BR")}
+            </span>
           </p>
 
-          <p className="text-purple-400">
-            EBITDA: R$ {ebitda.toLocaleString("pt-BR")}
+          <hr className="border-white/10" />
+
+          <p className="text-green-400 font-bold">
+            Receita Líquida
+            <span className="float-right">
+              R$ {receitaLiquida.toLocaleString("pt-BR")}
+            </span>
           </p>
 
-          <p>Impostos: R$ {impostos.toLocaleString("pt-BR")}</p>
+          <hr className="border-white/10" />
 
           <p>
-            Despesas Financeiras: R${" "}
-            {despesasFinanceiras.toLocaleString("pt-BR")}
+            ▼ Pessoal
+            <span className="float-right">
+              R$ {pessoal.toLocaleString("pt-BR")}
+            </span>
           </p>
 
+          <p>
+            ▼ Infraestrutura
+            <span className="float-right">
+              R$ {infraestrutura.toLocaleString("pt-BR")}
+            </span>
+          </p>
+
+          <p>
+            ▼ Administrativo
+            <span className="float-right">
+              R$ {administrativo.toLocaleString("pt-BR")}
+            </span>
+          </p>
+
+          <p>
+            ▼ Marketing
+            <span className="float-right">
+              R$ {marketing.toLocaleString("pt-BR")}
+            </span>
+          </p>
+
+          <hr className="border-white/10" />
+
+          <p className="text-purple-400 font-bold">
+            Resultado Operacional
+            <span className="float-right">
+              R$ {resultadoOperacional.toLocaleString("pt-BR")}
+            </span>
+          </p>
+
+          <p>
+            (-) Financeiro
+            <span className="float-right">
+              R$ {financeiro.toLocaleString("pt-BR")}
+            </span>
+          </p>
+
+          <hr className="border-white/10" />
+
           <p className="text-cyan-400 text-xl font-bold">
-            Lucro Líquido: R$ {lucroLiquido.toLocaleString("pt-BR")}
+            Resultado Final
+            <span className="float-right">
+              R$ {lucroLiquido.toLocaleString("pt-BR")}
+            </span>
           </p>
         </div>
       </div>
@@ -297,7 +394,7 @@ export default function Relatorios() {
               <p className="text-sm text-gray-400 mb-2">Margem EBITDA</p>
 
               <p className="text-2xl font-bold text-green-400">
-                {margemEbitda}%
+                {margemOperacional}%
               </p>
             </div>
 
@@ -336,7 +433,7 @@ export default function Relatorios() {
 
               <p>
                 Custos operacionais totalizaram R${" "}
-                {custos.toLocaleString("pt-BR")}
+                {custosOperacionais.toLocaleString("pt-BR")}
               </p>
             </div>
 
@@ -357,12 +454,16 @@ export default function Relatorios() {
 }
 
 function Card({ title, value, color }: any) {
+  const percentual = title.includes("Margem");
+
   return (
     <div className="bg-[#0f1c33] p-6 rounded-xl">
       <p className="text-gray-400 text-sm mb-2">{title}</p>
 
       <h2 className={`text-3xl font-bold ${color}`}>
-        R$ {Number(value).toLocaleString("pt-BR")}
+        {percentual
+          ? `${value}%`
+          : `R$ ${Number(value).toLocaleString("pt-BR")}`}
       </h2>
     </div>
   );
