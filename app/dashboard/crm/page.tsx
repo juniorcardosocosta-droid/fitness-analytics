@@ -6,6 +6,16 @@ import { supabase } from "@/lib/supabaseClient";
 
 import { normalizarCRM } from "@/lib/importadores/crmImportador";
 
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from "recharts";
+
 export default function CRMPage() {
   const [loading, setLoading] = useState(false);
 
@@ -498,6 +508,100 @@ export default function CRMPage() {
                 ></div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* PERFORMANCE COMERCIAL */}
+
+      <div className="mt-10 space-y-8">
+        <div className="bg-[#0f172a] rounded-3xl border border-cyan-500/20 p-8 h-[380px]">
+          <div className="flex h-full">
+            <div className="w-[280px] flex flex-col justify-center">
+              <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-6">
+                <span className="text-3xl">👥</span>
+              </div>
+
+              <h3 className="text-3xl font-bold text-white mb-2">
+                Evolução Mensal de Leads
+              </h3>
+
+              <p className="text-gray-400 mb-8">
+                Histórico de captação de leads
+              </p>
+
+              <h2 className="text-7xl font-bold text-cyan-400">1365</h2>
+
+              <span className="text-green-400 font-semibold text-xl mt-2">
+                ↑ 12,5%
+              </span>
+            </div>
+
+            <div className="flex-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={[
+                    { mes: "Jan", valor: 372 },
+                    { mes: "Fev", valor: 267 },
+                    { mes: "Mar", valor: 266 },
+                    { mes: "Abr", valor: 275 },
+                    { mes: "Mai", valor: 185 },
+                  ]}
+                >
+                  <defs>
+                    <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.8} />
+
+                      <stop offset="95%" stopColor="#22d3ee" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+
+                  <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" />
+
+                  <XAxis dataKey="mes" stroke="#64748b" />
+
+                  <YAxis stroke="#64748b" />
+
+                  <Tooltip />
+
+                  <Area
+                    type="monotone"
+                    dataKey="valor"
+                    stroke="#22d3ee"
+                    strokeWidth={4}
+                    fill="url(#colorLeads)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-[#0f172a] rounded-3xl border border-purple-500/20 p-8 h-[320px]">
+          <h3 className="text-2xl font-bold text-white mb-2">
+            Evolução dos Fechamentos
+          </h3>
+
+          <p className="text-gray-400">Conversões realizadas</p>
+
+          <div className="mt-6">
+            <h2 className="text-6xl font-bold text-purple-400">138</h2>
+
+            <span className="text-green-400 font-semibold">↑ 8,2%</span>
+          </div>
+        </div>
+
+        <div className="bg-[#0f172a] rounded-3xl border border-emerald-500/20 p-8 h-[320px]">
+          <h3 className="text-2xl font-bold text-white mb-2">
+            Taxa de Conversão
+          </h3>
+
+          <p className="text-gray-400">Eficiência comercial</p>
+
+          <div className="mt-6">
+            <h2 className="text-6xl font-bold text-emerald-400">18,4%</h2>
+
+            <span className="text-green-400 font-semibold">↑ 3,1 p.p.</span>
           </div>
         </div>
       </div>
