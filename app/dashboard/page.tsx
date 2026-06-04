@@ -4,14 +4,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { ComposedChart } from "recharts";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
-
-import dynamic from "next/dynamic";
-
-const BotaoPDF = dynamic(() => import("@/components/BotaoPDF"), {
-  ssr: false,
-});
 
 import {
   BarChart,
@@ -37,69 +29,6 @@ import {
 } from "lucide-react";
 
 export default function Dashboard() {
-  const capturarGrafico = async (id: string) => {
-    const el = document.getElementById(id);
-    if (!el) return null;
-
-    // 🔥 CLONA O ELEMENTO
-    const clone = el.cloneNode(true) as HTMLElement;
-
-    // 🔥 CRIA CONTAINER TEMPORÁRIO
-    const wrapper = document.createElement("div");
-
-    wrapper.style.position = "fixed";
-    wrapper.style.top = "0";
-    wrapper.style.left = "0";
-    wrapper.style.width = "1200px";
-    wrapper.style.height = "700px";
-    wrapper.style.background = "#0a162b";
-    wrapper.style.display = "flex";
-    wrapper.style.alignItems = "center";
-    wrapper.style.justifyContent = "center";
-    wrapper.style.zIndex = "-1";
-
-    wrapper.appendChild(clone);
-    document.body.appendChild(wrapper);
-
-    // 🔥 REMOVE PROBLEMA DE CORES (FORÇA CSS SIMPLES)
-    const allElements = wrapper.querySelectorAll("*");
-    allElements.forEach((node: any) => {
-      node.style.color = "#ffffff";
-      node.style.backgroundColor = "transparent";
-      node.style.borderColor = "#1f2a44";
-    });
-
-    try {
-      const canvas = await html2canvas(wrapper, {
-        scale: 2,
-        backgroundColor: "#0a162b",
-        useCORS: true,
-      });
-
-      return canvas.toDataURL("image/png");
-    } catch (err) {
-      console.error("Erro ao capturar:", err);
-      return null;
-    } finally {
-      document.body.removeChild(wrapper);
-    }
-  };
-
-  const gerarImagens = async () => {
-    return {
-      receita: await capturarGrafico("grafico-receita"),
-      alunos: await capturarGrafico("grafico-alunos"),
-      composicao: await capturarGrafico("grafico-composicao"),
-      churn: await capturarGrafico("grafico-churn"),
-      evolucao: await capturarGrafico("grafico-evolucao"),
-      ticket: await capturarGrafico("grafico-ticket"),
-      custos: await capturarGrafico("grafico-custos"),
-      margem: await capturarGrafico("grafico-margem"),
-      heatReceita: await capturarGrafico("grafico-heatmap-receita"),
-      heatDespesa: await capturarGrafico("grafico-heatmap-despesas"),
-    };
-  };
-
   const router = useRouter();
 
   const [role, setRole] = useState("");
@@ -846,20 +775,6 @@ export default function Dashboard() {
       <div className="flex items-center justify-between mb-6">
         {/* ESQUERDA */}
         <h1 className="text-4xl font-bold">Dashboard</h1>
-
-        {/* DIREITA */}
-        <div>
-          <BotaoPDF
-            gerarImagens={gerarImagens}
-            dados={{
-              receita: receita.toFixed(2),
-              despesa: despesa.toFixed(2),
-              resultado: resultado.toFixed(2),
-              margem:
-                receita > 0 ? ((resultado / receita) * 100).toFixed(1) : "0",
-            }}
-          />
-        </div>
       </div>
 
       {/* FILTROS */}
