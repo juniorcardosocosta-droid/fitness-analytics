@@ -14,6 +14,7 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
+  LabelList,
 } from "recharts";
 
 export default function CRMPage() {
@@ -616,7 +617,15 @@ export default function CRMPage() {
 
             <div className="flex-1">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={graficoLeads}>
+                <AreaChart
+                  data={graficoLeads}
+                  margin={{
+                    top: 40,
+                    right: 20,
+                    left: 10,
+                    bottom: 0,
+                  }}
+                >
                   <defs>
                     <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.8} />
@@ -649,7 +658,15 @@ export default function CRMPage() {
                       r: 10,
                       fill: "#22d3ee",
                     }}
-                  />
+                  >
+                    <LabelList
+                      dataKey="valor"
+                      position="top"
+                      fill="#ffffff"
+                      fontSize={18}
+                      fontWeight="bold"
+                    />
+                  </Area>
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -678,7 +695,15 @@ export default function CRMPage() {
 
             <div className="flex-1">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={graficoFechamentos}>
+                <AreaChart
+                  data={graficoFechamentos}
+                  margin={{
+                    top: 40,
+                    right: 20,
+                    left: 10,
+                    bottom: 0,
+                  }}
+                >
                   <defs>
                     <linearGradient
                       id="colorFechamentos"
@@ -688,6 +713,7 @@ export default function CRMPage() {
                       y2="1"
                     >
                       <stop offset="5%" stopColor="#a855f7" stopOpacity={0.8} />
+
                       <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
                     </linearGradient>
                   </defs>
@@ -716,7 +742,15 @@ export default function CRMPage() {
                       r: 10,
                       fill: "#a855f7",
                     }}
-                  />
+                  >
+                    <LabelList
+                      dataKey="valor"
+                      position="top"
+                      fill="#ffffff"
+                      fontSize={18}
+                      fontWeight="bold"
+                    />
+                  </Area>
                 </AreaChart>
               </ResponsiveContainer>
             </div>
