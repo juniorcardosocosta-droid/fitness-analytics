@@ -656,63 +656,70 @@ export default function CRMPage() {
           </div>
         </div>
 
-        <div className="bg-[#0f172a] rounded-3xl border border-purple-500/20 p-8 h-[520px]">
-          <h3 className="text-2xl font-bold text-white mb-2">
-            Evolução dos Fechamentos
-          </h3>
+        <div className="bg-[#0f172a] rounded-3xl border border-purple-500/20 p-8 h-[380px]">
+          <div className="flex h-full">
+            <div className="w-[280px] flex flex-col justify-center">
+              <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-6">
+                <span className="text-3xl">🎯</span>
+              </div>
 
-          <p className="text-gray-400">Conversões realizadas</p>
+              <h3 className="text-3xl font-bold text-white mb-2">
+                Evolução dos Fechamentos
+              </h3>
 
-          <div className="mt-6">
-            <h2 className="text-6xl font-bold text-purple-400">
-              {totalFechamentos}
-            </h2>
-          </div>
+              <p className="text-gray-400 mb-8">
+                Histórico de contratos fechados
+              </p>
 
-          <div className="h-[260px] mt-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={graficoFechamentos}>
-                <defs>
-                  <linearGradient
-                    id="colorFechamentos"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop offset="5%" stopColor="#a855f7" stopOpacity={0.8} />
+              <h2 className="text-7xl font-bold text-purple-400">
+                {totalFechamentos}
+              </h2>
+            </div>
 
-                    <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
+            <div className="flex-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={graficoFechamentos}>
+                  <defs>
+                    <linearGradient
+                      id="colorFechamentos"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="5%" stopColor="#a855f7" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
 
-                <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" />
+                  <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" />
 
-                <XAxis dataKey="mes" stroke="#64748b" />
+                  <XAxis dataKey="mes" stroke="#64748b" />
 
-                <YAxis stroke="#64748b" />
+                  <YAxis stroke="#64748b" />
 
-                <Tooltip />
+                  <Tooltip />
 
-                <Area
-                  type="monotone"
-                  dataKey="valor"
-                  stroke="#a855f7"
-                  strokeWidth={4}
-                  fill="url(#colorFechamentos)"
-                  dot={{
-                    r: 6,
-                    fill: "#a855f7",
-                    stroke: "#a855f7",
-                    strokeWidth: 2,
-                  }}
-                  activeDot={{
-                    r: 10,
-                    fill: "#a855f7",
-                  }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+                  <Area
+                    type="monotone"
+                    dataKey="valor"
+                    stroke="#a855f7"
+                    strokeWidth={4}
+                    fill="url(#colorFechamentos)"
+                    dot={{
+                      r: 6,
+                      fill: "#a855f7",
+                      stroke: "#a855f7",
+                      strokeWidth: 2,
+                    }}
+                    activeDot={{
+                      r: 10,
+                      fill: "#a855f7",
+                    }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
 
