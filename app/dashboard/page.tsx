@@ -1508,8 +1508,16 @@ export default function Dashboard() {
         {/* CUSTOS OPERACIONAL*/}
         <div id="grafico-custos" className="bg-[#0f1c33] p-6 rounded w-full">
           <h2 className="mb-4">Custos Operacionais</h2>
-          <ResponsiveContainer width="100%" height={320}>
-            <ComposedChart data={dadosCustos}>
+          <ResponsiveContainer width="100%" height={380}>
+            <ComposedChart
+              data={dadosCustos}
+              margin={{
+                top: 50,
+                right: 20,
+                left: 10,
+                bottom: 10,
+              }}
+            >
               <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
               <XAxis dataKey="mes" stroke="#94a3b8" />
               <YAxis stroke="#94a3b8" />
