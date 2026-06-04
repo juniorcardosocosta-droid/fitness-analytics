@@ -454,7 +454,7 @@ export default function CRMPage() {
               <p className="text-gray-400 text-sm">Conversão Total</p>
 
               <h3 className="text-5xl font-bold text-white mt-2">
-                {pctFechados}%
+                {taxaConversao}%
               </h3>
             </div>
 
