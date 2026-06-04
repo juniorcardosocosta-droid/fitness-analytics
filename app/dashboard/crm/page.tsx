@@ -208,6 +208,50 @@ export default function CRMPage() {
       }));
 
     setGraficoFechamentos(dadosFechamentos);
+
+    const agrupadoConversao: Record<
+      number,
+      {
+        leads: number;
+        fechados: number;
+      }
+    > = {};
+
+    data.forEach((item: any) => {
+      const mesNumero = new Date(item.data_cadastro).getMonth() + 1;
+
+      if (!agrupadoConversao[mesNumero]) {
+        agrupadoConversao[mesNumero] = {
+          leads: 0,
+          fechados: 0,
+        };
+      }
+
+      agrupadoConversao[mesNumero].leads++;
+
+      if (item.status === "FECHADO") {
+        agrupadoConversao[mesNumero].fechados++;
+      }
+    });
+
+    const dadosConversao = Object.keys(agrupadoConversao)
+      .map(Number)
+      .sort((a, b) => a - b)
+      .map((mesNumero) => {
+        const mes = agrupadoConversao[mesNumero];
+
+        const percentual =
+          mes.leads > 0
+            ? Number(((mes.fechados / mes.leads) * 100).toFixed(1))
+            : 0;
+
+        return {
+          mes: nomesMeses[mesNumero],
+          valor: percentual,
+        };
+      });
+
+    setGraficoConversao(dadosConversao);
   }
 
   // IMPORTAR CRM
@@ -757,17 +801,87 @@ export default function CRMPage() {
           </div>
         </div>
 
-        <div className="bg-[#0f172a] rounded-3xl border border-emerald-500/20 p-8 h-[320px]">
-          <h3 className="text-2xl font-bold text-white mb-2">
-            Taxa de Conversão
-          </h3>
+        <div className="bg-[#0f172a] rounded-3xl border border-emerald-500/20 p-8 h-[380px]">
+          <div className="flex h-full">
+            <div className="w-[280px] flex flex-col justify-center">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6">
+                <span className="text-3xl">📈</span>
+              </div>
 
-          <p className="text-gray-400">Eficiência comercial</p>
+              <h3 className="text-3xl font-bold text-white mb-2">
+                Taxa de Conversão
+              </h3>
 
-          <div className="mt-6">
-            <h2 className="text-6xl font-bold text-emerald-400">
-              {taxaConversao}%
-            </h2>
+              <p className="text-gray-400 mb-8">
+                Conversão de leads em contratos
+              </p>
+
+              <h2 className="text-7xl font-bold text-emerald-400">
+                {taxaConversao}%
+              </h2>
+            </div>
+
+            <div className="flex-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={graficoConversao}
+                  margin={{
+                    top: 40,
+                    right: 20,
+                    left: 10,
+                    bottom: 0,
+                  }}
+                >
+                  <defs>
+                    <linearGradient
+                      id="colorConversao"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+
+                  <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" />
+
+                  <XAxis dataKey="mes" stroke="#64748b" />
+
+                  <YAxis stroke="#64748b" />
+
+                  <Tooltip />
+
+                  <Area
+                    type="monotone"
+                    dataKey="valor"
+                    stroke="#10b981"
+                    strokeWidth={4}
+                    fill="url(#colorConversao)"
+                    dot={{
+                      r: 6,
+                      fill: "#10b981",
+                      stroke: "#10b981",
+                      strokeWidth: 2,
+                    }}
+                    activeDot={{
+                      r: 10,
+                      fill: "#10b981",
+                    }}
+                  >
+                    <LabelList
+                      dataKey="valor"
+                      position="top"
+                      fill="#ffffff"
+                      fontSize={18}
+                      fontWeight="bold"
+                    />
+                  </Area>
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       </div>
