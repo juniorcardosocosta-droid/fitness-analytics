@@ -139,8 +139,44 @@ export default function CRMPage() {
 
       console.log("CRM NORMALIZADO:", registros);
 
-      // APAGAR CRM ANTIGO
-      await supabase.from("fato_crm").delete().eq("academia_id", academiaId);
+      // VALIDAR SE O MÊS JÁ FOI IMPORTADO
+
+      const primeiroRegistro = registros[0];
+
+      if (!primeiroRegistro?.data_cadastro) {
+        alert("Não foi possível identificar a data do arquivo.");
+        return;
+      }
+
+      const ano = primeiroRegistro.data_cadastro.substring(0, 4);
+
+      const mes = primeiroRegistro.data_cadastro.substring(5, 7);
+
+      const inicioMes = `${ano}-${mes}-01`;
+
+      const fimMes = `${ano}-${mes}-31`;
+
+      const { data: existente, error: erroConsulta } = await supabase
+        .from("fato_crm")
+        .select("id")
+        .eq("academia_id", academiaId)
+        .gte("data_cadastro", inicioMes)
+        .lte("data_cadastro", fimMes)
+        .limit(1);
+
+      if (erroConsulta) {
+        console.log(erroConsulta);
+
+        alert("Erro ao validar importação.");
+
+        return;
+      }
+
+      if (existente && existente.length > 0) {
+        alert(`O mês ${mes}/${ano} já foi importado para esta academia.`);
+
+        return;
+      }
 
       // PAYLOAD
       const payload = registros.map((item: any) => ({
