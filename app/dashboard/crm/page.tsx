@@ -570,6 +570,16 @@ export default function CRMPage() {
                     stroke="#22d3ee"
                     strokeWidth={4}
                     fill="url(#colorLeads)"
+                    dot={{
+                      r: 6,
+                      fill: "#22d3ee",
+                      stroke: "#22d3ee",
+                      strokeWidth: 2,
+                    }}
+                    activeDot={{
+                      r: 10,
+                      fill: "#22d3ee",
+                    }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
