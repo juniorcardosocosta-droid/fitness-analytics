@@ -39,6 +39,18 @@ export default function CRMPage() {
 
   const [pctFechados, setPctFechados] = useState(0);
 
+  const [totalLeads, setTotalLeads] = useState(0);
+
+  const [totalFechamentos, setTotalFechamentos] = useState(0);
+
+  const [taxaConversao, setTaxaConversao] = useState(0);
+
+  const [graficoLeads, setGraficoLeads] = useState<any[]>([]);
+
+  const [graficoFechamentos, setGraficoFechamentos] = useState<any[]>([]);
+
+  const [graficoConversao, setGraficoConversao] = useState<any[]>([]);
+
   // CARREGAR ACADEMIAS
   useEffect(() => {
     carregarAcademias();
@@ -126,6 +138,34 @@ export default function CRMPage() {
     setPctAula(percentualAula);
 
     setPctFechados(percentualFechados);
+
+    setTotalLeads(totalContato);
+
+    setTotalFechamentos(totalFechado);
+
+    const conversaoGeral =
+      totalContato > 0 ? ((totalFechado / totalContato) * 100).toFixed(2) : "0";
+
+    setTaxaConversao(Number(conversaoGeral));
+
+    const agrupado: Record<string, number> = {};
+
+    data.forEach((item: any) => {
+      const dataCRM = new Date(item.data_cadastro);
+
+      const mes = dataCRM.toLocaleString("pt-BR", {
+        month: "short",
+      });
+
+      agrupado[mes] = (agrupado[mes] || 0) + 1;
+    });
+
+    const dadosGrafico = Object.keys(agrupado).map((mes) => ({
+      mes,
+      valor: agrupado[mes],
+    }));
+
+    setGraficoLeads(dadosGrafico);
   }
 
   // IMPORTAR CRM
@@ -530,24 +570,12 @@ export default function CRMPage() {
                 Histórico de captação de leads
               </p>
 
-              <h2 className="text-7xl font-bold text-cyan-400">1365</h2>
-
-              <span className="text-green-400 font-semibold text-xl mt-2">
-                ↑ 12,5%
-              </span>
+              <h2 className="text-7xl font-bold text-cyan-400">{totalLeads}</h2>
             </div>
 
             <div className="flex-1">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={[
-                    { mes: "Jan", valor: 372 },
-                    { mes: "Fev", valor: 267 },
-                    { mes: "Mar", valor: 266 },
-                    { mes: "Abr", valor: 275 },
-                    { mes: "Mai", valor: 185 },
-                  ]}
-                >
+                <AreaChart data={graficoLeads}>
                   <defs>
                     <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.8} />
@@ -595,9 +623,9 @@ export default function CRMPage() {
           <p className="text-gray-400">Conversões realizadas</p>
 
           <div className="mt-6">
-            <h2 className="text-6xl font-bold text-purple-400">138</h2>
-
-            <span className="text-green-400 font-semibold">↑ 8,2%</span>
+            <h2 className="text-6xl font-bold text-purple-400">
+              {totalFechamentos}
+            </h2>
           </div>
         </div>
 
@@ -609,9 +637,9 @@ export default function CRMPage() {
           <p className="text-gray-400">Eficiência comercial</p>
 
           <div className="mt-6">
-            <h2 className="text-6xl font-bold text-emerald-400">18,4%</h2>
-
-            <span className="text-green-400 font-semibold">↑ 3,1 p.p.</span>
+            <h2 className="text-6xl font-bold text-emerald-400">
+              {taxaConversao}%
+            </h2>
           </div>
         </div>
       </div>
