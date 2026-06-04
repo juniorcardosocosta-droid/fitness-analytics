@@ -49,7 +49,6 @@ export default function CRMPage() {
 
   const [graficoFechamentos, setGraficoFechamentos] = useState<any[]>([]);
 
-
   const [graficoConversao, setGraficoConversao] = useState<any[]>([]);
 
   // CARREGAR ACADEMIAS
@@ -168,6 +167,28 @@ export default function CRMPage() {
 
     setGraficoLeads(dadosGrafico);
 
+    // FECHAMENTOS POR MÊS
+
+    const agrupadoFechamentos: Record<string, number> = {};
+
+    data
+      .filter((item: any) => item.status === "FECHADO")
+      .forEach((item: any) => {
+        const dataCRM = new Date(item.data_cadastro);
+
+        const mes = dataCRM.toLocaleString("pt-BR", {
+          month: "short",
+        });
+
+        agrupadoFechamentos[mes] = (agrupadoFechamentos[mes] || 0) + 1;
+      });
+
+    const dadosFechamentos = Object.keys(agrupadoFechamentos).map((mes) => ({
+      mes,
+      valor: agrupadoFechamentos[mes],
+    }));
+
+    setGraficoFechamentos(dadosFechamentos);
   }
 
   // IMPORTAR CRM
@@ -628,6 +649,42 @@ export default function CRMPage() {
             <h2 className="text-6xl font-bold text-purple-400">
               {totalFechamentos}
             </h2>
+          </div>
+
+          <div className="h-[180px] mt-6">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={graficoFechamentos}>
+                <defs>
+                  <linearGradient
+                    id="colorFechamentos"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop offset="5%" stopColor="#a855f7" stopOpacity={0.8} />
+
+                    <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+
+                <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" />
+
+                <XAxis dataKey="mes" stroke="#64748b" />
+
+                <YAxis stroke="#64748b" />
+
+                <Tooltip />
+
+                <Area
+                  type="monotone"
+                  dataKey="valor"
+                  stroke="#a855f7"
+                  strokeWidth={4}
+                  fill="url(#colorFechamentos)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
