@@ -49,6 +49,7 @@ export default function CRMPage() {
 
   const [graficoFechamentos, setGraficoFechamentos] = useState<any[]>([]);
 
+
   const [graficoConversao, setGraficoConversao] = useState<any[]>([]);
 
   // CARREGAR ACADEMIAS
@@ -166,6 +167,7 @@ export default function CRMPage() {
     }));
 
     setGraficoLeads(dadosGrafico);
+
   }
 
   // IMPORTAR CRM
