@@ -154,14 +154,19 @@ export default function CRMPage() {
 
       const inicioMes = `${ano}-${mes}-01`;
 
-      const fimMes = `${ano}-${mes}-31`;
+      const proximoMes = Number(mes) + 1;
+
+      const fimMes =
+        proximoMes <= 12
+          ? `${ano}-${String(proximoMes).padStart(2, "0")}-01`
+          : `${Number(ano) + 1}-01-01`;
 
       const { data: existente, error: erroConsulta } = await supabase
         .from("fato_crm")
         .select("id")
         .eq("academia_id", academiaId)
         .gte("data_cadastro", inicioMes)
-        .lte("data_cadastro", fimMes)
+        .lt("data_cadastro", fimMes)
         .limit(1);
 
       if (erroConsulta) {
