@@ -169,24 +169,42 @@ export default function CRMPage() {
 
     // FECHAMENTOS POR MÊS
 
-    const agrupadoFechamentos: Record<string, number> = {};
+    const agrupadoFechamentos: Record<number, number> = {};
 
     data
       .filter((item: any) => item.status === "FECHADO")
       .forEach((item: any) => {
         const dataCRM = new Date(item.data_cadastro);
 
-        const mes = dataCRM.toLocaleString("pt-BR", {
-          month: "short",
-        });
+        const mesNumero = dataCRM.getMonth() + 1;
 
-        agrupadoFechamentos[mes] = (agrupadoFechamentos[mes] || 0) + 1;
+        agrupadoFechamentos[mesNumero] =
+          (agrupadoFechamentos[mesNumero] || 0) + 1;
       });
 
-    const dadosFechamentos = Object.keys(agrupadoFechamentos).map((mes) => ({
-      mes,
-      valor: agrupadoFechamentos[mes],
-    }));
+    const nomesMeses = [
+      "",
+      "Jan",
+      "Fev",
+      "Mar",
+      "Abr",
+      "Mai",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Set",
+      "Out",
+      "Nov",
+      "Dez",
+    ];
+
+    const dadosFechamentos = Object.keys(agrupadoFechamentos)
+      .map(Number)
+      .sort((a, b) => a - b)
+      .map((mesNumero) => ({
+        mes: nomesMeses[mesNumero],
+        valor: agrupadoFechamentos[mesNumero],
+      }));
 
     setGraficoFechamentos(dadosFechamentos);
   }
@@ -638,7 +656,7 @@ export default function CRMPage() {
           </div>
         </div>
 
-        <div className="bg-[#0f172a] rounded-3xl border border-purple-500/20 p-8 h-[320px]">
+        <div className="bg-[#0f172a] rounded-3xl border border-purple-500/20 p-8 h-[520px]">
           <h3 className="text-2xl font-bold text-white mb-2">
             Evolução dos Fechamentos
           </h3>
@@ -651,7 +669,7 @@ export default function CRMPage() {
             </h2>
           </div>
 
-          <div className="h-[180px] mt-6">
+          <div className="h-[260px] mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={graficoFechamentos}>
                 <defs>
@@ -682,6 +700,16 @@ export default function CRMPage() {
                   stroke="#a855f7"
                   strokeWidth={4}
                   fill="url(#colorFechamentos)"
+                  dot={{
+                    r: 6,
+                    fill: "#a855f7",
+                    stroke: "#a855f7",
+                    strokeWidth: 2,
+                  }}
+                  activeDot={{
+                    r: 10,
+                    fill: "#a855f7",
+                  }}
                 />
               </AreaChart>
             </ResponsiveContainer>
