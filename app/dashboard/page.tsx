@@ -1513,26 +1513,79 @@ export default function Dashboard() {
         </div>
 
         {/* CHURN */}
-        <div id="grafico-churn" className="bg-[#0f1c33] p-6 rounded w-full">
-          <h2 className="mb-4">Churn Mensal (%)</h2>
+        <div
+          id="grafico-churn"
+          className="bg-[#0f172a] rounded-3xl border border-red-500/20 p-8 w-full"
+        >
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-white">
+                Churn Mensal (%)
+              </h2>
 
-          <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={dadosChurn}>
+              <p className="text-gray-400 mt-2">
+                Histórico mensal de cancelamentos
+              </p>
+            </div>
+
+            <div className="bg-[#2a0f14] border border-red-500/20 rounded-2xl px-6 py-4 text-center">
+              <p className="text-gray-400 text-sm">Churn Médio</p>
+
+              <h3 className="text-red-400 text-3xl font-bold mt-1">
+                {(
+                  dadosChurn.reduce((acc, item) => acc + item.churn, 0) /
+                  (dadosChurn.length || 1)
+                ).toFixed(1)}
+                %
+              </h3>
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" height={420}>
+            <AreaChart
+              data={dadosChurn}
+              margin={{
+                top: 50,
+                right: 30,
+                left: 10,
+                bottom: 0,
+              }}
+            >
+              <defs>
+                <linearGradient id="churnGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.75} />
+                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                </linearGradient>
+              </defs>
               <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
               <XAxis dataKey="mes" stroke="#94a3b8" />
               <YAxis domain={[0, 100]} stroke="#94a3b8" />
               <Tooltip formatter={(v: any) => `${v.toFixed(1)}%`} />
-              <Legend />
-
-              <Bar dataKey="churn" fill="#ef4444">
+              <Area
+                type="monotone"
+                dataKey="churn"
+                stroke="#ef4444"
+                strokeWidth={5}
+                fill="url(#churnGradient)"
+                dot={{
+                  r: 6,
+                  fill: "#ef4444",
+                  stroke: "#ef4444",
+                  strokeWidth: 2,
+                }}
+                activeDot={{
+                  r: 10,
+                  fill: "#ef4444",
+                }}
+              >
                 <LabelList
                   dataKey="churn"
                   position="top"
                   formatter={(v: any) => `${v.toFixed(1)}%`}
-                  fill="#fff"
+                  fill="#ffffff"
                 />
-              </Bar>
-            </BarChart>
+              </Area>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
