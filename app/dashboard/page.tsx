@@ -1415,7 +1415,7 @@ export default function Dashboard() {
       </div>
 
       {/* 3 - TICKET - MEIDO + CHURN */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+      <div className="flex flex-col gap-6 mt-6">
         {/* TICKET MEDIO */}
         <div id="grafico-ticket" className="bg-[#0f1c33] p-6 rounded w-full">
           <h2 className="mb-4">Ticket Médio</h2>
@@ -1504,7 +1504,7 @@ export default function Dashboard() {
       </div>
 
       {/* 4 - RESTANTE */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+      <div className="flex flex-col gap-6 mt-6">
         {/* CUSTOS OPERACIONAL*/}
         <div id="grafico-custos" className="bg-[#0f1c33] p-6 rounded w-full">
           <h2 className="mb-4">Custos Operacionais</h2>
