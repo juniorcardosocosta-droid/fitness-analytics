@@ -108,6 +108,9 @@ export function importarTecnofit(
           ? parseNumero(item["Valor Líquido"])
           : parseNumero(item["Valor Pago"] || item["Valor"]);
 
+      console.log("VALOR BRUTO EXCEL:", item["Valor Líquido"]);
+      console.log("VALOR CONVERTIDO:", valor);
+
       if (!valor) return null;
 
       const descricao =
@@ -142,6 +145,10 @@ export function importarTecnofit(
 
         data = parseData(item["Data Pagamento"]);
       }
+
+      console.log("DATA CRÉDITO:", item["Data Crédito"]);
+      console.log("DATA PAGAMENTO:", item["Data Pagamento"]);
+      console.log("DATA FINAL:", data);
 
       if (!data) return null;
 
@@ -187,7 +194,7 @@ export function importarTecnofit(
         tipo_plano: plano.tipo_plano,
         frequencia_plano: plano.frequencia_plano,
 
-       import_id: JSON.stringify(item),
+        import_id: JSON.stringify(item),
       };
     })
     .filter(Boolean);
