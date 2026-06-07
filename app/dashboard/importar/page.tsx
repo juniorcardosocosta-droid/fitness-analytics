@@ -165,8 +165,16 @@ export default function Importar() {
         });
 
         console.log("TOTAL LINHAS EXCEL:", jsonData.length);
-        console.log("PRIMEIRA LINHA EXCEL:", jsonData[0]);
-        console.log("TODAS AS CHAVES:", Object.keys(jsonData[0] || {}));
+
+        console.log(
+          "PRIMEIRA LINHA EXCEL JSON:",
+          JSON.stringify(jsonData[0], null, 2),
+        );
+
+        console.log(
+          "TODAS AS CHAVES:",
+          JSON.stringify(Object.keys(jsonData[0] || {}), null, 2),
+        );
 
         await processarDados(jsonData, tipo);
 
