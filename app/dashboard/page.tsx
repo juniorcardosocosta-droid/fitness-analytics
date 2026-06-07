@@ -750,13 +750,33 @@ export default function Dashboard() {
   };
 
   // ================= GRÁFICO EVOLUÇAÕ DO TICKET MEDIO EFETIVO =================
-  const dadosTicket = ticketMensal
-    .map((item: any) => ({
-      mes: meses[Number(item.mes) - 1],
-      ordem: Number(item.mes),
-      ticket: Number(item.ticket || 0),
-    }))
-    .sort((a: any, b: any) => a.ordem - b.ordem);
+  const dadosTicket = Object.values(
+  ticketMensal.reduce((acc: any, item: any) => {
+    const mesNumero = Number(item.mes);
+
+    if (!acc[mesNumero]) {
+      acc[mesNumero] = {
+        mes: meses[mesNumero - 1],
+        ordem: mesNumero,
+        ticket: 0,
+        quantidade: 0,
+      };
+    }
+
+    acc[mesNumero].ticket += Number(item.ticket || 0);
+    acc[mesNumero].quantidade += 1;
+
+    return acc;
+  }, {})
+)
+  .map((item: any) => ({
+    ...item,
+    ticket:
+      item.quantidade > 0
+        ? item.ticket / item.quantidade
+        : 0,
+  }))
+  .sort((a: any, b: any) => a.ordem - b.ordem);
 
   const ultimoTicket =
     dadosTicket.length > 0 ? dadosTicket[dadosTicket.length - 1].ticket : 0;
