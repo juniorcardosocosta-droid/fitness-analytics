@@ -1489,7 +1489,16 @@ export default function Dashboard() {
           </div>
 
           <ResponsiveContainer width="100%" height={420}>
-            <BarChart data={dadosAlunos} barGap={25}>
+            <BarChart
+              data={dadosAlunos}
+              barGap={25}
+              margin={{
+                top: 40,
+                right: 20,
+                left: 20,
+                bottom: 20,
+              }}
+            >
               <defs>
                 <linearGradient id="ativosGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#34d399" />
