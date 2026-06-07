@@ -1417,13 +1417,22 @@ export default function Dashboard() {
       {/* 3 - TICKET - MEIDO + CHURN */}
       <div className="flex flex-col gap-6 mt-6">
         {/* TICKET MEDIO */}
-        <div id="grafico-ticket" className="bg-[#0f1c33] p-6 rounded w-full">
-          <h2 className="mb-4">Ticket Médio</h2>
-          <ResponsiveContainer width="100%" height={350}>
+        <div
+          id="grafico-ticket"
+          className="bg-[#0f172a] rounded-3xl border border-cyan-500/20 p-8 w-full"
+        >
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-white">Ticket Médio</h2>
+
+            <p className="text-gray-400 mt-2">
+              Histórico mensal do ticket médio
+            </p>
+          </div>
+          <ResponsiveContainer width="100%" height={380}>
             <LineChart
               data={dadosTicket}
               margin={{
-                top: 20,
+                top: 50,
                 right: 30,
                 left: 10,
                 bottom: 0,
