@@ -1179,12 +1179,23 @@ export default function Dashboard() {
       <div id="grafico-evolucao" className="bg-[#0f1c33] p-6 rounded w-full">
         <h2 className="mb-4">Receita vs Despesa vs Resultado</h2>
 
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart
+        <ResponsiveContainer width="100%" height={520}>
+          <ComposedChart
             data={dadosEvolucao}
             margin={{ top: 50, right: 20, left: 0, bottom: 0 }}
             barCategoryGap="25%"
           >
+            <defs>
+              <linearGradient id="receitaGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#4ade80" />
+                <stop offset="100%" stopColor="#166534" />
+              </linearGradient>
+
+              <linearGradient id="despesaGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#f87171" />
+                <stop offset="100%" stopColor="#7f1d1d" />
+              </linearGradient>
+            </defs>
             <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
 
             <XAxis dataKey="mes" stroke="#94a3b8" />
@@ -1209,7 +1220,7 @@ export default function Dashboard() {
             {/* RECEITA */}
             <Bar
               dataKey="receita"
-              fill="#22c55e"
+              fill="url(#receitaGradient)"
               name="Receita"
               radius={[6, 6, 0, 0]}
               fillOpacity={0.85}
@@ -1220,7 +1231,7 @@ export default function Dashboard() {
             {/* DESPESA */}
             <Bar
               dataKey="despesa"
-              fill="#ef4444"
+              fill="url(#despesaGradient)"
               name="Despesa"
               radius={[6, 6, 0, 0]}
               fillOpacity={0.85}
@@ -1229,16 +1240,24 @@ export default function Dashboard() {
             </Bar>
 
             {/* RESULTADO */}
-            <Bar
+            <Line
+              type="monotone"
               dataKey="resultado"
-              fill="#3b82f6"
               name="Resultado"
-              radius={[6, 6, 0, 0]}
-              fillOpacity={0.85}
+              stroke="#3b82f6"
+              strokeWidth={4}
+              dot={{
+                r: 6,
+                fill: "#3b82f6",
+              }}
+              activeDot={{
+                r: 9,
+                fill: "#3b82f6",
+              }}
             >
               <LabelList content={renderLabel} />
-            </Bar>
-          </BarChart>
+            </Line>
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
 
