@@ -726,6 +726,14 @@ export default function Dashboard() {
   const ultimoTicket =
     dadosTicket.length > 0 ? dadosTicket[dadosTicket.length - 1].ticket : 0;
 
+  const mesesComChurn = dadosChurn.filter((item) => Number(item.churn) > 0);
+
+  const churnMedio =
+    mesesComChurn.length > 0
+      ? mesesComChurn.reduce((acc, item) => acc + Number(item.churn), 0) /
+        mesesComChurn.length
+      : 0;
+
   // ================= GRÁFICO EVOLUÇAÕ DOS CUSTOS OPERACIONAIS TOTAIS =================
   const dadosCustos = custosMensal
     .map((item: any) => ({
@@ -1532,11 +1540,7 @@ export default function Dashboard() {
               <p className="text-gray-400 text-sm">Churn Médio</p>
 
               <h3 className="text-red-400 text-3xl font-bold mt-1">
-                {(
-                  dadosChurn.reduce((acc, item) => acc + item.churn, 0) /
-                  (dadosChurn.length || 1)
-                ).toFixed(1)}
-                %
+                {churnMedio.toFixed(1)}%
               </h3>
             </div>
           </div>
