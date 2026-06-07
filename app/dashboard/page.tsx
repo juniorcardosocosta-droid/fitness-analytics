@@ -730,14 +730,29 @@ export default function Dashboard() {
     }, {}),
   ).sort((a: any, b: any) => a.ordem - b.ordem);
 
-  const dadosMargem = financeiroFiltrado
+  const dadosMargem: any[] = Object.values(
+    financeiroFiltrado.reduce((acc: any, item: any) => {
+      const mesNumero = Number(item.mes);
+
+      if (!acc[mesNumero]) {
+        acc[mesNumero] = {
+          mes: meses[mesNumero - 1],
+          ordem: mesNumero,
+          receita: 0,
+          resultado: 0,
+        };
+      }
+
+      acc[mesNumero].receita += Number(item.receita || 0);
+      acc[mesNumero].resultado += Number(item.resultado || 0);
+
+      return acc;
+    }, {}),
+  )
     .map((item: any) => ({
-      mes: meses[Number(item.mes) - 1],
-      ordem: Number(item.mes),
-      margem:
-        Number(item.receita || 0) > 0
-          ? (Number(item.resultado || 0) / Number(item.receita || 0)) * 100
-          : 0,
+      mes: item.mes,
+      ordem: item.ordem,
+      margem: item.receita > 0 ? (item.resultado / item.receita) * 100 : 0,
     }))
     .sort((a: any, b: any) => a.ordem - b.ordem);
 
