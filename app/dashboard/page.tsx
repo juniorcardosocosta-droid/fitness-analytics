@@ -666,13 +666,31 @@ export default function Dashboard() {
       : 0;
 
   // ================= GRÁFICO DE CHURN =================
-  const dadosChurn = churnMensal
+  const dadosChurn = Object.values(
+    churnMensal.reduce((acc: any, item: any) => {
+      const mesNumero = Number(item.mes);
+
+      if (!acc[mesNumero]) {
+        acc[mesNumero] = {
+          mes: meses[mesNumero - 1],
+          ordem: mesNumero,
+          ativos: 0,
+          cancelados: 0,
+        };
+      }
+
+      acc[mesNumero].ativos += Number(item.ativos || 0);
+      acc[mesNumero].cancelados += Number(item.cancelados || 0);
+
+      return acc;
+    }, {}),
+  )
     .map((item: any) => ({
-      mes: meses[Number(item.mes) - 1],
-      ordem: Number(item.mes),
-      ativos: Number(item.ativos || 0),
-      cancelados: Number(item.cancelados || 0),
-      churn: Number(item.churn || 0),
+      ...item,
+      churn:
+        item.ativos + item.cancelados > 0
+          ? (item.cancelados / (item.ativos + item.cancelados)) * 100
+          : 0,
     }))
     .sort((a: any, b: any) => a.ordem - b.ordem);
 
@@ -751,32 +769,29 @@ export default function Dashboard() {
 
   // ================= GRÁFICO EVOLUÇAÕ DO TICKET MEDIO EFETIVO =================
   const dadosTicket = Object.values(
-  ticketMensal.reduce((acc: any, item: any) => {
-    const mesNumero = Number(item.mes);
+    ticketMensal.reduce((acc: any, item: any) => {
+      const mesNumero = Number(item.mes);
 
-    if (!acc[mesNumero]) {
-      acc[mesNumero] = {
-        mes: meses[mesNumero - 1],
-        ordem: mesNumero,
-        ticket: 0,
-        quantidade: 0,
-      };
-    }
+      if (!acc[mesNumero]) {
+        acc[mesNumero] = {
+          mes: meses[mesNumero - 1],
+          ordem: mesNumero,
+          ticket: 0,
+          quantidade: 0,
+        };
+      }
 
-    acc[mesNumero].ticket += Number(item.ticket || 0);
-    acc[mesNumero].quantidade += 1;
+      acc[mesNumero].ticket += Number(item.ticket || 0);
+      acc[mesNumero].quantidade += 1;
 
-    return acc;
-  }, {})
-)
-  .map((item: any) => ({
-    ...item,
-    ticket:
-      item.quantidade > 0
-        ? item.ticket / item.quantidade
-        : 0,
-  }))
-  .sort((a: any, b: any) => a.ordem - b.ordem);
+      return acc;
+    }, {}),
+  )
+    .map((item: any) => ({
+      ...item,
+      ticket: item.quantidade > 0 ? item.ticket / item.quantidade : 0,
+    }))
+    .sort((a: any, b: any) => a.ordem - b.ordem);
 
   const ultimoTicket =
     dadosTicket.length > 0 ? dadosTicket[dadosTicket.length - 1].ticket : 0;
