@@ -1436,14 +1436,6 @@ export default function Dashboard() {
             </div>
 
             <div className="bg-[#0b2345] border border-cyan-500/20 rounded-2xl px-6 py-4 text-center">
-              <p className="text-gray-400 text-sm">Ticket Atual</p>
-
-              <h3 className="text-cyan-400 text-3xl font-bold mt-1">
-                R$ {ultimoTicket.toLocaleString("pt-BR")}
-              </h3>
-            </div>
-
-            <div className="bg-[#0b2345] border border-cyan-500/20 rounded-2xl px-6 py-4 text-center">
               <p className="text-gray-400 text-sm">Média Anual</p>
 
               <h3 className="text-cyan-400 text-3xl font-bold mt-1">
