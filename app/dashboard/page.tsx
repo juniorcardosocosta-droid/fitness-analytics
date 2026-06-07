@@ -1693,33 +1693,92 @@ export default function Dashboard() {
         </div>
 
         {/* MARGEM OPERACIONAL */}
-        <div id="grafico-margem" className="bg-[#0f1c33] p-6 rounded w-full">
-          <h2 className="mb-4">Margem Operacional (%)</h2>
+        <div
+          id="grafico-margem"
+          className="bg-[#0f172a] rounded-3xl border border-purple-500/20 p-8 w-full"
+        >
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-white">
+                Margem Operacional (%)
+              </h2>
 
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dadosMargem}>
+              <p className="text-gray-400 mt-2">
+                Histórico mensal da margem operacional
+              </p>
+            </div>
+
+            <div className="bg-[#22123a] border border-purple-500/20 rounded-2xl px-6 py-4 text-center">
+              <p className="text-gray-400 text-sm">Margem Média</p>
+
+              <h3 className="text-purple-400 text-3xl font-bold mt-1">
+                {(
+                  dadosMargem.reduce((acc, item) => acc + item.margem, 0) /
+                  (dadosMargem.length || 1)
+                ).toFixed(1)}
+                %
+              </h3>
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" height={420}>
+            <AreaChart
+              data={dadosMargem}
+              margin={{
+                top: 50,
+                right: 30,
+                left: 10,
+                bottom: 0,
+              }}
+            >
+              <defs>
+                <linearGradient id="margemGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#a855f7" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+
               <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+
               <XAxis dataKey="mes" stroke="#94a3b8" />
+
               <YAxis stroke="#94a3b8" />
 
-              <Tooltip formatter={(v: any) => `${v.toFixed(1)}%`} />
-              <Legend />
+              <Tooltip
+                formatter={(v: any) => [`${Number(v).toFixed(1)}%`, "Margem"]}
+                contentStyle={{
+                  backgroundColor: "#0f172a",
+                  border: "1px solid #a855f7",
+                  borderRadius: "12px",
+                  color: "#fff",
+                }}
+              />
 
-              <Line
+              <Area
                 type="monotone"
                 dataKey="margem"
-                stroke="#22c55e"
-                strokeWidth={3}
-                dot={{ r: 4 }}
+                stroke="#a855f7"
+                strokeWidth={5}
+                fill="url(#margemGradient)"
+                dot={{
+                  r: 6,
+                  fill: "#a855f7",
+                  stroke: "#a855f7",
+                  strokeWidth: 2,
+                }}
+                activeDot={{
+                  r: 10,
+                  fill: "#a855f7",
+                }}
               >
                 <LabelList
                   dataKey="margem"
                   position="top"
-                  formatter={(v: any) => `${v.toFixed(1)}%`}
-                  fill="#fff"
+                  formatter={(v: any) => `${Number(v).toFixed(1)}%`}
+                  fill="#ffffff"
                 />
-              </Line>
-            </LineChart>
+              </Area>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
