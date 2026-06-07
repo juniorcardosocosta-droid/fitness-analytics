@@ -158,7 +158,7 @@ export default function Importar() {
         const jsonData = XLSX.utils.sheet_to_json(sheet, {
           range:
             erp === "tecnofit"
-              ? 0
+              ? 1
               : erp === "ultra" && tipo === "despesa"
                 ? 1
                 : 0,
