@@ -723,6 +723,9 @@ export default function Dashboard() {
     }))
     .sort((a: any, b: any) => a.ordem - b.ordem);
 
+  const ultimoTicket =
+    dadosTicket.length > 0 ? dadosTicket[dadosTicket.length - 1].ticket : 0;
+
   // ================= GRÁFICO EVOLUÇAÕ DOS CUSTOS OPERACIONAIS TOTAIS =================
   const dadosCustos = custosMensal
     .map((item: any) => ({
@@ -1423,14 +1426,32 @@ export default function Dashboard() {
           id="grafico-ticket"
           className="bg-[#0f172a] rounded-3xl border border-cyan-500/20 p-8 w-full"
         >
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold text-white">Ticket Médio</h2>
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-white">Ticket Médio</h2>
 
-            <p className="text-gray-400 mt-2">
-              Histórico mensal do ticket médio
-            </p>
+              <p className="text-gray-400 mt-2">
+                Histórico mensal do ticket médio
+              </p>
+            </div>
+
+            <div className="bg-[#0b2345] border border-cyan-500/20 rounded-2xl px-6 py-4 text-center">
+              <p className="text-gray-400 text-sm">Ticket Atual</p>
+
+              <h3 className="text-cyan-400 text-3xl font-bold mt-1">
+                R$ {ultimoTicket.toLocaleString("pt-BR")}
+              </h3>
+            </div>
+
+            <div className="bg-[#0b2345] border border-cyan-500/20 rounded-2xl px-6 py-4 text-center">
+              <p className="text-gray-400 text-sm">Média Anual</p>
+
+              <h3 className="text-cyan-400 text-3xl font-bold mt-1">
+                R$ {Math.round(ticketFinanceiro)}
+              </h3>
+            </div>
           </div>
-          <ResponsiveContainer width="100%" height={380}>
+          <ResponsiveContainer width="100%" height={420}>
             <AreaChart
               data={dadosTicket}
               margin={{
@@ -1442,7 +1463,7 @@ export default function Dashboard() {
             >
               <defs>
                 <linearGradient id="ticketGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.55} />
+                  <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.85} />
                   <stop offset="95%" stopColor="#22d3ee" stopOpacity={0} />
                 </linearGradient>
               </defs>
@@ -1471,7 +1492,7 @@ export default function Dashboard() {
                 type="monotone"
                 dataKey="ticket"
                 stroke="#22d3ee"
-                strokeWidth={4}
+                strokeWidth={5}
                 fill="url(#ticketGradient)"
                 dot={{
                   r: 6,
