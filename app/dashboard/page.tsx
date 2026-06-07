@@ -1398,30 +1398,80 @@ export default function Dashboard() {
 
       {/* 2 - EVOLUÇÃO DE ALUNOS */}
       <div className="mt-6">
-        <div id="grafico-alunos" className="bg-[#0f1c33] p-6 rounded w-full">
-          <h2 className="mb-4">Evolução de Alunos</h2>
+        <div
+          id="grafico-alunos"
+          className="bg-[#0f172a] rounded-3xl border border-purple-500/20 p-8 w-full"
+        >
+          <div className="flex justify-between items-start mb-8">
+            <div>
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                  <span className="text-2xl">👥</span>
+                </div>
 
-          <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={dadosAlunos}>
-              <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+                <div>
+                  <h2 className="text-4xl font-bold text-white">
+                    Evolução de Alunos
+                  </h2>
+
+                  <p className="text-gray-400 mt-1">
+                    Visão geral do crescimento da base de alunos
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#1b1033] border border-purple-500/30 rounded-3xl px-8 py-5 min-w-[220px]">
+              <p className="text-gray-400 text-sm">Total de Alunos</p>
+
+              <h3 className="text-purple-400 text-6xl font-bold mt-2">
+                {dadosAlunos.length > 0
+                  ? dadosAlunos[dadosAlunos.length - 1].ativos +
+                    dadosAlunos[dadosAlunos.length - 1].novos +
+                    dadosAlunos[dadosAlunos.length - 1].recorrencia
+                  : 0}
+              </h3>
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" height={420}>
+            <BarChart data={dadosAlunos} barGap={25}>
+              <CartesianGrid
+                stroke="#1f2a44"
+                strokeOpacity={0.25}
+                vertical={false}
+              />
+
               <XAxis dataKey="mes" stroke="#94a3b8" />
+
               <YAxis stroke="#94a3b8" />
-              <Tooltip />
+
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#0f172a",
+                  border: "1px solid #7c3aed",
+                  borderRadius: "12px",
+                  color: "#fff",
+                }}
+              />
+
               <Legend />
 
-              {["ativos", "recorrencia", "novos"].map((key) => {
-                const colors: any = {
-                  ativos: "#22c55e",
-                  recorrencia: "#3b82f6",
-                  novos: "#a855f7",
-                };
+              <Bar dataKey="ativos" fill="#22c55e" radius={[12, 12, 0, 0]}>
+                <LabelList dataKey="ativos" position="top" fill="#ffffff" />
+              </Bar>
 
-                return (
-                  <Bar key={key} dataKey={key} fill={colors[key]}>
-                    <LabelList dataKey={key} position="top" fill="#fff" />
-                  </Bar>
-                );
-              })}
+              <Bar dataKey="recorrencia" fill="#3b82f6" radius={[12, 12, 0, 0]}>
+                <LabelList
+                  dataKey="recorrencia"
+                  position="top"
+                  fill="#ffffff"
+                />
+              </Bar>
+
+              <Bar dataKey="novos" fill="#a855f7" radius={[12, 12, 0, 0]}>
+                <LabelList dataKey="novos" position="top" fill="#ffffff" />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
