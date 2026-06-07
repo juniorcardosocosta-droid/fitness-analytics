@@ -678,15 +678,27 @@ export default function Dashboard() {
 
   // ================= GRÁFICO EVOLUÇÃO FINANCEIRA =================
 
-  const dadosEvolucao = financeiroFiltrado
-    .map((item: any) => ({
-      mes: meses[Number(item.mes) - 1],
-      ordem: Number(item.mes),
-      receita: Number(item.receita || 0),
-      despesa: Number(item.despesa || 0),
-      resultado: Number(item.resultado || 0),
-    }))
-    .sort((a: any, b: any) => a.ordem - b.ordem);
+  const dadosEvolucao = Object.values(
+    financeiroFiltrado.reduce((acc: any, item: any) => {
+      const mesNumero = Number(item.mes);
+
+      if (!acc[mesNumero]) {
+        acc[mesNumero] = {
+          mes: meses[mesNumero - 1],
+          ordem: mesNumero,
+          receita: 0,
+          despesa: 0,
+          resultado: 0,
+        };
+      }
+
+      acc[mesNumero].receita += Number(item.receita || 0);
+      acc[mesNumero].despesa += Number(item.despesa || 0);
+      acc[mesNumero].resultado += Number(item.resultado || 0);
+
+      return acc;
+    }, {}),
+  ).sort((a: any, b: any) => a.ordem - b.ordem);
 
   const dadosMargem = financeiroFiltrado
     .map((item: any) => ({
