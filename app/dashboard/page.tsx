@@ -805,14 +805,31 @@ export default function Dashboard() {
       : 0;
 
   // ================= GRÁFICO EVOLUÇAÕ DOS CUSTOS OPERACIONAIS TOTAIS =================
-  const dadosCustos = custosMensal
+  const dadosCustos = Object.values(
+    custosMensal.reduce((acc: any, item: any) => {
+      const mesNumero = Number(item.mes);
+
+      if (!acc[mesNumero]) {
+        acc[mesNumero] = {
+          mes: meses[mesNumero - 1],
+          ordem: mesNumero,
+          receita: 0,
+          despesa: 0,
+        };
+      }
+
+      acc[mesNumero].receita += Number(item.receita || 0);
+      acc[mesNumero].despesa += Number(item.despesa || 0);
+
+      return acc;
+    }, {}),
+  )
     .map((item: any) => ({
-      mes: meses[Number(item.mes) - 1],
-      ordem: Number(item.mes),
-      receita: Number(item.receita || 0),
-      despesa: Number(item.despesa || 0),
-      percentual: Number(item.percentual || 0),
-      percentualReal: Number(item.percentual || 0),
+      ...item,
+      percentual: item.receita > 0 ? (item.despesa / item.receita) * 100 : 0,
+
+      percentualReal:
+        item.receita > 0 ? (item.despesa / item.receita) * 100 : 0,
     }))
     .sort((a: any, b: any) => a.ordem - b.ordem);
 
