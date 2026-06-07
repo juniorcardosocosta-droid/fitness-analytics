@@ -632,20 +632,32 @@ export default function Dashboard() {
   ];
 
   // ================= GRÁFICO DE ALUNOS =================
-  const dadosAlunos = alunosMensal
-    .map((item: any) => ({
-      mes: meses[Number(item.mes) - 1],
-      ordem: Number(item.mes),
-      ativos: Number(item.ativos || 0),
-      recorrencia: Number(item.recorrencia || 0),
-      novos: Number(item.novos || 0),
-    }))
-    .sort((a: any, b: any) => a.ordem - b.ordem);
+  const dadosAlunos: any[] = Object.values(
+    alunosMensal.reduce((acc: any, item: any) => {
+      const mesNumero = Number(item.mes);
 
-  const ultimoMesAlunos =
+      if (!acc[mesNumero]) {
+        acc[mesNumero] = {
+          mes: meses[mesNumero - 1],
+          ordem: mesNumero,
+          ativos: 0,
+          recorrencia: 0,
+          novos: 0,
+        };
+      }
+
+      acc[mesNumero].ativos += Number(item.ativos || 0);
+      acc[mesNumero].recorrencia += Number(item.recorrencia || 0);
+      acc[mesNumero].novos += Number(item.novos || 0);
+
+      return acc;
+    }, {}),
+  ).sort((a: any, b: any) => a.ordem - b.ordem);
+
+  const ultimoMesAlunos: any =
     dadosAlunos.length > 0 ? dadosAlunos[dadosAlunos.length - 1] : null;
 
-  const mesAnteriorAlunos =
+  const mesAnteriorAlunos: any =
     dadosAlunos.length > 1 ? dadosAlunos[dadosAlunos.length - 2] : null;
 
   const totalUltimoMes = ultimoMesAlunos
@@ -1515,9 +1527,9 @@ export default function Dashboard() {
 
                   <h3 className="text-purple-400 text-6xl font-bold mt-2">
                     {dadosAlunos.length > 0
-                      ? dadosAlunos[dadosAlunos.length - 1].ativos +
-                        dadosAlunos[dadosAlunos.length - 1].novos +
-                        dadosAlunos[dadosAlunos.length - 1].recorrencia
+                      ? (dadosAlunos[dadosAlunos.length - 1] as any).ativos +
+                        (dadosAlunos[dadosAlunos.length - 1] as any).novos +
+                        (dadosAlunos[dadosAlunos.length - 1] as any).recorrencia
                       : 0}
                   </h3>
 
