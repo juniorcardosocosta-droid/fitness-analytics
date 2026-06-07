@@ -1421,21 +1421,67 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="bg-[#1b1033] border border-purple-500/30 rounded-3xl px-8 py-5 min-w-[220px]">
-              <p className="text-gray-400 text-sm">Total de Alunos</p>
+            <div className="bg-[#1b1033] border border-purple-500/30 rounded-3xl px-8 py-5 min-w-[260px]">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-gray-400 text-sm">Total de Alunos</p>
 
-              <h3 className="text-purple-400 text-6xl font-bold mt-2">
-                {dadosAlunos.length > 0
-                  ? dadosAlunos[dadosAlunos.length - 1].ativos +
-                    dadosAlunos[dadosAlunos.length - 1].novos +
-                    dadosAlunos[dadosAlunos.length - 1].recorrencia
-                  : 0}
-              </h3>
+                  <h3 className="text-purple-400 text-6xl font-bold mt-2">
+                    {dadosAlunos.length > 0
+                      ? dadosAlunos[dadosAlunos.length - 1].ativos +
+                        dadosAlunos[dadosAlunos.length - 1].novos +
+                        dadosAlunos[dadosAlunos.length - 1].recorrencia
+                      : 0}
+                  </h3>
+
+                  <div className="mt-3 flex items-center gap-2">
+                    <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded-lg text-sm font-medium">
+                      +15,2%
+                    </span>
+
+                    <span className="text-gray-400 text-sm">
+                      vs mês anterior
+                    </span>
+                  </div>
+                </div>
+
+                <svg width="90" height="50" viewBox="0 0 90 50" fill="none">
+                  <path
+                    d="M5 35 C20 10, 35 45, 50 20 S75 25, 85 5"
+                    stroke="#a855f7"
+                    strokeWidth="3"
+                    fill="none"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
 
           <ResponsiveContainer width="100%" height={420}>
             <BarChart data={dadosAlunos} barGap={25}>
+              <defs>
+                <linearGradient id="ativosGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#34d399" />
+                  <stop offset="100%" stopColor="#065f46" />
+                </linearGradient>
+
+                <linearGradient id="novosGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#c084fc" />
+                  <stop offset="100%" stopColor="#581c87" />
+                </linearGradient>
+
+                <linearGradient
+                  id="recorrenciaGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="0%" stopColor="#60a5fa" />
+                  <stop offset="100%" stopColor="#1e3a8a" />
+                </linearGradient>
+              </defs>
               <CartesianGrid
                 stroke="#1f2a44"
                 strokeOpacity={0.25}
@@ -1457,11 +1503,19 @@ export default function Dashboard() {
 
               <Legend />
 
-              <Bar dataKey="ativos" fill="#22c55e" radius={[12, 12, 0, 0]}>
+              <Bar
+                dataKey="ativos"
+                fill="url(#ativosGradient)"
+                radius={[12, 12, 0, 0]}
+              >
                 <LabelList dataKey="ativos" position="top" fill="#ffffff" />
               </Bar>
 
-              <Bar dataKey="recorrencia" fill="#3b82f6" radius={[12, 12, 0, 0]}>
+              <Bar
+                dataKey="recorrencia"
+                fill="url(#recorrenciaGradient)"
+                radius={[12, 12, 0, 0]}
+              >
                 <LabelList
                   dataKey="recorrencia"
                   position="top"
@@ -1469,7 +1523,11 @@ export default function Dashboard() {
                 />
               </Bar>
 
-              <Bar dataKey="novos" fill="#a855f7" radius={[12, 12, 0, 0]}>
+              <Bar
+                dataKey="novos"
+                fill="url(#novosGradient)"
+                radius={[12, 12, 0, 0]}
+              >
                 <LabelList dataKey="novos" position="top" fill="#ffffff" />
               </Bar>
             </BarChart>
