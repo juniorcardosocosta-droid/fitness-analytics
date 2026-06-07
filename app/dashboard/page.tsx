@@ -642,6 +642,29 @@ export default function Dashboard() {
     }))
     .sort((a: any, b: any) => a.ordem - b.ordem);
 
+  const ultimoMesAlunos =
+    dadosAlunos.length > 0 ? dadosAlunos[dadosAlunos.length - 1] : null;
+
+  const mesAnteriorAlunos =
+    dadosAlunos.length > 1 ? dadosAlunos[dadosAlunos.length - 2] : null;
+
+  const totalUltimoMes = ultimoMesAlunos
+    ? ultimoMesAlunos.ativos +
+      ultimoMesAlunos.novos +
+      ultimoMesAlunos.recorrencia
+    : 0;
+
+  const totalMesAnterior = mesAnteriorAlunos
+    ? mesAnteriorAlunos.ativos +
+      mesAnteriorAlunos.novos +
+      mesAnteriorAlunos.recorrencia
+    : 0;
+
+  const crescimentoAlunos =
+    totalMesAnterior > 0
+      ? ((totalUltimoMes - totalMesAnterior) / totalMesAnterior) * 100
+      : 0;
+
   // ================= GRÁFICO DE CHURN =================
   const dadosChurn = churnMensal
     .map((item: any) => ({
@@ -1435,8 +1458,15 @@ export default function Dashboard() {
                   </h3>
 
                   <div className="mt-3 flex items-center gap-2">
-                    <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded-lg text-sm font-medium">
-                      +15,2%
+                    <span
+                      className={`px-2 py-1 rounded-lg text-sm font-medium ${
+                        crescimentoAlunos >= 0
+                          ? "bg-green-500/20 text-green-300"
+                          : "bg-red-500/20 text-red-300"
+                      }`}
+                    >
+                      {crescimentoAlunos > 0 ? "+" : ""}
+                      {crescimentoAlunos.toFixed(1)}%
                     </span>
 
                     <span className="text-gray-400 text-sm">
