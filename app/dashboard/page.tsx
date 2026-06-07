@@ -1596,54 +1596,100 @@ export default function Dashboard() {
 
       {/* 4 - RESTANTE */}
       <div className="flex flex-col gap-6 mt-6">
-        {/* CUSTOS OPERACIONAL*/}
-        <div id="grafico-custos" className="bg-[#0f1c33] p-6 rounded w-full">
-          <h2 className="mb-4">Custos Operacionais</h2>
-          <ResponsiveContainer width="100%" height={380}>
+        {/* CUSTOS OPERACIONAIS */}
+        <div
+          id="grafico-custos"
+          className="bg-[#0f172a] rounded-3xl border border-green-500/20 p-8 w-full"
+        >
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-white">
+                Custos Operacionais
+              </h2>
+
+              <p className="text-gray-400 mt-2">Evolução mensal dos custos</p>
+            </div>
+
+            <div className="bg-[#0f2a14] border border-green-500/20 rounded-2xl px-6 py-4 text-center">
+              <p className="text-gray-400 text-sm">Média de Custos</p>
+
+              <h3 className="text-green-400 text-3xl font-bold mt-1">
+                R${" "}
+                {Math.round(
+                  dadosCustos.reduce((acc, item) => acc + item.despesa, 0) /
+                    (dadosCustos.length || 1),
+                ).toLocaleString("pt-BR")}
+              </h3>
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" height={420}>
             <ComposedChart
               data={dadosCustos}
               margin={{
                 top: 50,
-                right: 20,
+                right: 30,
                 left: 10,
                 bottom: 10,
               }}
             >
               <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
+
               <XAxis dataKey="mes" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
+
+              <YAxis
+                stroke="#94a3b8"
+                tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`}
+              />
+
               <YAxis
                 yAxisId="right"
                 orientation="right"
-                domain={[0, 100]}
+                domain={[0, 160]}
                 stroke="#3b82f6"
               />
 
-              <Tooltip />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#0f172a",
+                  border: "1px solid #22c55e",
+                  borderRadius: "12px",
+                  color: "#fff",
+                }}
+              />
+
               <Legend />
 
-              <Bar dataKey="despesa" fill="#22c55e">
+              <Bar dataKey="despesa" fill="#22c55e" radius={[8, 8, 0, 0]}>
                 <LabelList
                   dataKey="despesa"
                   position="top"
-                  formatter={(v: any) => `R$ ${v.toLocaleString("pt-BR")}`}
-                  fill="#fff"
+                  formatter={(v: any) =>
+                    `R$ ${Number(v).toLocaleString("pt-BR")}`
+                  }
+                  fill="#ffffff"
                 />
               </Bar>
 
               <Line
+                yAxisId="right"
                 type="monotone"
                 dataKey="percentualReal"
                 stroke="#3b82f6"
-                yAxisId="right"
-                strokeWidth={3}
-                dot={{ r: 4 }}
+                strokeWidth={4}
+                dot={{
+                  r: 6,
+                  fill: "#3b82f6",
+                }}
+                activeDot={{
+                  r: 8,
+                }}
               >
                 <LabelList
                   dataKey="percentualReal"
                   position="top"
                   formatter={(v: any) => `${Number(v).toFixed(0)}%`}
-                  fill="#3b82f6"
+                  fill="#60a5fa"
                 />
               </Line>
             </ComposedChart>
