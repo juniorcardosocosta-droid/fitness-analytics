@@ -10,6 +10,8 @@ import {
   Bar,
   LineChart,
   Line,
+  AreaChart,
+  Area,
   Legend,
   XAxis,
   YAxis,
@@ -1414,7 +1416,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 3 - TICKET - MEIDO + CHURN */}
+      {/* 3 - TICKET - MEIDO */}
       <div className="flex flex-col gap-6 mt-6">
         {/* TICKET MEDIO */}
         <div
@@ -1429,7 +1431,7 @@ export default function Dashboard() {
             </p>
           </div>
           <ResponsiveContainer width="100%" height={380}>
-            <LineChart
+            <AreaChart
               data={dadosTicket}
               margin={{
                 top: 50,
@@ -1438,6 +1440,12 @@ export default function Dashboard() {
                 bottom: 0,
               }}
             >
+              <defs>
+                <linearGradient id="ticketGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.55} />
+                  <stop offset="95%" stopColor="#22d3ee" stopOpacity={0} />
+                </linearGradient>
+              </defs>
               <CartesianGrid stroke="#1e335a" strokeDasharray="3 3" />
 
               <XAxis dataKey="mes" stroke="#6b87b3" />
@@ -1459,17 +1467,21 @@ export default function Dashboard() {
                 }}
               />
 
-              <Line
+              <Area
                 type="monotone"
                 dataKey="ticket"
-                stroke="#06b6d4"
+                stroke="#22d3ee"
                 strokeWidth={4}
+                fill="url(#ticketGradient)"
                 dot={{
-                  r: 5,
-                  fill: "#06b6d4",
+                  r: 6,
+                  fill: "#22d3ee",
+                  stroke: "#22d3ee",
+                  strokeWidth: 2,
                 }}
                 activeDot={{
-                  r: 8,
+                  r: 10,
+                  fill: "#22d3ee",
                 }}
               >
                 <LabelList
@@ -1480,10 +1492,10 @@ export default function Dashboard() {
                       maximumFractionDigits: 0,
                     })}`
                   }
-                  fill="#67e8f9"
+                  fill="#ffffff"
                 />
-              </Line>
-            </LineChart>
+              </Area>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
 
