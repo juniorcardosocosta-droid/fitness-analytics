@@ -1624,15 +1624,22 @@ export default function Dashboard() {
           </div>
 
           <ResponsiveContainer width="100%" height={420}>
-            <ComposedChart
+            <AreaChart
               data={dadosCustos}
               margin={{
                 top: 50,
                 right: 30,
                 left: 10,
-                bottom: 10,
+                bottom: 0,
               }}
             >
+              <defs>
+                <linearGradient id="custosGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.85} />
+                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+
               <CartesianGrid stroke="#1f2a44" strokeOpacity={0.3} />
 
               <XAxis dataKey="mes" stroke="#94a3b8" />
@@ -1642,14 +1649,11 @@ export default function Dashboard() {
                 tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`}
               />
 
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                domain={[0, 160]}
-                stroke="#3b82f6"
-              />
-
               <Tooltip
+                formatter={(v: any) => [
+                  `R$ ${Number(v).toLocaleString("pt-BR")}`,
+                  "Custos",
+                ]}
                 contentStyle={{
                   backgroundColor: "#0f172a",
                   border: "1px solid #22c55e",
@@ -1658,9 +1662,23 @@ export default function Dashboard() {
                 }}
               />
 
-              <Legend />
-
-              <Bar dataKey="despesa" fill="#22c55e" radius={[8, 8, 0, 0]}>
+              <Area
+                type="monotone"
+                dataKey="despesa"
+                stroke="#22c55e"
+                strokeWidth={5}
+                fill="url(#custosGradient)"
+                dot={{
+                  r: 6,
+                  fill: "#22c55e",
+                  stroke: "#22c55e",
+                  strokeWidth: 2,
+                }}
+                activeDot={{
+                  r: 10,
+                  fill: "#22c55e",
+                }}
+              >
                 <LabelList
                   dataKey="despesa"
                   position="top"
@@ -1669,30 +1687,8 @@ export default function Dashboard() {
                   }
                   fill="#ffffff"
                 />
-              </Bar>
-
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="percentualReal"
-                stroke="#3b82f6"
-                strokeWidth={4}
-                dot={{
-                  r: 6,
-                  fill: "#3b82f6",
-                }}
-                activeDot={{
-                  r: 8,
-                }}
-              >
-                <LabelList
-                  dataKey="percentualReal"
-                  position="top"
-                  formatter={(v: any) => `${Number(v).toFixed(0)}%`}
-                  fill="#60a5fa"
-                />
-              </Line>
-            </ComposedChart>
+              </Area>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
 
