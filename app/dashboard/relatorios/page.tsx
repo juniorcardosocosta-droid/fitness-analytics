@@ -62,9 +62,13 @@ export default function Relatorios() {
 
     // ================= DASHBOARD =================
 
-    const { data: dashboardData } = await supabase
-      .from("vw_dashboard_mensal")
-      .select("*");
+    let queryDashboard = supabase.from("vw_dashboard_mensal").select("*");
+
+    if (academiaId !== "todas") {
+      queryDashboard = queryDashboard.eq("academia_id", academiaId);
+    }
+
+    const { data: dashboardData } = await queryDashboard;
 
     if (dashboardData) {
       let receitaTotal = 0;
