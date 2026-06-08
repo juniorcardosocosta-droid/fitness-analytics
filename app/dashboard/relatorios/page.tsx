@@ -13,6 +13,11 @@ export default function Relatorios() {
   const [receitaBruta, setReceitaBruta] = useState(0);
   const [despesas, setDespesas] = useState(0);
 
+  const [receitaDashboard, setReceitaDashboard] = useState(0);
+  const [despesaDashboard, setDespesaDashboard] = useState(0);
+  const [resultadoDashboard, setResultadoDashboard] = useState(0);
+  const [margemDashboard, setMargemDashboard] = useState(0);
+
   const [tributos, setTributos] = useState(0);
   const [pessoal, setPessoal] = useState(0);
   const [infraestrutura, setInfraestrutura] = useState(0);
@@ -54,6 +59,41 @@ export default function Relatorios() {
       console.log(error);
       return;
     }
+
+    // ================= DASHBOARD =================
+
+    const { data: dashboardData } = await supabase
+      .from("vw_dashboard_mensal")
+      .select("*");
+
+    if (dashboardData) {
+      let receitaTotal = 0;
+      let despesaTotal = 0;
+      let resultadoTotal = 0;
+
+      dashboardData.forEach((item: any) => {
+        const mesItem = Number(item.mes);
+        const anoItem = Number(item.ano);
+
+        if (anoItem !== ano) return;
+
+        if (mes !== "todos" && mesItem !== Number(mes)) return;
+
+        receitaTotal += Number(item.receita || 0);
+        despesaTotal += Number(item.despesa || 0);
+        resultadoTotal += Number(item.resultado || 0);
+      });
+
+      const margem =
+        receitaTotal > 0 ? (resultadoTotal / receitaTotal) * 100 : 0;
+
+      setReceitaDashboard(receitaTotal);
+      setDespesaDashboard(despesaTotal);
+      setResultadoDashboard(resultadoTotal);
+      setMargemDashboard(margem);
+    }
+
+    // ================= DRE =================
 
     let receita = 0;
     let despesa = 0;
@@ -211,28 +251,20 @@ export default function Relatorios() {
 
       {/* CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-        <Card
-          title="Receita Líquida"
-          value={receitaLiquida}
-          color="text-green-400"
-        />
+        <Card title="Receita" value={receitaDashboard} color="text-green-400" />
+
+        <Card title="Despesas" value={despesaDashboard} color="text-red-400" />
 
         <Card
-          title="Custos Operacionais"
-          value={custosOperacionais}
-          color="text-yellow-400"
-        />
-
-        <Card
-          title="Margem Operacional"
-          value={margemOperacional}
-          color="text-purple-400"
-        />
-
-        <Card
-          title="Lucro Líquido"
-          value={lucroLiquido}
+          title="Resultado"
+          value={resultadoDashboard}
           color="text-cyan-400"
+        />
+
+        <Card
+          title="Margem %"
+          value={margemDashboard.toFixed(1)}
+          color="text-purple-400"
         />
       </div>
 
