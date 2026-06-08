@@ -92,6 +92,8 @@ export default function Relatorios() {
         receitaTotal > 0 ? (resultadoTotal / receitaTotal) * 100 : 0;
 
       setReceitaDashboard(receitaTotal);
+      setReceitaBruta(receitaTotal);
+
       setDespesaDashboard(despesaTotal);
       setResultadoDashboard(resultadoTotal);
       setMargemDashboard(margem);
@@ -165,7 +167,7 @@ export default function Relatorios() {
       setRanking(rankingData);
     }
 
-    setReceitaBruta(receita);
+    
     setDespesas(despesa);
     setTributos(totalTributos);
     setPessoal(totalPessoal);
