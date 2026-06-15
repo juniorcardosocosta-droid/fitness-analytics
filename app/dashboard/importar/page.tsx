@@ -190,12 +190,28 @@ export default function Importar() {
         const workbook = XLSX.read(data, { type: "array" });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
-        const linhaCabecalho = detectarCabecalho(sheet, tipo);
+        let range = 0;
 
-        console.log("📌 Cabeçalho encontrado na linha:", linhaCabecalho);
+        if (erp === "tecnofit") {
+          if (tipo === "receita") {
+            range = 1;
+          }
+
+          if (tipo === "despesa") {
+            range = 1;
+          }
+
+          if (tipo === "comercial") {
+            range = 0;
+          }
+        }
+
+        if (erp === "ultra" && tipo === "despesa") {
+          range = 1;
+        }
 
         const jsonData = XLSX.utils.sheet_to_json(sheet, {
-          range: linhaCabecalho,
+          range,
         });
 
         console.log("TOTAL LINHAS EXCEL:", jsonData.length);
