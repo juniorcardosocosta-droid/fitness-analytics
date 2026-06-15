@@ -1,139 +1,147 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { supabase } from "../../../lib/supabaseClient"
+import { useEffect, useState } from "react";
+import { supabase } from "../../../lib/supabaseClient";
 
 export default function Clientes() {
-
-  const [clientes, setClientes] = useState<any[]>([])
-  const [nome, setNome] = useState("")
-  const [responsavel, setResponsavel] = useState("")
-  const [telefone, setTelefone] = useState("")
+  const [clientes, setClientes] = useState<any[]>([]);
+  const [nome, setNome] = useState("");
+  const [responsavel, setResponsavel] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [clienteEditando, setClienteEditando] = useState<any>(null);
 
   useEffect(() => {
-    carregarClientes()
-  }, [])
+    carregarClientes();
+  }, []);
 
   async function carregarClientes() {
-
     const { data } = await supabase
       .from("clientes")
       .select("*")
-      .order("created_at", { ascending: false })
+      .order("created_at", { ascending: false });
 
-    setClientes(data || [])
-
+    setClientes(data || []);
   }
 
   async function salvarCliente() {
-
     if (!nome) {
-      alert("Informe o nome do cliente")
-      return
+      alert("Informe o nome do cliente");
+      return;
     }
 
-    const { error } = await supabase
-      .from("clientes")
-      .insert([
+    if (clienteEditando) {
+      const { error } = await supabase
+        .from("clientes")
+        .update({
+          nome,
+          responsavel,
+          telefone,
+        })
+        .eq("id", clienteEditando.id);
+
+      if (error) {
+        alert("Erro ao atualizar cliente");
+        return;
+      }
+
+      alert("Cliente atualizado com sucesso");
+
+      setClienteEditando(null);
+    } else {
+      const { error } = await supabase.from("clientes").insert([
         {
           nome,
           responsavel,
-          telefone
-        }
-      ])
+          telefone,
+        },
+      ]);
 
-    if (error) {
-      alert("Erro ao salvar cliente")
-      return
+      if (error) {
+        alert("Erro ao salvar cliente");
+        return;
+      }
     }
 
-    setNome("")
-    setResponsavel("")
-    setTelefone("")
+    setNome("");
+    setResponsavel("");
+    setTelefone("");
 
-    carregarClientes()
-
+    carregarClientes();
   }
 
   return (
-
     <div>
-
-      <h1 className="text-3xl font-bold mb-8">
-        Clientes
-      </h1>
+      <h1 className="text-3xl font-bold mb-8">Clientes</h1>
 
       <div className="bg-[#0f1c33] p-6 rounded-xl mb-10 max-w-xl">
-
         <input
           placeholder="Nome do cliente"
           className="w-full p-3 mb-4 bg-[#0a162b] rounded-lg"
           value={nome}
-          onChange={(e)=>setNome(e.target.value)}
+          onChange={(e) => setNome(e.target.value)}
         />
 
         <input
           placeholder="Responsável"
           className="w-full p-3 mb-4 bg-[#0a162b] rounded-lg"
           value={responsavel}
-          onChange={(e)=>setResponsavel(e.target.value)}
+          onChange={(e) => setResponsavel(e.target.value)}
         />
 
         <input
           placeholder="Telefone"
           className="w-full p-3 mb-4 bg-[#0a162b] rounded-lg"
           value={telefone}
-          onChange={(e)=>setTelefone(e.target.value)}
+          onChange={(e) => setTelefone(e.target.value)}
         />
 
         <button
           onClick={salvarCliente}
           className="bg-cyan-500 hover:bg-cyan-600 px-6 py-3 rounded-lg"
         >
-          Cadastrar Cliente
+          {clienteEditando ? "Salvar Alterações" : "Cadastrar Cliente"}
         </button>
-
       </div>
 
-
       <div className="bg-[#0f1c33] p-6 rounded-xl">
-
-        <h2 className="text-xl mb-6">
-          Clientes cadastrados
-        </h2>
+        <h2 className="text-xl mb-6">Clientes cadastrados</h2>
 
         <table className="w-full">
-
           <thead className="text-gray-400">
-
             <tr>
               <th className="text-left">Nome</th>
               <th className="text-left">Responsável</th>
               <th className="text-left">Telefone</th>
+              <th className="text-left">Ações</th>
             </tr>
-
           </thead>
 
           <tbody>
-
-            {clientes.map((cliente)=>(
+            {clientes.map((cliente) => (
               <tr key={cliente.id} className="border-t border-white/5">
-
                 <td className="py-3">{cliente.nome}</td>
                 <td>{cliente.responsavel}</td>
                 <td>{cliente.telefone}</td>
 
+                <td>
+                  <button
+                    onClick={() => {
+                      setClienteEditando(cliente);
+
+                      setNome(cliente.nome || "");
+                      setResponsavel(cliente.responsavel || "");
+                      setTelefone(cliente.telefone || "");
+                    }}
+                    className="text-cyan-400 hover:text-cyan-300"
+                  >
+                    Editar
+                  </button>
+                </td>
               </tr>
             ))}
-
           </tbody>
-
         </table>
-
       </div>
-
     </div>
-
-  )
-
+  );
 }
