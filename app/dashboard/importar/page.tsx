@@ -10,41 +10,6 @@ import { importarUltra } from "../../../lib/importadores/ultra";
 import { importarPacto } from "../../../lib/importadores/pacto";
 import { importarComercialTecnofit } from "../../../lib/importadores/comercialTecnofit";
 
-function detectarCabecalho(
-  sheet: XLSX.WorkSheet,
-  tipo: "receita" | "despesa" | "comercial",
-) {
-  const linhas = XLSX.utils.sheet_to_json(sheet, {
-    header: 1,
-  }) as any[][];
-
-  for (let i = 0; i < Math.min(linhas.length, 10); i++) {
-    const textoLinha = linhas[i].join(" ").toLowerCase();
-
-    if (
-      tipo === "comercial" &&
-      textoLinha.includes("cliente") &&
-      textoLinha.includes("tipo de venda")
-    ) {
-      return i;
-    }
-
-    if (tipo === "receita" && textoLinha.includes("valor líquido")) {
-      return i;
-    }
-
-    if (
-      tipo === "despesa" &&
-      (textoLinha.includes("valor pago") ||
-        textoLinha.includes("data pagamento"))
-    ) {
-      return i;
-    }
-  }
-
-  return 0;
-}
-
 export default function Importar() {
   const [loading, setLoading] = useState(false);
   const [academias, setAcademias] = useState<any[]>([]);
