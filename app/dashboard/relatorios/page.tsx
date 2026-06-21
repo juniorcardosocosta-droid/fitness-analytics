@@ -130,28 +130,93 @@ export default function Relatorios() {
       if (item.tipo === "despesa") {
         despesa += valor;
 
-        switch (item.categoria) {
+        const categoria = String(item.categoria || "")
+          .trim()
+          .toUpperCase();
+
+        switch (categoria) {
+          // TRIBUTOS
           case "TRIBUTOS":
+          case "SIMPLES NACIONAL":
+          case "ISS":
+          case "ICMS":
+          case "PIS":
+          case "COFINS":
+          case "IRPJ":
+          case "CSLL":
             totalTributos += valor;
             break;
 
+          // PESSOAL
           case "FOLHA DE PAGAMENTO":
+          case "PRÓ-LABORE":
+          case "PRO LABORE":
+          case "COMISSÕES":
+          case "COMISSOES":
+          case "BENEFÍCIOS":
+          case "BENEFICIOS":
+          case "ESTAGIÁRIOS":
+          case "ESTAGIARIOS":
+          case "ENCARGOS":
             totalPessoal += valor;
             break;
 
+          // INFRAESTRUTURA
+          case "IMÓVEL":
+          case "IMOVEL":
           case "IMÓVEL (OCUPAÇÃO E INFRAESTRUTURA)":
+          case "ALUGUEL":
+          case "IPTU":
+          case "ÁGUA":
+          case "AGUA":
+          case "LUZ":
+          case "ENERGIA":
+          case "CONDOMÍNIO":
+          case "CONDOMINIO":
+          case "INTERNET":
+          case "TELEFONIA":
+          case "MANUTENÇÃO":
+          case "MANUTENCAO":
+          case "LIMPEZA":
+          case "SEGURANÇA":
+          case "SEGURANCA":
             totalInfraestrutura += valor;
             break;
 
+          // ADMINISTRATIVO
           case "ADMINISTRATIVO":
+          case "CONTABILIDADE":
+          case "JURÍDICO":
+          case "JURIDICO":
+          case "SOFTWARE":
+          case "SOFTWARES":
+          case "MATERIAL DE ESCRITÓRIO":
+          case "MATERIAL DE ESCRITORIO":
             totalAdministrativo += valor;
             break;
 
+          // MARKETING
+          case "MARKETING":
           case "MARKETING/ IMPULSIONAMENTO":
+          case "TRÁFEGO PAGO":
+          case "TRAFEGO PAGO":
+          case "GOOGLE ADS":
+          case "FACEBOOK ADS":
+          case "INSTAGRAM ADS":
+          case "AGÊNCIA":
+          case "AGENCIA":
             totalMarketing += valor;
             break;
 
+          // FINANCEIRO
           case "EMPRÉSTIMO":
+          case "EMPRESTIMO":
+          case "JUROS":
+          case "IOF":
+          case "TARIFAS BANCÁRIAS":
+          case "TARIFAS BANCARIAS":
+          case "ANTECIPAÇÃO":
+          case "ANTECIPACAO":
             totalFinanceiro += valor;
             break;
         }
@@ -167,7 +232,6 @@ export default function Relatorios() {
       setRanking(rankingData);
     }
 
-    
     setDespesas(despesa);
     setTributos(totalTributos);
     setPessoal(totalPessoal);
