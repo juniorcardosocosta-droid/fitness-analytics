@@ -146,6 +146,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function carregarDados() {
+      console.log("ROLE:", role);
+      console.log("CLIENTE:", clienteId);
+      console.log("ACADEMIA:", academiaId);
+
       // 🔒 NÃO EXECUTA SEM CONTEXTO
       if (!role) return;
 
