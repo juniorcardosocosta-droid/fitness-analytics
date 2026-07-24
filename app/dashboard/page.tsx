@@ -44,6 +44,7 @@ export default function Dashboard() {
   const [alunosMensal, setAlunosMensal] = useState<any[]>([]);
   const [ticketMensal, setTicketMensal] = useState<any[]>([]);
   const [custosMensal, setCustosMensal] = useState<any[]>([]);
+  const [heatmapPlanos, setHeatmapPlanos] = useState<any[]>([]);
 
   const [mesSelecionado, setMesSelecionado] = useState("");
   const [anoSelecionado, setAnoSelecionado] = useState("");
@@ -372,6 +373,43 @@ export default function Dashboard() {
       console.log("CUSTOS VIEW:", custosData);
 
       setCustosMensal(custosData || []);
+
+      // ================= HEATMAP PLANOS =================
+      let queryHeatmapPlanos = supabase.from("vw_heatmap_planos").select("*");
+
+      if (role === "usuario") {
+        queryHeatmapPlanos = queryHeatmapPlanos.eq("academia_id", academiaId);
+      }
+
+      // 🔵 ADMIN REDE
+      if (role === "admin_rede") {
+        const { data: academias } = await supabase
+          .from("academias")
+          .select("id")
+          .eq("cliente_id", clienteId);
+
+        const ids = academias?.map((a) => a.id) || [];
+
+        if (academiaId) {
+          queryHeatmapPlanos = queryHeatmapPlanos.eq("academia_id", academiaId);
+        } else {
+          queryHeatmapPlanos = queryHeatmapPlanos.in("academia_id", ids);
+        }
+      }
+
+      // 🔴 ADMIN MASTER
+      if (role === "admin_master") {
+        if (academiaId) {
+          queryHeatmapPlanos = queryHeatmapPlanos.eq("academia_id", academiaId);
+        }
+      }
+
+      const { data: planosData } = await queryHeatmapPlanos.order(
+        "venda_total",
+        { ascending: false },
+      );
+
+      setHeatmapPlanos(planosData || []);
     }
 
     carregarDados();
@@ -896,6 +934,24 @@ export default function Dashboard() {
       return acc;
     }, {}),
   ).sort((a: any, b: any) => a.ordem - b.ordem);
+
+  // ================= HEATMAP PLANOS =================
+  const maxVendaPlano = Math.max(
+    ...heatmapPlanos.map((p: any) => Number(p.venda_total || 0)),
+    0,
+  );
+
+  const getHeatColorPlano = (valor: number) => {
+    const intensidade = maxVendaPlano > 0 ? valor / maxVendaPlano : 0;
+
+    if (intensidade > 0.85) return "bg-emerald-700";
+    if (intensidade > 0.65) return "bg-emerald-600";
+    if (intensidade > 0.45) return "bg-emerald-500";
+    if (intensidade > 0.25) return "bg-emerald-400";
+    if (intensidade > 0.1) return "bg-emerald-300";
+
+    return "bg-[#1e293b]";
+  };
 
   // ================= TELA =================
   return (
@@ -1685,6 +1741,42 @@ export default function Dashboard() {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* ================= HEATMAP DE PLANOS ================= */}
+      <div className="mt-6">
+        <div className="bg-[#0f172a] rounded-3xl border border-emerald-500/20 p-8 w-full">
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Heatmap de Planos
+          </h2>
+
+          <div className="grid grid-cols-5 gap-4">
+            {heatmapPlanos.map((plano: any) => (
+              <div
+                key={plano.plano}
+                className={`${getHeatColorPlano(Number(plano.venda_total || 0))} rounded-xl p-4`}
+              >
+                <div className="text-white font-semibold">{plano.plano}</div>
+
+                <div className="text-sm text-gray-200 mt-2">
+                  Alunos: {plano.total_alunos}
+                </div>
+
+                <div className="text-sm text-gray-200">
+                  Receita: R${" "}
+                  {Number(plano.venda_total || 0).toLocaleString("pt-BR")}
+                </div>
+
+                <div className="text-sm text-gray-200">
+                  Ticket: R${" "}
+                  {Number(plano.ticket_medio || 0).toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

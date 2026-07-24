@@ -60,6 +60,31 @@ function normalizarTipoVenda(tipo: string) {
     recorrencia: texto.includes("renov"),
   };
 }
+function extrairPeriodoContrato(item: string) {
+  const texto = String(item || "");
+
+  const match = texto.match(
+    /\((\d{2}\/\d{2}\/\d{4})\s*-\s*(\d{2}\/\d{2}\/\d{4})\)/,
+  );
+
+  if (!match) {
+    return {
+      data_inicio: null,
+      data_fim: null,
+    };
+  }
+
+  return {
+    data_inicio: parseData(match[1]),
+    data_fim: parseData(match[2]),
+  };
+}
+
+function limparNomePlano(item: string) {
+  return String(item || "")
+    .replace(/\(\d{2}\/\d{2}\/\d{4}\s*-\s*\d{2}\/\d{2}\/\d{4}\)/, "")
+    .trim();
+}
 
 function extrairPlano(item: string) {
   const texto = String(item || "").toLowerCase();
@@ -108,7 +133,30 @@ export function importarComercialTecnofit(dados: any[], academiaId: string) {
 
       const flags = normalizarTipoVenda(tipoVenda);
 
+      const periodo = extrairPeriodoContrato(item["Itens"] || "");
+
       const plano = extrairPlano(item["Itens"] || "");
+
+      const nomePlano = limparNomePlano(item["Itens"] || "");
+      let duracao_meses = 1;
+
+      switch (plano.tipo_plano) {
+        case "mensal":
+          duracao_meses = 1;
+          break;
+
+        case "trimestral":
+          duracao_meses = 3;
+          break;
+
+        case "semestral":
+          duracao_meses = 6;
+          break;
+
+        case "anual":
+          duracao_meses = 12;
+          break;
+      }
 
       const dataVenda = parseData(item["Data"]);
 
@@ -119,21 +167,34 @@ export function importarComercialTecnofit(dados: any[], academiaId: string) {
 
         sistema_origem: "tecnofit",
 
+        codigo_aluno: item["Código"] || null,
+
         aluno_nome: item["Cliente"] || null,
 
         data_venda: dataVenda,
 
         tipo_venda: tipoVenda,
 
-        plano: item["Itens"] || null,
+        plano: nomePlano,
+
+        nome_plano_original: item["Itens"] || null,
 
         tipo_plano: plano.tipo_plano,
+
+        data_inicio_plano: periodo.data_inicio,
+
+        data_fim_plano: periodo.data_fim,
+
+        duracao_meses,
 
         valor: parseNumero(item["Valor Venda"]),
 
         desconto: parseNumero(item["Desconto Venda"]),
 
         valor_final: valorFinal,
+
+        receita_mensal:
+          duracao_meses > 0 ? valorFinal / duracao_meses : valorFinal,
 
         valor_quitado: parseNumero(item["Valor Quitado/Recibo"]),
 
