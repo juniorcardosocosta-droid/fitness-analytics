@@ -1745,40 +1745,153 @@ export default function Dashboard() {
       </div>
 
       {/* ================= HEATMAP DE PLANOS ================= */}
-      <div className="mt-6">
-        <div className="bg-[#0f172a] rounded-3xl border border-emerald-500/20 p-8 w-full">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            Heatmap de Planos
-          </h2>
+      {(() => {
+        const colunas = ["Alunos", "Receita", "Ticket Médio", "% Base"];
 
-          <div className="grid grid-cols-5 gap-4">
-            {heatmapPlanos.map((plano: any) => (
-              <div
-                key={plano.plano}
-                className={`${getHeatColorPlano(Number(plano.venda_total || 0))} rounded-xl p-4`}
-              >
-                <div className="text-white font-semibold">{plano.plano}</div>
+        const percentualBase = heatmapPlanos.reduce(
+          (acc: number, item: any) => acc + Number(item.total_alunos || 0),
+          0,
+        );
 
-                <div className="text-sm text-gray-200 mt-2">
-                  Alunos: {plano.total_alunos}
+        const maxValor = Math.max(
+          ...heatmapPlanos.flatMap((item: any) => [
+            Number(item.total_alunos || 0),
+            Number(item.venda_total || 0),
+            Number(item.ticket_medio || 0),
+            percentualBase > 0
+              ? (Number(item.total_alunos || 0) / percentualBase) * 100
+              : 0,
+          ]),
+        );
+
+        function getHeatColor(valor: number) {
+          const intensidade = maxValor > 0 ? valor / maxValor : 0;
+
+          if (intensidade > 0.85) return "bg-emerald-700";
+          if (intensidade > 0.65) return "bg-emerald-600";
+          if (intensidade > 0.45) return "bg-emerald-500";
+          if (intensidade > 0.25) return "bg-emerald-400";
+          if (intensidade > 0.1) return "bg-emerald-300";
+
+          return "bg-[#1e293b]";
+        }
+
+        return (
+          <div className="mt-10">
+            <div
+              id="grafico-heatmap-planos"
+              className="bg-gradient-to-br from-[#0b1220] to-[#0f1c33] p-6 rounded-2xl shadow-lg w-full"
+            >
+              <h2 className="mb-6 text-lg font-semibold">Heatmap de Planos</h2>
+
+              <div className="grid grid-cols-[220px_repeat(4,1fr)] gap-2 text-xs">
+                {/* CABEÇALHO */}
+                <div></div>
+
+                {colunas.map((coluna) => (
+                  <div
+                    key={coluna}
+                    className="text-center text-gray-400 font-semibold"
+                  >
+                    {coluna}
+                  </div>
+                ))}
+
+                {/* LINHAS */}
+                {heatmapPlanos.map((plano: any) => {
+                  const perc =
+                    percentualBase > 0
+                      ? (Number(plano.total_alunos || 0) / percentualBase) * 100
+                      : 0;
+
+                  return (
+                    <>
+                      {/* NOME DO PLANO */}
+                      <div className="text-gray-300 flex items-center font-medium">
+                        {plano.plano}
+                      </div>
+
+                      {/* ALUNOS */}
+                      <div
+                        className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(Number(plano.total_alunos || 0))}`}
+                      >
+                        {Number(plano.total_alunos || 0).toLocaleString(
+                          "pt-BR",
+                        )}
+                      </div>
+
+                      {/* RECEITA */}
+                      <div
+                        className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(Number(plano.venda_total || 0))}`}
+                      >
+                        R${" "}
+                        {Number(plano.venda_total || 0).toLocaleString("pt-BR")}
+                      </div>
+
+                      {/* TICKET */}
+                      <div
+                        className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(Number(plano.ticket_medio || 0))}`}
+                      >
+                        R${" "}
+                        {Number(plano.ticket_medio || 0).toLocaleString(
+                          "pt-BR",
+                          {
+                            minimumFractionDigits: 2,
+                          },
+                        )}
+                      </div>
+
+                      {/* % BASE */}
+                      <div
+                        className={`h-12 rounded-lg flex items-center justify-center text-white ${getHeatColor(perc)}`}
+                      >
+                        {perc.toFixed(1)}%
+                      </div>
+                    </>
+                  );
+                })}
+
+                {/* TOTAL */}
+                <div className="text-emerald-400 flex items-center font-bold">
+                  TOTAL
                 </div>
 
-                <div className="text-sm text-gray-200">
-                  Receita: R${" "}
-                  {Number(plano.venda_total || 0).toLocaleString("pt-BR")}
+                <div className="h-12 flex items-center justify-center text-emerald-400 font-bold">
+                  {percentualBase.toLocaleString("pt-BR")}
                 </div>
 
-                <div className="text-sm text-gray-200">
-                  Ticket: R${" "}
-                  {Number(plano.ticket_medio || 0).toLocaleString("pt-BR", {
+                <div className="h-12 flex items-center justify-center text-emerald-400 font-bold">
+                  R${" "}
+                  {heatmapPlanos
+                    .reduce(
+                      (acc: number, item: any) =>
+                        acc + Number(item.venda_total || 0),
+                      0,
+                    )
+                    .toLocaleString("pt-BR")}
+                </div>
+
+                <div className="h-12 flex items-center justify-center text-emerald-400 font-bold">
+                  R${" "}
+                  {(
+                    heatmapPlanos.reduce(
+                      (acc: number, item: any) =>
+                        acc + Number(item.ticket_medio || 0),
+                      0,
+                    ) / (heatmapPlanos.length || 1)
+                  ).toLocaleString("pt-BR", {
                     minimumFractionDigits: 2,
                   })}
                 </div>
+
+                <div className="h-12 flex items-center justify-center text-emerald-400 font-bold">
+                  100%
+                </div>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* 3 - TICKET - MEIDO */}
       <div className="flex flex-col gap-6 mt-6">
