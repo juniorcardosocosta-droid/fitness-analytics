@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { ComposedChart } from "recharts";
+import { PieChart, Pie, Cell } from "recharts";
 
 import {
   BarChart,
@@ -953,6 +954,24 @@ export default function Dashboard() {
     return "bg-[#1e293b]";
   };
 
+  const totalMatriculas = heatmapPlanos.reduce(
+    (acc: number, item: any) => acc + Number(item.total_alunos || 0),
+    0,
+  );
+
+  const totalReceitaPlanos = heatmapPlanos.reduce(
+    (acc: number, item: any) => acc + Number(item.venda_total || 0),
+    0,
+  );
+
+  const mediaTicketPlanos =
+    heatmapPlanos.length > 0
+      ? heatmapPlanos.reduce(
+          (acc: number, item: any) => acc + Number(item.ticket_medio || 0),
+          0,
+        ) / heatmapPlanos.length
+      : 0;
+
   // ================= TELA =================
   return (
     <div
@@ -1767,20 +1786,20 @@ export default function Dashboard() {
         function getHeatColor(valor: number) {
           const intensidade = maxValor > 0 ? valor / maxValor : 0;
 
-          if (intensidade > 0.85) return "bg-emerald-700";
-          if (intensidade > 0.65) return "bg-emerald-600";
-          if (intensidade > 0.45) return "bg-emerald-500";
-          if (intensidade > 0.25) return "bg-emerald-400";
-          if (intensidade > 0.1) return "bg-emerald-300";
+          if (intensidade > 0.85) return "bg-emerald-900";
+          if (intensidade > 0.70) return "bg-emerald-800";
+          if (intensidade > 0.55) return "bg-emerald-700";
+          if (intensidade > 0.35) return "bg-emerald-600";
+          if (intensidade > 0.15) return "bg-emerald-500";
 
-          return "bg-[#1e293b]";
+          return "bg-[#162234]";
         }
 
         return (
           <div className="mt-10">
             <div
               id="grafico-heatmap-planos"
-              className="bg-gradient-to-br from-[#0b1220] to-[#0f1c33] p-6 rounded-2xl shadow-lg w-full"
+              className="bg-gradient-to-br from-[#050b18] via-[#081321] to-[#10213b] p-8 rounded-3xl border border-emerald-500/10 shadow-2xl w-full"
             >
               <h2 className="mb-6 text-lg font-semibold">Heatmap de Planos</h2>
 
