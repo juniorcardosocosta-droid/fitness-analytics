@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { ComposedChart } from "recharts";
-import { PieChart, Pie, Cell } from "recharts";
 
 import {
   BarChart,
@@ -1787,7 +1786,7 @@ export default function Dashboard() {
           const intensidade = maxValor > 0 ? valor / maxValor : 0;
 
           if (intensidade > 0.85) return "bg-emerald-900";
-          if (intensidade > 0.70) return "bg-emerald-800";
+          if (intensidade > 0.7) return "bg-emerald-800";
           if (intensidade > 0.55) return "bg-emerald-700";
           if (intensidade > 0.35) return "bg-emerald-600";
           if (intensidade > 0.15) return "bg-emerald-500";

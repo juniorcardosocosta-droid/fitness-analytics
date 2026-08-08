@@ -9,6 +9,7 @@ import { importarEvo } from "../../../lib/importadores/evo";
 import { importarUltra } from "../../../lib/importadores/ultra";
 import { importarPacto } from "../../../lib/importadores/pacto";
 import { importarComercialTecnofit } from "../../../lib/importadores/comercialTecnofit";
+import { importarComercialEvo } from "../../../lib/importadores/comercialEvo";
 
 export default function Importar() {
   const [loading, setLoading] = useState(false);
@@ -57,10 +58,14 @@ export default function Importar() {
       } else {
         dadosConvertidos = importarTecnofit(dados, tipo, academiaId);
       }
-    } else if (tipo !== "comercial") {
-      if (erp === "evo") {
+    } else if (erp === "evo") {
+      if (tipo === "comercial") {
+        dadosConvertidos = importarComercialEvo(dados, academiaId);
+      } else {
         dadosConvertidos = await importarEvo(dados, tipo, academiaId);
-      } else if (erp === "ultra") {
+      }
+    } else if (tipo !== "comercial") {
+      if (erp === "ultra") {
         dadosConvertidos = importarUltra(dados, tipo, academiaId);
       } else if (erp === "pacto") {
         dadosConvertidos = importarPacto(dados, tipo, academiaId);
